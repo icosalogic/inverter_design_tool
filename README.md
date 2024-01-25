@@ -8,7 +8,7 @@ This application can be accessed by two methods:
 1. By serving the files via a web server.
 2. By downloading the files from github to your local machine.  This option is especially appealing if you need to work offline.
 
-Just click the index.html file to run the app.
+Just click the designer/index.html file to run the app.
 
 # Configurations
 
