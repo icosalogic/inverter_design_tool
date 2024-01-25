@@ -1,0 +1,35 @@
+The goal of this section is to create a .js file containing capacitor selections
+for the inverter designer.
+
+The table has been created by taking screenshots of the capacitor datasheets
+from multiple capacitor manufacturers, then extracting the text using OCR.
+The OCR can be somewhat noisy, so manually inspect and clean up the OCR output
+to create an input file for the next step.  Each datasheet has a slightly
+different format, so each folder has a separate script to convert their
+specific format to the common entry used in the designer's cap_table.js file.
+
+{
+  mfg:      'CDE',
+  pn:       '944U101K801AA',
+  tech:     'Film',
+  c:        100.0,
+  v_dc:     800.0,
+  i_rms:    74.0,
+  esl:      20.0,
+  esr:      0.0005,
+  th_cc:    2.8,
+  th_ca:    5.2,
+  shape:    'cylinder',
+  dim_dia:  84.5,
+  dim_z:    40.0,
+},
+
+In the file, each entry is usually collapsed onto one line, to make the file more
+readable by humans.
+
+The shell script gen.sh combines all the individual capacitor tables, adds a prefix
+and suffix to make the final cap_table.js file.
+
+In the parent folder, the shell script mk_release.sh will copy caps/cap_table.js to
+the designer folder if it has a newer modify time than designer/cap_table.js.
+

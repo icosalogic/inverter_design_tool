@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+
+<!--
+  Inverter Design Tool
+  In the MVC UI design paradigm, this is the view.
+  The controller is found in designer.js.
+  The model consists of config.js and derived.js.
+  
+  Test UNICODE sequences.
+   ⊕  2295
+   ⥉ 2949
+   ⊚ 229a
+   Ⓘ 24be  (upper i)
+   
+-->
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>IcosaLogic Inverter Designer</title>
+  <link rel="stylesheet" href="designer.css">
+  <script type='text/javascript' src='designer.js'></script>
+  <script type='text/javascript' src='config.js'></script>
+  <script type='text/javascript' src='derived.js'></script>
+  <script type='text/javascript' src='derived_lcl.js'></script>
+  <script type='text/javascript' src='filter.js'></script>
+  <script type='text/javascript' src='version.js'></script>
+
+  <script type='text/javascript' src='wire_table.js'></script>
+  <script type='text/javascript' src='cap_table.js'></script>
+  <script type='text/javascript' src='fet_table.js'></script>
+  <script type='text/javascript' src='ind_table.js'></script>
+  <script type='text/javascript' src='ind_cor_table.js'></script>
+  <script type='text/javascript' src='ind_dc_bias_table.js'></script>
+  <script type='text/javascript' src='info_text.js'></script>
+</head>
+
+
+<body onload='icosalogic.inv_design.onLoadHandler()'>
+  <h1 id='main_title' style='text-align: center'>Icosalogic Inverter Design Tool</h1>
+  <div id='version_info' style='text-align: center'></div>
+  <div class='oa_text'>
+        <table>
+          <tr>
+            <td colspan='2'> <h3>Configurations</h3> </td>
+            <td> <button id='show_hide_all' type='button' name='all_sh' value='h'>Hide All</button> </td>
+          </tr>
+          <tr>
+            <td><label for='configs'  >Current Config</label></td>
+            <td>cur_cfg</td>
+            <td>
+              <select id='configs'  name='configs' >
+              </select>
+            </td>
+            <td> <button type='button' id='cfg_delete' >Delete</button> </td>
+            <td> <button type='button' id='cfg_print' >Print</button> </td>
+            <td></td>
+            <td> <svg width="0.25in" height="0.25in" viewBox="0 0 8 8"><circle id='cfg_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_configs'>ⓘ</td>
+          </tr>
+          <tr id='row_new_cfg'>
+            <td><label for='new_cfg'  >Enter name for new config</label></td>
+            <td>new_cfg</td>
+            <td><input id='new_cfg_name' type='text' value='' ></td>
+            <td colspan='4'> <button type='button' id='cfg_create' >Create</button> </td>
+            <td id='info_new_cfg'>ⓘ</td>
+          </tr>
+          <tr id='row_purge'>
+            <td><label for='cfg_purge'  >Purge All Configs</label></td>
+            <td>cfg_purge</td>
+            <td> <button type='button' id='cfg_purge' >Purge</button> </td>
+            <td colspan='4'></td>
+            <td id='info_cfg_purge'>ⓘ</td>
+          </tr>
+          <!-- 
+          <tr id='row_num_cfgs'>
+            <td><label for='num_cfgs'  >Number of configs</label></td>
+            <td>num_cfgs</td>
+            <td><input id='num_cfgs' type='number' value='1' readonly='readonly' ></td>
+          </tr>
+          -->
+          
+          
+          <tr>
+            <td colspan='2'> <h3>Basics</h3> </td>
+            <td> <button type='button' name='sh_basics' value='h'>Hide</button> </td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_freq'  >Output Frequency</label></td>
+            <td>f<sub>out</sub></td>
+            <td>
+              <select id='out_freq'  name='out_freq' >
+                <option value='60' selected>60</option>
+                <option value='50'>50</option>
+              </select>
+            </td>
+            <td colspan='4'>Hz</td>
+            <td id='info_out_freq'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_freq_omega'  >Output Frequency Omega</label></td>
+            <td>ω<sub>out</sub></td>
+            <td><input id='out_freq_omega' type='number' value='0.0' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_out_freq_omega'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='pwm_freq'>PWM Frequency</label></td>
+            <td>f<sub>pwm</sub></td>
+            <td><input id='pwm_freq' type='number' value='12000' ></td>
+            <td colspan='4'>Hz</td>
+            <td id='info_pwm_freq'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='pwm_omega'>PWM Frequency Omega</label></td>
+            <td>ω<sub>pwm</sub></td>
+            <td><input id='pwm_omega' type='number' value='0' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_pwm_omega'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='pwm_cycle_us'>PWM Cycle Time</label></td>
+            <td>t<sub>pwm</sub></td>
+            <td><input id='pwm_cycle_us' type='number' value='0' readonly='readonly'></td>
+            <td colspan='4'>us</td>
+            <td id='info_pwm_cycle_us'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td> <label for='skin_depth'  >Skin depth at f<sub>pwm</sub></label></td>
+            <td>d<sub>skin</sub></td>
+            <td><input id='skin_depth' type='number' value='0.01' readonly='readonly'></td>
+            <td>mm</td>
+            <td><input id='skin_depth_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_skin_depth'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_amps'  >Output Current</label></td>
+            <td>I<sub>out</sub></td>
+            <td><input id='out_amps' type='number' value='100' ></td>
+            <td colspan='4'>A</td>
+            <td id='info_out_amps'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_voltage'  >Output Voltage</label></td>
+            <td>V<sub>rms</sub></td>
+            <td><input id='out_voltage' type='number' value='120' ></td>
+            <td colspan='4'>V RMS</td>
+            <td id='info_out_voltage'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_voltage_pp'  >Output Voltage (peak-to-peak)</label></td>
+            <td>V<sub>pp</sub></td>
+            <td><input id='out_voltage_pp' type='number' value='349.4' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_out_voltage_pp'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_lines'  >Number of Lines</label></td>
+            <td>lines</td>
+            <td>
+              <select id='out_lines'  name='out_lines' >
+                <option value='1'>1</option>
+                <option value='2' selected>2</option>
+                <option value='3'>3</option>
+              </select>
+            <td colspan='4'></td>
+            <td id='info_out_lines'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='out_watts'  >Output Power</label></td>
+            <td>P<sub>out</sub></td>
+            <td><input id='out_watts' type='number' value='24' readonly='readonly'></td>
+            <td colspan='4'>kW</td>
+            <td id='info_out_watts'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='est_eff' >Estimated Efficiency</label></td>
+            <td>η</td>
+            <td><input id='est_eff' type='number' value='90'></td>
+            <td colspan='4'>%</td>
+            <td id='info_est_eff'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td></td>
+            <td></td>
+            <td>Min</td>
+            <td>Nominal</td>
+            <td>Max</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='i_in_line_min' >Input Current Per Line</label></td>
+            <td>I<sub>in_line</sub></td>
+            <td><input id='i_in_line_min' type='number' value='0.0' readonly='readonly'></td>
+            <td><input id='i_in_line_nom' type='number' value='0.0' readonly='readonly'></td>
+            <td><input id='i_in_line_max' type='number' value='0.0' readonly='readonly'></td>
+            <td colspan='2'>A</td>
+            <td id='info_i_in_line'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='i_in_min' >Input Current</label></td>
+            <td>I<sub>in</sub></td>
+            <td><input id='i_in_min' type='number' value='0.0' readonly='readonly'></td>
+            <td><input id='i_in_nom' type='number' value='0.0' readonly='readonly'></td>
+            <td><input id='i_in_max' type='number' value='0.0' readonly='readonly'></td>
+            <td colspan='2'>A</td>
+            <td id='info_i_in'>ⓘ</td>
+          </tr>
+
+          
+          <tr>
+            <td colspan='2'> <h3>Battery</h3> </td>
+            <td> <button type='button' name='sh_bat' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bat_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_bat'>
+            <td></td>
+            <td></td>
+            <td>Min</td>
+            <td>Nominal</td>
+            <td>Max</td>
+          </tr>
+          <tr class='sh_bat'>
+            <td><label for='bat_v_cell_min' >Cell Voltage</label></td>
+            <td>V<sub>cell</sub></td>
+            <td><input id='v_cell_min' type='number' value='3.0'></td>
+            <td><input id='v_cell_nom' type='number' value='3.3'></td>
+            <td><input id='v_cell_max' type='number' value='3.6'></td>
+            <td colspan='2'>v</td>
+            <td id='info_bat_v_cell'>ⓘ</td>
+          </tr>
+          <tr class='sh_bat'>
+            <td><label for='bat_series' >Series</label></td>
+            <td>bat_series</td>
+            <td><input id='bat_series' type='number' value='144'></td>
+            <td colspan='4'>cells</td>
+            <td id='info_bat_series'>ⓘ</td>
+          </tr>
+          <tr class='sh_bat'>
+            <td><label for='bat_v_pack_min' >Pack Voltage</label></td>
+            <td>V<sub>pack</sub></td>
+            <td><input id='v_pack_min' type='number' value='3.0' readonly='readonly'></td>
+            <td><input id='v_pack_nom' type='number' value='3.3' readonly='readonly'></td>
+            <td><input id='v_pack_max' type='number' value='3.6' readonly='readonly'></td>
+            <td>v</td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bat_v_min_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_v_pack'>ⓘ</td>
+          </tr>
+
+          
+          <tr>
+            <td colspan='2'> <h3>Bus Configuration</h3> </td>
+            <td> <button type='button' name='sh_bus' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bb_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_bus'>
+            <td><label for='bus_type'  >Bus type</label></td>
+            <td>bus_type</td>
+            <td>
+              <select id='bus_type' name='bus_type' >
+                <option id='bus_type_bar' value='bar'>Laminated Bus Bar</option>
+                <option id='bus_type_p2p' value='p2p'>Point to point wire</option>
+              </select>
+            </td>
+            <td colspan='4'></td>
+            <td id='info_bus_type'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus'>
+            <td><label for='j_cond'  >Conductor current density</label></td>
+            <td>J<sub>cond</sub></td>
+            <td><input id='j_cond'   type='number' value='5.0' ></td>
+            <td colspan='4'>A/mm<sup>2</sup></td>
+            <td id='info_j_cond'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p'>
+            <td><label for='wire_pn'  >Wire part number</label></td>
+            <td>wire_pn</td>
+            <td>
+              <select id='wire_pn' name='wire_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_wire_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_wire_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p sh_wire_pn'>
+            <td> <label for='wire_awg'  >Wire gauge</label></td>
+            <td>AWG</td>
+            <td><input id='wire_awg' type='number'  readonly='readonly'></td>
+            <td colspan='4'>gauge</td>
+            <td id='info_wire_awg'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p sh_wire_pn'>
+            <td> <label for='wire_strands'  >Number of strands</label></td>
+            <td>strands</td>
+            <td><input id='wire_strands' type='number' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_wire_strands'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p sh_wire_pn'>
+            <td> <label for='wire_strand_dia'  >Strand Diameter</label></td>
+            <td>strand_dia</td>
+            <td><input id='wire_strand_dia' type='number' readonly='readonly'></td>
+            <td>mm</td>
+            <td><input id='wire_strand_dia_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_wire_strand_dia'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p sh_wire_pn'>
+            <td> <label for='wire_dia'  >Wire Diameter</label></td>
+            <td>wire_dia</td>
+            <td><input id='wire_dia' type='number' readonly='readonly'></td>
+            <td>mm</td>
+            <td><input id='wire_dia_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_wire_dia'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p'>
+            <td> <label for='wire_i'  >Current Capacity</label></label></td>
+            <td>I<sub>wire</sub></td>
+            <td><input id='wire_i' type='number' value='5' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_wire_i'>ⓘ</td>
+          </tr>
+          
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_cu_recommend'  >CU thickness recommend</label></td>
+            <td>d<sub>CU recommend</sub></td>
+            <td><input id='bb_cu_recommend' type='number' readonly='readonly' ></td>
+            <td>mm</td>
+            <td><input id='bb_cu_recommend_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_cu_recommend'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_cu_use_recommend'  >Use recommend</label></td>
+            <td>use_cu_recommend</td>
+            <td><input id='bb_cu_use_recommend' type='checkbox' checked ></td>
+            <td colspan='4'>in</td>
+            <td id='info_bb_cu_use_recommend'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_cu_thickness'  >CU thickness actual</label></td>
+            <td>d<sub>CU actual</sub></td>
+            <td><input id='bb_cu_thickness' type='number' value='0.254' ></td>
+            <td>mm</td>
+            <td><input id='bb_cu_thickness_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_cu_thickness'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_min_width'  >Min current path width</label></td>
+            <td>min_cond_width</td>
+            <td><input id='bb_min_width' type='number' value='12.7' ></td>
+            <td>mm</td>
+            <td><input id='bb_min_width_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_min_width'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_num_layers'  >Num CU layers required</label></label></td>
+            <td>cu_layers</td>
+            <td><input id='bb_num_layers' type='number' value='5' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_bb_num_layers'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_i'  >Current Capacity</label></label></td>
+            <td>I<sub>bb</sub></td>
+            <td><input id='bb_i' type='number' value='5' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bb_i_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_bb_i'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_sub_thickness'  >Substrate thickness</label></label></td>
+            <td>d<sub>substrate</sub></td>
+            <td><input id='bb_sub_thickness' type='number' value='1.6256' ></td>
+            <td>mm</td>
+            <td><input id='bb_sub_thickness_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_sub_thickness'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_ild_thickness'  >Inter-layer dielectric thickness</label></label></td>
+            <td>d<sub>ild</sub></td>
+            <td><input id='bb_ild_thickness' type='number' value='0.1016' ></td>
+            <td>mm</td>
+            <td><input id='bb_ild_thickness_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_ild_thickness'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_total_thickness'  >Total bus bar thickness</label></label></td>
+            <td>d<sub>total</sub></td>
+            <td><input id='bb_total_thickness' type='number' value='5' readonly='readonly'></td>
+            <td>mm</td>
+            <td><input id='bb_total_thickness_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_bb_total_thickness'>ⓘ</td>
+          </tr>
+          
+          
+          <tr>
+            <td colspan='2'> <h3>DC Link Capacitor</h3> </td>
+            <td> <button type='button' name='sh_dcl' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='dcl_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_dc_rms_factor'  >Input DC to RMS Current</label></td>
+            <td>dcl_dc_rms_factor</td>
+            <td><input id='dcl_dc_rms_factor'   type='number' value='1.0' ></td>
+            <td colspan='4'></td>
+            <td id='info_dcl_dc_rms_factor'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_i_rms_max'  >Max RMS Input Current</label></td>
+            <td>dcl_i_rms_max</td>
+            <td><input id='dcl_i_rms_max'   type='number' value='1.0' readonly='readonly' ></td>
+            <td colspan='4'>A</td>
+            <td id='info_dcl_i_rms_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_v_ripple'  >Input Ripple</label></td>
+            <td>dcl_v_ripple</td>
+            <td><input id='dcl_v_ripple'   type='number' value='1.0' ></td>
+            <td colspan='4'>V</td>
+            <td id='info_dcl_v_ripple'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_z_ripple'  >Input Ripple Impedance</label></td>
+            <td>dcl_z_ripple</td>
+            <td><input id='dcl_z_ripple'   type='number' value='1.0' readonly='readonly'></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_dcl_z_ripple'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_c_req'  >Capacitance Required</label></td>
+            <td>C<sub>required</sub></td>
+            <td><input id='dcl_c_req'   type='number' value='180' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_dcl_c_req'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_fom'  >Figure of Merit</label></td>
+            <td>FoM</td>
+            <td><input id='dcl_fom'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>*10<sup>6</sup></td>
+            <td id='info_dcl_fom'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_cap_pn'  >Cap Part Number</label></td>
+            <td>dcl_cap_pn</td>
+            <td>
+              <select id='dcl_cap_pn' name='dcl_cap_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_dcl_pn' value='h'>Hide</button> </td>
+            <td colspan='3'> <button type='button' id='dcl_filter' value='f'>Filter</button> </td>
+            <td id='info_dcl_cap_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_mfg'  >Manufacturer</label></td>
+            <td>dcl_mfg</td>
+            <td><input id='dcl_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_dcl_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_tech'  >Tech</label></td>
+            <td>dcl_tech</td>
+            <td><input id='dcl_tech'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_dcl_tech'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_c'  >Capacitance</label></td>
+            <td>C<sub>dcl</sub></td>
+            <td><input id='dcl_c'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_dcl_c'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_v_dc_max'  >Max DC Voltage</label></td>
+            <td>V<sub>dcl_dc</sub></td>
+            <td><input id='dcl_v_dc_max'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_dcl_v_dc_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_i_rms'  >Current RMS</label></td>
+            <td>I<sub>dcl_rms</sub></td>
+            <td><input id='dcl_i_rms'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_dcl_i_rms'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_esl'  >Equivalent Series Inductance</label></td>
+            <td>ESL<sub>dcl</sub></td>
+            <td><input id='dcl_esl'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>nH</td>
+            <td id='info_dcl_esl'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_esr'  >Equivalent Series Resistance</label></td>
+            <td>ESR<sub>dcl</sub></td>
+            <td><input id='dcl_esr'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_dcl_esr'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_th_cc'  >Thermal Resistance Core To Case</label></td>
+            <td>R<sub>dcl_θ_cc</sub></td>
+            <td><input id='dcl_th_cc'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_dcl_th_cc'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl sh_dcl_pn'>
+            <td><label for='dcl_th_ca'  >Thermal Resistance Case To Ambient</label></td>
+            <td>R<sub>dcl_θ_ca</sub></td>
+            <td><input id='dcl_th_ca'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_dcl_th_ca'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_count'>Number of Caps</label></td>
+            <td>dcl_count</td>
+            <td><input id='dcl_count' type='number' value='1' ></td>
+            <td colspan='4'></td>
+            <td id='info_dcl_count'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_fom_cap'  >Capacitor FoM</label></td>
+            <td>FoM_cap</td>
+            <td><input id='dcl_fom_cap'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>*10<sup>6</sup></td>
+            <td id='info_dcl_fom_cap'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_fom_total'  >Total Figure of Merit</label></td>
+            <td>FoM_total</td>
+            <td><input id='dcl_fom_total'   type='number' value='1' readonly='readonly'></td>
+            <td>*10<sup>6</sup></td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='dcl_fom_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_dcl_fom_total'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_i_total'  >Total DCL Current</label></td>
+            <td>I<sub>dcl_total</sub></td>
+            <td><input id='dcl_i_total' type='number' value='1' readonly='readonly'></td>
+            <td>A</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='dcl_i_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_dcl_i_total'>ⓘ</td>
+          </tr>
+          <tr class='sh_dcl'>
+            <td><label for='dcl_c_total'  >Total DCL Capacitance</label></td>
+            <td>C<sub>dcl_total</sub></td>
+            <td><input id='dcl_c_total'   type='number' value='1' readonly='readonly'></td>
+            <td>µF</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='dcl_c_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_dcl_c_total'>ⓘ</td>
+          </tr>
+          
+          
+          <tr>
+            <td colspan='2'> <h3>FET</h3> </td>
+            <td> <button type='button' name='sh_fet' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='fet_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_fet'>
+            <td><label for='fet_count'>Number of FETs</label></td>
+            <td>fet_count</td>
+            <td><input id='fet_count' type='number' value='1' ></td>
+            <td colspan='4'></td>
+            <td id='info_fet_count'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet'>
+            <td><label for='fet_pn'  >FET part number</label></td>
+            <td>fet_pn</td>
+            <td>
+              <select id='fet_pn' name='fet_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_fet_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_fet_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_mfg'  >FET Manufacturer</label></td>
+            <td>fet_mfg</td>
+            <td><input id='fet_mfg' type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_fet_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_tech'  >Technology</label></td>
+            <td>fet_tech</td>
+            <td><input id='fet_tech' type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_fet_tech'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_pkg'  >Package</label></td>
+            <td>fet_pkg</td>
+            <td><input id='fet_pkg' type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_fet_pkg'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_max_v'  >Voltage</label></td>
+            <td>V<sub>fet_max</sub></td>
+            <td><input id='fet_max_v'   type='number' value='150' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_fet_max_v'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_max_i'  >Max Current</label></td>
+            <td>I<sub>fet_max</sub></td>
+            <td><input id='fet_max_i'   type='number' value='150' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_fet_max_i'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_max_i_hot'  >Max Current (Hot)</label></td>
+            <td>I<sub>fet_max_hot</sub></td>
+            <td><input id='fet_max_i_hot'   type='number' value='150' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_fet_max_i_hot'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_r_ds_on'  >On Resistance</label></td>
+            <td>R<sub>ds_on</sub></td>
+            <td><input id='fet_r_ds_on'   type='number' value='150' readonly='readonly'></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_fet_r_ds_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='qg'  >Total Gate Charge</label></td>
+            <td>Q<sub>g</sub></td>
+            <td><input id='qg'   type='number' value='150' readonly='readonly'></td>
+            <td colspan='4'>nC</td>
+            <td id='info_qg'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='t_d_on'  >Turn on delay</label></td>
+            <td>t<sub>d(on)</sub></td>
+            <td><input id='t_d_on'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>ns</td>
+            <td id='info_t_d_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='t_rise'  >Rise time</label></td>
+            <td>t<sub>rise</sub></td>
+            <td><input id='t_rise'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>ns</td>
+            <td id='info_t_rise'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='t_d_off'  >Turn off delay</label></td>
+            <td>t<sub>d(off)</sub></td>
+            <td><input id='t_d_off'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>ns</td>
+            <td id='info_t_d_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='t_fall'  >Fall time</label></td>
+            <td>t<sub>fall</sub></td>
+            <td><input id='t_fall'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>ns</td>
+            <td id='info_t_fall'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='r_th_jc'  >Theta Junction to Case</label></td>
+            <td>R<sub>θ_jc</sub></td>
+            <td><input id='r_th_jc'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_r_th_jc'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='r_g_ext'  >Gate External Resistance</label></td>
+            <td>R<sub>g_ext</sub></td>
+            <td><input id='r_g_ext'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_r_g_ext'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='r_g_int'  >Gate Internal Resistance</label></td>
+            <td>R<sub>g_int</sub></td>
+            <td><input id='r_g_int'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_r_g_int'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='v_g_on'  >Gate On Voltage</label></td>
+            <td>V<sub>g_on</sub></td>
+            <td><input id='v_g_on'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_v_g_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='v_g_off'  >Gate Off Voltage</label></td>
+            <td>V<sub>g_off</sub></td>
+            <td><input id='v_g_off'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_v_g_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='c_iss'  >Input Capacitance</label></td>
+            <td>C<sub>iss</sub></td>
+            <td><input id='c_iss'   type='number' value='500' readonly='readonly'></td>
+            <td colspan='4'>pF</td>
+            <td id='info_c_iss'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='c_oss'  >Output Capacitance</label></td>
+            <td>C<sub>oss</sub></td>
+            <td><input id='c_oss'   type='number' value='100' readonly='readonly'></td>
+            <td colspan='4'>pF</td>
+            <td id='info_c_oss'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='c_rss'  >Reverse Transfer Capacitance</label></td>
+            <td>C<sub>rss</sub></td>
+            <td><input id='c_rss'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>pF</td>
+            <td id='info_c_rss'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet'>
+            <td><label for='t_dead'  >Dead time</label></td>
+            <td>t<sub>dead</sub></td>
+            <td><input id='t_dead'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>ns</td>
+            <td id='info_t_dead'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet'>
+            <td><label for='fet_max_i_actual'  >Max Current (Actual)</label></td>
+            <td>I<sub>fet_max_actual</sub></td>
+            <td><input id='fet_max_i_actual'   type='number' value='150' readonly='readonly'></td>
+            <td>A</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='fet_i_actual_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_fet_max_i_actual'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet'>
+            <td><label for='r_th_ca'  >Heat Sink Theta Case to Ambient</label></td>
+            <td>R<sub>θ_ca</sub></td>
+            <td><input id='r_th_ca'   type='number' value='50'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_r_th_ca'>ⓘ</td>
+          </tr>
+
+
+          <tr>
+            <td colspan='2'> <h3>Gate Driver</h3> </td>
+            <td> <button type='button' name='sh_gate_driver' value='h'>Hide</button> </td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_r_on'  >Gate Driver On Resistance</label></td>
+            <td>R<sub>gd_on</sub></td>
+            <td><input id='gd_r_on'   type='number' value='6' ></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_gd_r_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_r_off'  >Gate Driver Off Resistance</label></td>
+            <td>R<sub>gd_off</sub></td>
+            <td><input id='gd_r_off'   type='number' value='6' ></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_gd_r_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_i_on'  >Est Turn On Current</label></td>
+            <td>I<sub>gd_on</sub></td>
+            <td><input id='gd_i_on'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_gd_i_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_i_off'  >Est Turn Off Current</label></td>
+            <td>I<sub>gd_off</sub></td>
+            <td><input id='gd_i_off'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_gd_i_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_dc_on'  >Turn On Duty Cycle</label></td>
+            <td>gd_dc_on</td>
+            <td><input id='gd_dc_on'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>%</td>
+            <td id='info_gd_dc_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_dc_off'  >Turn Off Duty Cycle</label></td>
+            <td>gd_dc_off</td>
+            <td><input id='gd_dc_off'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>%</td>
+            <td id='info_gd_dc_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_i_avg'  >Avg Gate Driver Current</label></td>
+            <td>I<sub>gd_avg</sub></td>
+            <td><input id='gd_i_avg'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_gd_i_avg'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_p_avg'  >Avg Gate Driver Power</label></td>
+            <td>P<sub>gd_avg</sub></td>
+            <td><input id='gd_p_avg'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_gd_p_avg'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_bs_vf'  >Bootstrap Diode Forward Voltage</label></td>
+            <td>V<sub>f_bs</sub></td>
+            <td><input id='gd_bs_vf'   type='number' value='10' ></td>
+            <td colspan='4'>V</td>
+            <td id='info_gd_bs_vf'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_bs_cf'  >Bootstrap Capacitor Factor</label></td>
+            <td>gd_bs_cf</td>
+            <td><input id='gd_bs_cf'   type='number' value='10' ></td>
+            <td colspan='4'></td>
+            <td id='info_gd_bs_cf'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_c_bs'  >Bootstrap Capacitor</label></td>
+            <td>C<sub>bs</sub></td>
+            <td><input id='gd_c_bs'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>nF</td>
+            <td id='info_gd_c_bs'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_r_bs'  >Bootstrap Resistor</label></td>
+            <td>R<sub>bs</sub></td>
+            <td><input id='gd_r_bs'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>Ω</td>
+            <td id='info_gd_r_bs'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_c_vdd'  >VDD Capacitor</label></td>
+            <td>C<sub>vdd</sub></td>
+            <td><input id='gd_c_vdd'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_gd_c_vdd'>ⓘ</td>
+          </tr>
+          
+          
+          <tr>
+            <td colspan='2'> <h3>Output Filter</h3> </td>
+            <td> <button type='button' name='sh_out_filter' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='of_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='pct_sat_hr'  >Inductor Saturation Headroom</label></td>
+            <td>%<sub>sat_hr</sub></td>
+            <td><input id='pct_sat_hr' type='number' value='10' ></td>
+            <td colspan='4'>%</td>
+            <td id='info_pct_sat_hr'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='i_sat_hr'  >Inductor Saturation Headroom</label></td>
+            <td>I<sub>sat_hr</sub></td>
+            <td><input id='i_sat_hr' type='number' value='10' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_i_sat_hr'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lcl'>
+            <td><label for='l_grid_max'  >Max Grid Inductance</label></td>
+            <td>L<sub>grid_max</sub></td>
+            <td><input id='l_grid_max' type='number' value='0.013' ></td>
+            <td colspan='4'>mH</td>
+            <td id='info_l_grid_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_type'  >Filter Type</label></td>
+            <td>of_type</td>
+            <td><input id='of_type' type='text' value='XX' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_of_type'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lc'>
+            <td></td>
+            <td></td>
+            <td>Min</td>
+            <td>Max</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lc'>
+            <td><label for='of_f_min5'  >Frequency Range 5 Octave</label></td>
+            <td>f<sub>lc_min5</sub></td>
+            <td><input id='of_f_min5'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='of_f_max5'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>kHz</td>
+            <td id='info_of_f_5'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lc'>
+            <td><label for='of_f_min6'  >Frequency Range 6 Octave</label></td>
+            <td>f<sub>lc_min6</sub></td>
+            <td><input id='of_f_min6'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='of_f_max6'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>kHz</td>
+            <td id='info_of_f_6'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td></td>
+            <td></td>
+            <td>Current</td>
+            <td>Stable</td>
+            <td>Max</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_ndx_sugg'  >Suggestion Number</label></td>
+            <td>n<sub>suggested</sub></td>
+            <td><input id='of_ndx_sugg'   type='number' value='1' readonly='readonly'></td>
+            <td><input id='of_ndx_stable' type='number' value='1' readonly='readonly'></td>
+            <td><input id='of_ndx_max'    type='number' value='1' readonly='readonly'></td>
+            <td> <button type='button' id='of_ndx_decr' name='of_ndx_decr' value='h'>-</button> </td>
+            <td> <button type='button' id='of_ndx_incr' name='of_ndx_incr' value='h'>+</button> </td>
+            <td id='info_of_ndx_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_h1_sugg'  >Suggested Inductance 1</label></td>
+            <td>L<sub>1_suggested</sub></td>
+            <td><input id='of_h1_sugg'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_of_h1_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_c_sugg'  >Suggested Capacitance</label></td>
+            <td>C<sub>suggested</sub></td>
+            <td><input id='of_c_sugg'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_of_c_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lcl' id='of_h2_sugg_row'>
+            <td><label for='of_h2_sugg'  >Suggested Inductance 2</label></td>
+            <td>L<sub>2_suggested</sub></td>
+            <td><input id='of_h2_sugg'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_of_h2_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lcl' id='of_delta_sugg_row'>
+            <td><label for='of_delta_sugg'  >Suggested Delta</label></td>
+            <td>δ<sub>suggested</sub></td>
+            <td><input id='of_delta_sugg'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_of_delta_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_f_res_sugg'  >Suggested Filter Frequency</label></td>
+            <td>f<sub>res_sugg</sub></td>
+            <td><input id='of_f_res_sugg'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>kHz</td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='of_sugg_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_of_f_res_sugg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td></td>
+            <td></td>
+            <td>Unloaded</td>
+            <td>Loaded</td>
+          </tr>
+          <tr class='sh_out_filter'>
+            <td><label for='of_f_res_actual'  >Actual Filter Frequency</label></td>
+            <td>f<sub>res_actual</sub></td>
+            <td><input id='of_f_res_actual'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='of_f_res_actualb'  type='number' value='20' readonly='readonly'></td>
+            <td colspan='2'>kHz</td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='of_actual_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_of_f_res_actual'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_filter sh_of_lcl' id='of_r_damping_row'>
+            <td><label for='of_r_damping'  >Damping Resistor</label></td>
+            <td>R<sub>damping</sub></td>
+            <td><input id='of_r_damping'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='of_r_dampingb'  type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>Ω</td>
+            <td id='info_of_r_damping'>ⓘ</td>
+          </tr>
+
+          
+          <tr>
+            <td colspan='2'> <h3>Inductor 1</h3> </td>
+            <td> <button type='button' name='sh_out_ind1' value='h'>Hide</button> </td>
+          </tr>
+          <tr class='sh_out_ind1'>
+            <td><label for='ind1_type'  >Inductor type</label></td>
+            <td>ind1_type</td>
+            <td>
+              <select id='ind1_type' name='ind1_type' >
+                <option id='ind1_type_ots' value='ots'>Off-the-shelf</option>
+                <option id='ind1_type_custom' value='custom'>Custom</option>
+              </select>
+            </td>
+            <td colspan='4'></td>
+            <td id='info_ind_type'>ⓘ</td>
+          </tr>
+          
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_pn'  >Part Number</label></td>
+            <td>ind1_pn</td>
+            <td>
+              <select id='ind1_pn' name='ind1_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_ind1_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_ind_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_mfg'  >Manufacturer</label></td>
+            <td>ind1_mfg</td>
+            <td><input id='ind1_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_h'>Inductance</label></td>
+            <td>L<sub>ind1</sub></td>
+            <td><input id='ind1_h'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>uH</td>
+            <td id='info_ind_h'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_r_dc_typ'  >Typical DC Resistance</label></td>
+            <td>R<sub>ind1_dc_typ</sub></td>
+            <td><input id='ind1_r_dc_typ'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_ind_r_dc_typ'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_r_dc_max'  >Max DC Resistance</label></td>
+            <td>R<sub>ind1_dc_max</sub></td>
+            <td><input id='ind1_r_dc_max'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_ind_r_dc_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_i_dt40'  >DC Current (40°C Δt)</label></td>
+            <td>I<sub>ind1_dt40</sub></td>
+            <td><input id='ind1_i_dt40'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_dt40'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_i_dt100'  >DC Current (100°C Δt)</label></td>
+            <td>I<sub>ind1_dt100</sub></td>
+            <td><input id='ind1_i_dt100'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_dt100'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_i_sat20'  >DC Saturation Current (20% ΔH)</label></td>
+            <td>I<sub>ind1_sat20</sub></td>
+            <td><input id='ind1_i_sat20'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_sat20'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_ots'>
+            <td><label for='ind1_i_sat30'  >DC Saturation Current (30% ΔH)</label></td>
+            <td>I<sub>ind1_sat30</sub></td>
+            <td><input id='ind1_i_sat30'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_sat30'>ⓘ</td>
+          </tr>
+          
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_target'  >Target Inductance</label></td>
+            <td>L<sub>1_target</sub></td>
+            <td><input id='ind1_target'   type='number' value='20'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_ind1_target'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_lii'  >Energy Stored</label></td>
+            <td>LI<sup>2</sup></td>
+            <td><input id='ind1_lii'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µH A<sup>2</sup></td>
+            <td id='info_ind_lii'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_target_ap'  >Target area product</label></td>
+            <td>A<sub>p_target</sub></td>
+            <td><input id='ind1_target_ap'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_target_ap'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_core_pn'  >Part Number</label></td>
+            <td>ind1_core_pn</td>
+            <td>
+              <select id='ind1_core_pn' name='ind1_core_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_ind1_core_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_ind_core_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_core_mfg'  >Manufacturer</label></td>
+            <td>ind1_core_mfg</td>
+            <td><input id='ind1_core_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_core_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_mat'  >Material</label></td>
+            <td>ind1_mat</td>
+            <td><input id='ind1_mat'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mat'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_mu'  >Relative permeability</label></td>
+            <td>µ<sub>1</sub></td>
+            <td><input id='ind1_mu'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mu'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_ap'  >Area product</label></td>
+            <td>A<sub>p</sub></td>
+            <td><input id='ind1_ap'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm<sup>4</sup></td>
+            <td id='info_ind_ap'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_od'  >Outside Diameter</label></td>
+            <td>ind1_od</td>
+            <td><input id='ind1_od'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_od'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_id'  >Inside Diameter</label></td>
+            <td>ind1_id</td>
+            <td><input id='ind1_id'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_id'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_ht'  >Height</label></td>
+            <td>ind1_ht</td>
+            <td><input id='ind1_ht'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_ht'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_turns_max'  >Max Turns</label></td>
+            <td>ind1_turns_max</td>
+            <td><input id='ind1_turns_max'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_turns_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_turns_l1'  >Max Turns Layer 1</label></td>
+            <td>ind1_turns_l1</td>
+            <td><input id='ind1_turns_l1'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_turns_l1'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_turns'  >Turns</label></td>
+            <td>ind1_turns</td>
+            <td><input id='ind1_turns'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='ind1_turns_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_ind_turns'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_winding_factor'  >Winding Factor</label></td>
+            <td>ind1_winding_factor</td>
+            <td><input id='ind1_winding_factor'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>%</td>
+            <td id='info_ind_winding_factor'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_wound_area'  >Wound area</label></td>
+            <td>ind1_wound_area</td>
+            <td><input id='ind1_wound_area'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>2</sup></td>
+            <td id='info_ind_wound_area'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td></td>
+            <td></td>
+            <td>Unloaded</td>
+            <td>Loaded</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_al'  >Turns factor</label></td>
+            <td>A<sub>l</sub></td>
+            <td><input id='ind1_al'   type='number' value='2760' readonly='readonly'></td>
+            <td><input id='ind1_alb'  type='number' value='2760' readonly='readonly'></td>
+            <td colspan='3'>nH / turns<sup>2</sup></td>
+            <td id='info_ind_al'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_h_eff'  >Inductance</label></td>
+            <td>L<sub>ind</sub></td>
+            <td><input id='ind1_h_eff'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='ind1_h_effb'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>µH</td>
+            <td id='info_ind_h_eff'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1'>
+            <td><label for='ind1_count'  >Number of Inductors</label></td>
+            <td>ind1_count</td>
+            <td><input id='ind1_count'  type='number' value='1'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_count'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1'>
+            <td><label for='ind1_h_total'>Total Inductance</label></td>
+            <td>L<sub>total</sub></td>
+            <td><input id='ind1_h_total'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_ind_h_total'>ⓘ</td>
+          </tr>
+
+
+          <tr>
+            <td colspan='2'> <h3>Output Capacitor</h3> </td>
+            <td> <button type='button' name='sh_out_cap' value='h'>Hide</button> </td>
+          </tr>
+          <tr class='sh_out_cap'>
+            <td><label for='oc_target'>Target Capacitance</label></td>
+            <td>C<sub>target</sub></td>
+            <td><input id='oc_target' type='number' value='1' ></td>
+            <td colspan='4'>µF</td>
+            <td id='info_oc_target'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap'>
+            <td><label for='oc_pn'  >Cap Part Number</label></td>
+            <td>oc_pn</td>
+            <td>
+              <select id='oc_pn' name='oc_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_oc_pn' value='h'>Hide</button> </td>
+            <td> <button type='button' id='oc_filter' value='f'>Filter</button> </td>
+            <td colspan='2'></td>
+            <td id='info_oc_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_mfg'  >Manufacturer</label></td>
+            <td>oc_mfg</td>
+            <td><input id='oc_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_oc_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_tech'  >Tech</label></td>
+            <td>oc_tech</td>
+            <td><input id='oc_tech'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_oc_tech'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_c'  >Capacitance</label></td>
+            <td>C<sub>oc</sub></td>
+            <td><input id='oc_c'   type='number' value='100' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_oc_c'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_v_dc'  >Voltage</label></td>
+            <td>V<sub>oc_dc</sub></td>
+            <td><input id='oc_v_dc'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>V</td>
+            <td id='info_oc_v_dc'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_i_rms'  >Current RMS</label></td>
+            <td>I<sub>oc_rms</sub></td>
+            <td><input id='oc_i_rms'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_oc_i_rms'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_esl'  >Equivalent Series Inductance</label></td>
+            <td>ESL<sub>oc</sub></td>
+            <td><input id='oc_esl'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>nH</td>
+            <td id='info_oc_esl'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_esr'  >Equivalent Series Resistance</label></td>
+            <td>ESR<sub>oc</sub></td>
+            <td><input id='oc_esr'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_oc_esr'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_th_cc'  >Thermal Resistance Core To Case</label></td>
+            <td>R<sub>oc_θ_cc</sub></td>
+            <td><input id='oc_th_cc'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_oc_th_cc'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap sh_oc_pn'>
+            <td><label for='oc_th_ca'  >Thermal Resistance Case To Ambient</label></td>
+            <td>R<sub>oc_θ_ca</sub></td>
+            <td><input id='oc_th_ca'   type='number' value='50' readonly='readonly'></td>
+            <td colspan='4'>°C / W</td>
+            <td id='info_oc_th_ca'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap'>
+            <td><label for='oc_count'>Number of Caps</label></td>
+            <td>oc_count</td>
+            <td><input id='oc_count' type='number' value='1' ></td>
+            <td colspan='4'></td>
+            <td id='info_oc_count'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_cap'>
+            <td><label for='oc_c_total'  >Total Capacitance</label></td>
+            <td>C<sub>oc_total</sub></td>
+            <td><input id='oc_c_total'   type='number' value='100' readonly='readonly'></td>
+            <td colspan='4'>µF</td>
+            <td id='info_oc_c_total'>ⓘ</td>
+          </tr>
+
+
+          <tr class='sh_of_lcl'>
+            <td colspan='2'> <h3>Inductor 2</h3> </td>
+            <td> <button type='button' name='sh_out_ind2' value='h'>Hide</button> </td>
+          </tr>
+          <tr class='sh_out_ind2 sh_of_lcl'>
+            <td><label for='ind2_type'  >Inductor type</label></td>
+            <td>ind2_type</td>
+            <td>
+              <select id='ind2_type' name='ind2_type' >
+                <option id='ind2_type_ots' value='ots'>Off-the-shelf</option>
+                <option id='ind2_type_custom' value='custom'>Custom</option>
+              </select>
+            </td>
+            <td colspan='4'></td>
+            <td id='info_ind_type'>ⓘ</td>
+          </tr>
+          
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_pn'  >Part Number</label></td>
+            <td>ind2_pn</td>
+            <td>
+              <select id='ind2_pn' name='ind2_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_ind2_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_ind_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_mfg'  >Manufacturer</label></td>
+            <td>ind2_mfg</td>
+            <td><input id='ind2_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_h'>Inductance</label></td>
+            <td>L<sub>ind2</sub></td>
+            <td><input id='ind2_h'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>uH</td>
+            <td id='info_ind_h'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_r_dc_typ'  >Typical DC Resistance</label></td>
+            <td>R<sub>ind2_dc_typ</sub></td>
+            <td><input id='ind2_r_dc_typ'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_ind_r_dc_typ'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_r_dc_max'  >Max DC Resistance</label></td>
+            <td>R<sub>ind2_dc_max</sub></td>
+            <td><input id='ind2_r_dc_max'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mΩ</td>
+            <td id='info_ind_r_dc_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_i_dt40'  >DC Current (40°C Δt)</label></td>
+            <td>I<sub>ind2_dt40</sub></td>
+            <td><input id='ind2_i_dt40'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_dt40'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_i_dt100'  >DC Current (100°C Δt)</label></td>
+            <td>I<sub>ind2_dt100</sub></td>
+            <td><input id='ind2_i_dt100'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_dt100'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_i_sat20'  >DC Saturation Current (20% ΔH)</label></td>
+            <td>I<sub>ind2_sat20</sub></td>
+            <td><input id='ind2_i_sat20'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_sat20'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_ots sh_of_lcl'>
+            <td><label for='ind2_i_sat30'  >DC Saturation Current (30% ΔH)</label></td>
+            <td>I<sub>ind2_sat30</sub></td>
+            <td><input id='ind2_i_sat30'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>A</td>
+            <td id='info_ind_i_sat30'>ⓘ</td>
+          </tr>
+
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_target'  >Target Inductance</label></td>
+            <td>L<sub>2_target</sub></td>
+            <td><input id='ind2_target'   type='number' value='20'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_ind2_target'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_lii'  >Energy Stored</label></td>
+            <td>LI<sup>2</sup></td>
+            <td><input id='ind2_lii'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µH A<sup>2</sup></td>
+            <td id='info_ind_lii'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_target_ap'  >Target area product</label></td>
+            <td>A<sub>p_target</sub></td>
+            <td><input id='ind2_target_ap'   type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>m<sup>4</sup></td>
+            <td id='info_ind_target_ap'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_core_pn'  >Part Number</label></td>
+            <td>ind2_core_pn</td>
+            <td>
+              <select id='ind2_core_pn' name='ind2_core_pn' >
+              </select>
+            </td>
+            <td> <button type='button' name='sh_ind2_core_pn' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td id='info_ind_core_pn'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_core_mfg'  >Manufacturer</label></td>
+            <td>ind2_core_mfg</td>
+            <td><input id='ind2_core_mfg'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_core_mfg'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_mat'  >Material</label></td>
+            <td>ind2_mat</td>
+            <td><input id='ind2_mat'  type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mat'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_mu'  >Relative permeability</label></td>
+            <td>µ<sub>2</sub></td>
+            <td><input id='ind2_mu'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_mu'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_ap'  >Area product</label></td>
+            <td>A<sub>p</sub></td>
+            <td><input id='ind2_ap'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm<sup>4</sup></td>
+            <td id='info_ind_ap'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_od'  >Outside Diameter</label></td>
+            <td>ind2_od</td>
+            <td><input id='ind2_od'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_od'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_id'  >Inside Diameter</label></td>
+            <td>ind2_id</td>
+            <td><input id='ind2_id'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_id'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_ht'  >Height</label></td>
+            <td>ind2_ht</td>
+            <td><input id='ind2_ht'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_ht'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_turns_max'  >Max Turns</label></td>
+            <td>ind2_turns_max</td>
+            <td><input id='ind2_turns_max'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_turns_max'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_turns_l1'  >Max Turns Layer 1</label></td>
+            <td>ind2_turns_l1</td>
+            <td><input id='ind2_turns_l1'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_turns_l1'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_turns'  >Turns</label></td>
+            <td>ind2_turns</td>
+            <td><input id='ind2_turns'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='ind2_turns_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_ind_turns'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_winding_factor'  >Winding Factor</label></td>
+            <td>ind2_winding_factor</td>
+            <td><input id='ind2_winding_factor'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>%</td>
+            <td id='info_ind_winding_factor'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_wound_area'  >Wound area</label></td>
+            <td>ind2_wound_area</td>
+            <td><input id='ind2_wound_area'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>2</sup></td>
+            <td id='info_ind_wound_area'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td></td>
+            <td></td>
+            <td>Unloaded</td>
+            <td>Loaded</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_al'  >Turns factor</label></td>
+            <td>A<sub>l</sub></td>
+            <td><input id='ind2_al'   type='number' value='2760' readonly='readonly'></td>
+            <td><input id='ind2_alb'  type='number' value='2760' readonly='readonly'></td>
+            <td colspan='3'>nH / turns<sup>2</sup></td>
+            <td id='info_ind_al'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+            <td><label for='ind2_h_eff'  >Inductance</label></td>
+            <td>L<sub>ind</sub></td>
+            <td><input id='ind2_h_eff'   type='number' value='20' readonly='readonly'></td>
+            <td><input id='ind2_h_effb'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='3'>µH</td>
+            <td id='info_ind_h_eff'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_of_lcl'>
+            <td><label for='ind2_count'  >Number of Inductors</label></td>
+            <td>ind2_count</td>
+            <td><input id='ind2_count'  type='number' value='1'></td>
+            <td colspan='4'></td>
+            <td id='info_ind_count'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_of_lcl'>
+            <td><label for='ind2_h_total'>Total Inductance</label></td>
+            <td>L<sub>total</sub></td>
+            <td><input id='ind2_h_total'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>µH</td>
+            <td id='info_ind_h_total'>ⓘ</td>
+          </tr>
+
+
+          <tr>
+            <td colspan='2'> <h3>Thermal</h3> </td>
+            <td> <button type='button' name='sh_thermal' value='h'>Hide</button> </td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='thermal_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='t_ambient'>Ambient Temperature</label></td>
+            <td>t<sub>ambient</sub></td>
+            <td><input id='t_ambient' type='number' value='25' ></td>
+            <td colspan='4'>°C</td>
+            <td id='info_t_ambient'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_p_dcl'  >DC-Link Cap Power</label></td>
+            <td>P<sub>dcl</sub></td>
+            <td><input id='th_p_dcl'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_p_dcl'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_t_dcl_core'>DC-Link Cap Core Temp</label></td>
+            <td>t<sub>dcl_core</sub></td>
+            <td><input id='th_t_dcl_core'   type='number' value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_dcl_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_th_t_dcl_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_pgsw'  >Gate Driver Switching Power</label></td>
+            <td>P<sub>gsd</sub></td>
+            <td><input id='th_pgsw'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_pgsw'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_prgext'  >Gate Ext Resistor Power</label></td>
+            <td>P<sub>rgext</sub></td>
+            <td><input id='th_prgext'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_prgext'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_prgint'  >Gate Int Resistor Power</label></td>
+            <td>P<sub>rgint</sub></td>
+            <td><input id='th_prgint'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_prgint'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_pfi'  >FET Current Power</label></td>
+            <td>P<sub>pf</sub></td>
+            <td><input id='th_pfi'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_pfi'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_t_fet_junction'  >FET Junction Temp</label></td>
+            <td>t<sub>fet_j</sub></td>
+            <td><input id='th_t_fet_junction'   type='number' value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_fet_junction_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_t_fet_junction'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_p_ind1'  >Inductor1 Power</label></td>
+            <td>P<sub>ind1</sub></td>
+            <td><input id='th_p_ind1'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_p_ind'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_t_ind1_core'>Inductor1 Core Temp</label></td>
+            <td>t<sub>ind1_core</sub></td>
+            <td><input id='th_t_ind1_core'   type='number' value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_ind1_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_th_t_ind_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_p_oc'  >Output Cap Power</label></td>
+            <td>P<sub>oc</sub></td>
+            <td><input id='th_p_oc'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_p_oc'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_t_oc_core'>Output Cap Core Temp</label></td>
+            <td>t<sub>oc_core</sub></td>
+            <td><input id='th_t_oc_core'   type='number' value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_oc_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_th_t_oc_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal sh_of_lcl'>
+            <td><label for='th_p_ind2'  >Inductor2 Power</label></td>
+            <td>P<sub>ind2</sub></td>
+            <td><input id='th_p_ind2'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_p_ind'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal sh_of_lcl'>
+            <td><label for='th_t_ind2_core'>Inductor2 Core Temp</label></td>
+            <td>t<sub>ind2_core</sub></td>
+            <td><input id='th_t_ind2_core'   type='number' value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_ind2_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_th_t_ind_core'>ⓘ</td>
+          </tr>
+
+       </table>
+
+  </div>
+
+</body>
+</html>
