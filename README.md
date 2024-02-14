@@ -1,7 +1,7 @@
 # Inverter Design Tool
 
 This tool can be used by designers to set basic parameters and select components of DC-AC inverters.
-The primary design constraint is that the DC source has a minimum voltage greater than two times the
+The primary design assumption is that the DC source has a minimum voltage greater than two times the
 peak-to-peak AC voltage, thus no output transformer is required.
 
 This application can be accessed by two methods:
@@ -9,6 +9,8 @@ This application can be accessed by two methods:
 2. By downloading the files from github to your local machine.  This option is especially appealing if you need to work offline.
 
 Just click the designer/index.html file to run the app.
+
+A version of this app is available online at [beta.icosalogic.com/inv_design/](http://beta.icosalogic.com/inv_design/).
 
 # Configurations
 
@@ -32,5 +34,5 @@ The status of all the sections roll up to the status of the currently selected c
 
 # Help Information
 
-Every line has an information icon, a circle with an "i" inside, that will display helpful information about
+Every line has an information icon ⓘ that a user can click to display helpful information about
 the current setting.
