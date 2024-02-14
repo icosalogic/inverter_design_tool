@@ -4,6 +4,21 @@ This tool can be used by designers to set basic parameters and select components
 The primary design assumption is that the DC source has a minimum voltage greater than two times the
 peak-to-peak AC voltage, thus no output transformer is required.
 
+# Features
+
+- Set basic attributes of the inverter, such as FET switching frequency, output AC frequency, maximum output current, etc.
+- Set the number of cells in the battery, and the maximum and minimum voltage of each cell.
+- Set the bus configuration to either laminated bus bar or point-to-point wiring with a specific gauge wire.
+- Size the DC-Link capacitor(s), and select from a list of hundreds of choices.
+- Select the size and number of FETs to use.
+- Evaluate gate driver requirements, and size bootstrap circuit components.
+- Choose between LCL and LC output filters, and evaluate component values.
+- Select output filter inductor cores, and evaluate winding options.
+- Select output filter capacitor from a list of choices.
+- Evaluate thermal constraints of the crucial components in the inverter.
+
+# Usage
+
 This application can be accessed by two methods:
 1. By serving the files via a web server.
 2. By downloading the files from github to your local machine.  This option is especially appealing if you need to work offline.
@@ -25,7 +40,7 @@ into a file if you want to back it up, or share it with others.
 
 # Configuration Status
 
-Components with current or voltage constraints have a colored status dot to the right of the setting.
+Components with current, voltage, or thermal constraints have a colored status dot to the right of the setting.
 This dot is red if the currently configured value exceeds the constraint, yellow if the value is marginal,
 or green if the value is within the bounds of the constraint.
 
