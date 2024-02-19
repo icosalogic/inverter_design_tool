@@ -654,7 +654,8 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_t_fet_junction_status = this.th_t_fet_junction > 175.0 ? 'red' : 'green';
     this.th_t_oc_status           = this.th_t_oc_core > 70.0 ? 'red' : 'green';
     this.thermal_status           = this.th_t_dcl_status == 'red' || this.th_t_fet_junction_status == 'red' ||
-                                    this.ind1.t_status == 'red' || this.ind2.t_status == 'red' ||
+                                    this.ind1.t_status == 'red' || 
+                                    (this.lcl.filter_type == 'LCL' && this.ind2.t_status == 'red') ||
                                     this.th_t_oc_status == 'red' ? 'red' : 'green';
     
     this.deriveCfgStatus();
