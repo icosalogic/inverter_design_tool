@@ -1060,19 +1060,22 @@ icosalogic.inv_design.displayDerived = function()
   var derived_lcl = icosalogic.lcl.derived;
   
   document.getElementById('out_freq_omega').value        = derived.out_freq_omega.toFixed(2);
+  document.getElementById('skin_depth_out').value        = derived.skin_depth_out.toFixed(4);
+  document.getElementById('skin_depth_out_in').value     = derived.skin_depth_out_in.toFixed(4);
   document.getElementById('pwm_omega').value             = derived.pwm_freq_omega.toFixed(0);
   document.getElementById('pwm_cycle_us').value          = Number(derived.pwm_cycle_ns / 1000).toFixed(3);
   document.getElementById('out_voltage_pp').value        = derived.out_voltage_pp.toFixed(2);
   document.getElementById('out_watts').value             = derived.out_watts.toFixed(0) / 1000;
-  document.getElementById('skin_depth').value            = derived.skin_depth.toFixed(4);
-  document.getElementById('skin_depth_in').value         = derived.skin_depth_in.toFixed(4);
+  document.getElementById('skin_depth_pwm').value        = derived.skin_depth_pwm.toFixed(4);
+  document.getElementById('skin_depth_pwm_in').value     = derived.skin_depth_pwm_in.toFixed(4);
   document.getElementById('wire_awg').value              = derived.wire_entry.awg;
   document.getElementById('wire_strands').value          = derived.wire_entry.strands;
   document.getElementById('wire_strand_dia').value       = derived.wire_entry.strand_dia_mm.toFixed(5);
   document.getElementById('wire_strand_dia_in').value    = derived.wire_strand_dia_in.toFixed(6);
   document.getElementById('wire_dia').value              = derived.wire_entry.dia_mm.toFixed(5);
   document.getElementById('wire_dia_in').value           = derived.wire_dia_in.toFixed(6);
-  document.getElementById('wire_i').value                = derived.wire_i.toFixed(2);
+  document.getElementById('wire_i_sw').value             = derived.wire_i_sw.toFixed(2);
+  document.getElementById('wire_i_out').value            = derived.wire_i_out.toFixed(2);
   document.getElementById('bb_cu_recommend').value       = derived.bb_cu_recommend.toFixed(4);
   document.getElementById('bb_cu_recommend_in').value    = derived.bb_cu_recommend_in.toFixed(4);
   document.getElementById('bb_cu_thickness_in').value    = derived.bb_cu_thickness_in.toFixed(4);
@@ -1258,7 +1261,8 @@ icosalogic.inv_design.displayDerived = function()
 
   document.getElementById('bat_v_min_status'        ).setAttributeNS(null, 'fill', derived.bat_v_min_status);
   document.getElementById('bat_status'              ).setAttributeNS(null, 'fill', derived.bat_status);
-  document.getElementById('wire_i_status'           ).setAttributeNS(null, 'fill', derived.wire_i_status);
+  document.getElementById('wire_i_sw_status'        ).setAttributeNS(null, 'fill', derived.wire_i_sw_status);
+  document.getElementById('wire_i_out_status'       ).setAttributeNS(null, 'fill', derived.wire_i_out_status);
   document.getElementById('bb_i_status'             ).setAttributeNS(null, 'fill', derived.bb_i_status);
   document.getElementById('bb_status'               ).setAttributeNS(null, 'fill', derived.bb_status);
   document.getElementById('dcl_fom_status'          ).setAttributeNS(null, 'fill', derived.dcl_fom_status);
@@ -1341,7 +1345,10 @@ icosalogic.inv_design.displayConfig = function()
   document.getElementById('j_cond').value                = cfg.j_cond;
   document.getElementById('wire_pn').value               = cfg.wire_pn;
   document.getElementById('out_lines').value             = cfg.out_lines;
+  var ur_before = document.getElementById('bb_cu_use_recommend').checked;
   document.getElementById('bb_cu_use_recommend').checked = cfg.bb_cu_use_recommend;
+  var ur_after = document.getElementById('bb_cu_use_recommend').checked;
+  console.log('displayConfig: before=' + ur_before + ' bb_cu_use_recommend=' + cfg.bb_cu_use_recommend + ' after=' + ur_after);
   document.getElementById('bb_cu_thickness').value       = cfg.bb_cu_thickness;
   document.getElementById('bb_min_width').value          = cfg.bb_min_width;
   document.getElementById('bb_sub_thickness').value      = cfg.bb_sub_thickness;
@@ -1593,8 +1600,10 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'pwm_omega'             + '=' + derived.pwm_freq_omega.toFixed(0) + '\n';
   outStr += 'out_voltage_pp'        + '=' + derived.out_voltage_pp.toFixed(2) + '\n';
   outStr += 'out_watts'             + '=' + derived.out_watts.toFixed(0) / 1000 + '\n';
-  outStr += 'skin_depth'            + '=' + derived.skin_depth.toFixed(4) + '\n';
-  outStr += 'skin_depth_in'         + '=' + derived.skin_depth_in.toFixed(4) + '\n';
+  outStr += 'skin_depth_out'        + '=' + derived.skin_depth_out.toFixed(4) + '\n';
+  outStr += 'skin_depth_out_in'     + '=' + derived.skin_depth_out_in.toFixed(4) + '\n';
+  outStr += 'skin_depth_pwm'        + '=' + derived.skin_depth_pwm.toFixed(4) + '\n';
+  outStr += 'skin_depth_pwm_in'     + '=' + derived.skin_depth_pwm_in.toFixed(4) + '\n';
   outStr += 'wire_awg'              + '=' + derived.wire_entry.awg + '\n';
   outStr += 'wire_strands'          + '=' + derived.wire_entry.strands + '\n';
   outStr += 'wire_strand_dia'       + '=' + derived.wire_entry.strand_dia_mm.toFixed(5) + '\n';

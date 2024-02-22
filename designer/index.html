@@ -105,6 +105,15 @@
             <td id='info_out_freq_omega'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
+            <td> <label for='skin_depth_out'  >Skin depth at f<sub>out</sub></label></td>
+            <td>d<sub>skin_out</sub></td>
+            <td><input id='skin_depth_out' type='number' value='0.01' readonly='readonly'></td>
+            <td>mm</td>
+            <td><input id='skin_depth_out_in' type='number' readonly='readonly'></td>
+            <td colspan='2'>in</td>
+            <td id='info_skin_depth_out'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
             <td><label for='pwm_freq'>PWM Frequency</label></td>
             <td>f<sub>pwm</sub></td>
             <td><input id='pwm_freq' type='number' value='12000' ></td>
@@ -126,13 +135,13 @@
             <td id='info_pwm_cycle_us'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
-            <td> <label for='skin_depth'  >Skin depth at f<sub>pwm</sub></label></td>
-            <td>d<sub>skin</sub></td>
-            <td><input id='skin_depth' type='number' value='0.01' readonly='readonly'></td>
+            <td> <label for='skin_depth_pwm'  >Skin depth at f<sub>pwm</sub></label></td>
+            <td>d<sub>skin_pwm</sub></td>
+            <td><input id='skin_depth_pwm' type='number' value='0.01' readonly='readonly'></td>
             <td>mm</td>
-            <td><input id='skin_depth_in' type='number' readonly='readonly'></td>
+            <td><input id='skin_depth_pwm_in' type='number' readonly='readonly'></td>
             <td colspan='2'>in</td>
-            <td id='info_skin_depth'>ⓘ</td>
+            <td id='info_skin_depth_pwm'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
             <td><label for='out_amps'  >Output Current</label></td>
@@ -318,12 +327,20 @@
             <td id='info_wire_dia'>ⓘ</td>
           </tr>
           <tr class='sh_bus sh_bus_p2p'>
-            <td> <label for='wire_i'  >Current Capacity</label></label></td>
-            <td>I<sub>wire</sub></td>
-            <td><input id='wire_i' type='number' value='5' readonly='readonly'></td>
+            <td> <label for='wire_i_sw'  >Switching Current Capacity</label></label></td>
+            <td>I<sub>wire_sw</sub></td>
+            <td><input id='wire_i_sw' type='number' value='5' readonly='readonly'></td>
             <td colspan='3'></td>
-            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
-            <td id='info_wire_i'>ⓘ</td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_sw_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_wire_i_sw'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p'>
+            <td> <label for='wire_i_out'  >Output Current Capacity</label></label></td>
+            <td>I<sub>wire_out</sub></td>
+            <td><input id='wire_i_out' type='number' value='5' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_out_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_wire_i_out'>ⓘ</td>
           </tr>
           
           <tr class='sh_bus sh_bus_bar'>

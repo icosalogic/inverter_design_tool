@@ -20,11 +20,14 @@ icosalogic.inv_design.info_text = [
 // Basics
 {key: 'out_freq',           itxt: '<b>f<sub>out</sub>:</b> The 2 commonly used AC frequencies are 50 and 60 Hz.'},
 {key: 'out_freq_omega',     itxt: '<b>ω<sub>out</sub>:</b> Omega value for the output frequency.  Equal to 2 * π * f<sub>out</sub>.  (Read only)'},
+{key: 'skin_depth_out',     itxt: '<b>d<sub>skin_out</sub>:</b> Skin depth at f<sub>out</sub>.<br>' +
+                                  'Skin depth at f<sub>out</sub> will be greater than at f<sub>pwm</sub>, see below.<br>' +
+                                  'Equal to 503000 * sqrt(1.678e-8 / f<sub>out</sub>) mm. (Read only)'},
 {key: 'pwm_freq',           itxt: '<b>f<sub>pwm</sub>:</b> This is the output transistor switching frequency.'},
 {key: 'pwm_omega',          itxt: '<b>ω<sub>pwm</sub>:</b> Omega value for the PWM frequency.<br>Equal to 2 * π * f<sub>pwm</sub>. (Read only)'},
 {key: 'pwm_cycle_us',       itxt: '<b>t<sub>pwm</sub>:</b> Cycle time for the PWM frequency in microseconds.<br>' +
                                   'Equal to 1e6 / f<sub>pwm</sub>. (Read only)'},
-{key: 'skin_depth',         itxt: '<b>d<sub>skin</sub>:</b> Skin depth at f<sub>pwm</sub>.<br>' +
+{key: 'skin_depth_pwm',     itxt: '<b>d<sub>skin_pwm</sub>:</b> Skin depth at f<sub>pwm</sub>.<br>' +
                                   'Designers of inverters operating at higher frequencies must take skin<br>' +
 				  'depth into account when selecting conductors.<br>' +
                                   'Equal to 503000 * sqrt(1.678e-8 / f<sub>pwm</sub>) mm. (Read only)'},
@@ -58,23 +61,30 @@ icosalogic.inv_design.info_text = [
 {key: 'wire_dia',           itxt: '<b>wire_dia:</b> The diameter of the wire, including insulation. (Read only)'},
 {key: 'wire_strand_dia',    itxt: '<b>wire_strand_dia:</b> The diameter of a single strand in the wire. (Read only)'},
 {key: 'wire_strands',       itxt: '<b>wire_strands:</b> The number of strands in the wire.  Must be 1 or more. (Read only)'},
-{key: 'wire_i',             itxt: '<b>I<sub>wire</sub>:</b> The current carrying capacity of the wire, assuming J<sub>cond</sub> A/mm<sup>2</sup>, and including skin effect.<br>' +
-                                  'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin</sub>, or<br>' +
-				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin</sub>)<sup>2</sup>) * π if SR > d<sub>skin</sub>. (Read only)'},
-{key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin</sub>. (Read only)'},
+{key: 'wire_i_sw',          itxt: '<b>I<sub>wire_in</sub>:</b> The current carrying capacity of the wire at the switching frequency, assuming J<sub>cond</sub> A/mm<sup>2</sup>, and including skin effect.<br>' +
+                                  'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_pwm</sub>, or<br>' +
+				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_pwm</sub>)<sup>2</sup>) * π if SR > d<sub>skin_pwm</sub>.<br>' +
+				  'This value should be greater than I<sub>in_max</sub>. (Read only)'},
+{key: 'wire_i_out',         itxt: '<b>I<sub>wire_in</sub>:</b> The current carrying capacity of the wire at the output frequency, assuming J<sub>cond</sub> A/mm<sup>2</sup>, and including skin effect.<br>' +
+                                  'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_out</sub>, or<br>' +
+				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_out</sub>)<sup>2</sup>) * π if SR > d<sub>skin_out</sub>.<br>' +
+				  'This value should be greater than I<sub>out</sub>. (Read only)'},
+{key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin_pwm</sub>. (Read only)'},
 {key: 'bb_cu_use_recommend',itxt: '<b>use_cu_recommend:</b> Check this box if you would like to use the recommended CU thickness.'},
 {key: 'bb_cu_thickness',    itxt: '<b>d<sub>CU actual</sub>:</b> Enter the CU thickness of each layer used in the bus bar.<br>' +
-                                  'This value is set to d<sub>CU recommend</sub> if use_cu_recommend is checked.'},
+                                  'This value is set to d<sub>CU recommend</sub> if use_cu_recommend is checked.<br>' +
+				  'If setting manually, choose a value greater than or equal to 2 * d<sub>skin_pwm</sub>.'},
 {key: 'bb_min_width',       itxt: '<b>min_cond_width:</b> Enter the minimum current path width in the bus bar.<br>' +
 				  'Wider current paths usually require fewer layers in the bus bar (to a point).'},
-{key: 'bb_num_layers',      itxt: '<b>cu_layers:</b> Number of CU layers required to carry I<sub>in</sub>.<br>' +
-                                  'Equal to I<sub>out</sub> / (J<sub>cond</sub> * bb_min_width * d<sub>CU actual</sub>). (Read only)'},
+{key: 'bb_num_layers',      itxt: '<b>cu_layers:</b> Number of CU layers required to carry I<sub>in</sub>, taking into account skin effect at f<sub>pwm</sub>.<br>' +
+                                  'Equal to I<sub>out</sub> / (J<sub>cond</sub> * bb_min_width * 2 * d<sub>skin_pwm</sub>). (Read only)'},
 {key: 'bb_i',               itxt: '<b>I<sub>bb</sub>:</b> The current capacity of the bus bar.<br>' +
                                   'Equal to d<sub>CU actual</sub> * min_cond_width * cu_layers * J<sub>cond</sub>. (Read only)'},
 {key: 'bb_sub_thickness',   itxt: '<b>d<sub>substrate</sub>:</b> Enter the thickness of the substrate on which the bus bar is built.<br>' +
                                   'Usually, this is 1.6 mm FR-4.'},
 {key: 'bb_ild_thickness',   itxt: '<b>d<sub>ild</sub>:</b> Enter the thickness of the insulating layer between CU layers.'},
-{key: 'bb_total_thickness', itxt: '<b>d<sub>total</sub>:</b> Equal to d<sub>substrate</sub> + 2 * (d<sub>CU actual</sub> * cu_layers) + 2 * (d<sub>ild</sub> * (cu_layers - 1)). (Read only)'},
+{key: 'bb_total_thickness', itxt: '<b>d<sub>total</sub>:</b> The total thickness of the bus bar, including the substrate, insulation, and copper layers.<br>' +
+                                  'Equal to d<sub>substrate</sub> + 2 * (d<sub>CU actual</sub> * cu_layers) + 2 * (d<sub>ild</sub> * (cu_layers - 1)). (Read only)'},
                                   
 // DC Link Capacitor
 {key: 'dcl_dc_rms_factor',  itxt: '<b>dcl_dc_rms_factor:</b> Factor used to adjust the RMS current handled by the DC link capacitor.'},
