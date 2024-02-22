@@ -333,6 +333,10 @@ icosalogic.inv_design.Config.prototype = {
     this.ind1.load(this, 1);
     this.ind2.load(this, 2);
     
+    var ur_before = this.bb_cu_use_recommend;
+    this.bb_cu_use_recommend = ur_before == 'false' ? false : true;
+    // console.log('load: before=' + ur_before + ' bb_cu_use_recommed=' + this.bb_cu_use_recommend);
+    
     console.log('load: ind1.target=' + this.ind1.target + ' ind2.target=' + this.ind2.target);
   },
   
