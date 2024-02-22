@@ -203,12 +203,15 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.r_total               = this.r_eff / cfgInd.count;
       
       // Calculate core loss: Method 1 from Magnetics Powder Core catalog (dated 2020) page 20
-      var i_dc                   = cfg.out_amps;
-      var i_ac_pk                = cfg.out_amps * 0.41;   // this is a guess
+      var i_dc                   = 0;                          // cfg.out_amps
+      var i_ac_pk                = cfg.out_amps * oa.sqrt_2;   // cfg.out_amps * 0.41
       var h_ac_max               = 4 * Math.PI * (this.turns * (i_dc + i_ac_pk) / this.cor_size_entry.Le );
       var h_ac_min               = 4 * Math.PI * (this.turns * (i_dc - i_ac_pk) / this.cor_size_entry.Le );
       var b_ac_max               = this.get_b(h_ac_max);
       var b_ac_min               = this.get_b(h_ac_min);
+      if (Number.isNaN(b_ac_min)) {
+        b_ac_min                 = 0 - b_ac_max;
+      }
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
       var f_kHz                  = cfg.pwm_freq / 1000;
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
@@ -238,7 +241,10 @@ icosalogic.inv_design.DerivedInd.prototype = {
       console.log('radius=' + wound_radius + ' dia=' + wound_dia + ' circum=' + wound_circum + ' ht=' + wound_ht);
       console.log('wound_area=' + this.wound_area + ' wound_area1=' + wound_area1 + ' outer=' + wound_outer);
       
-      this.t_core                = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);                                       // TODO
+      this.t_core                = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);    // TODO
+      
+      console.log('power=' + this.power + ' wound_area=' + this.wound_area + ' t_core=' + this.t_core);
+
       this.t_status              = this.t_core > 155.0 ? 'red' : 'green';
     
       // console.log('h_total=' + this.h_total + ' h_totalb=' + this.h_totalb + ' count=' + cfgInd.count);
@@ -316,7 +322,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
     
     var dcm = this.cor_dc_mag_entry;
     var b = Math.pow((dcm.a + dcm.b * h + dcm.c * h * h) / (1 + dcm.d * h + dcm.e * h *  h), dcm.x);
-    // console.log('get_b: b=' + b);
+    console.log('get_b: b=' + b);
     
     return b;
   },
@@ -334,12 +340,16 @@ icosalogic.inv_design.Derived.prototype = {
   pwm_cycle_ns:             0.0,
   out_voltage_pp:           0.0,
   out_watts:                0.0,
-  skin_depth:               0.0,
-  skin_depth_in:            0.0,
+  skin_depth_out:           0.0,
+  skin_depth_out_in:        0.0,
+  skin_depth_pwm:           0.0,
+  skin_depth_pwm_in:        0.0,
   wire_dia_in:              0.0,
   wire_strand_dia_in:       0.0,
-  wire_i:                   0.0,
-  wire_i_status:            'red',
+  wire_i_sw:                0.0,
+  wire_i_sw_status:         'red',
+  wire_i_out:               0.0,
+  wire_i_out_status:        'red',
   bb_cu_recommend:          0.0,
   bb_cu_recommend_in:       0.0,
   bb_cu_thickness_in:       0.0,
@@ -471,8 +481,10 @@ icosalogic.inv_design.Derived.prototype = {
     this.pwm_cycle_ns          = 1e9 / cfg.pwm_freq;
     this.out_voltage_pp        = cfg.out_voltage * oa.sqrt_2 * 2;
     this.out_watts             = cfg.out_voltage * cfg.out_amps * cfg.out_lines;
-    this.skin_depth            = 503000 * Math.sqrt(oa.cu_rho / cfg.pwm_freq);
-    this.skin_depth_in         = this.mm_to_in(this.skin_depth);
+    this.skin_depth_out        = 503000 * Math.sqrt(oa.cu_rho / cfg.out_freq);
+    this.skin_depth_out_in     = this.mm_to_in(this.skin_depth_out);
+    this.skin_depth_pwm        = 503000 * Math.sqrt(oa.cu_rho / cfg.pwm_freq);
+    this.skin_depth_pwm_in     = this.mm_to_in(this.skin_depth_pwm);
 
     this.bat_v_min_status = this.v_pack_min < this.out_voltage_pp ? 'red' : 'green';
     this.bat_status = this.bat_v_min_status;
@@ -480,21 +492,28 @@ icosalogic.inv_design.Derived.prototype = {
     // Calculate wire current capacity at f_pwm
     var wire_radius            = this.wire_entry.strand_dia_mm / 2;
     var strand_area            = Math.PI * wire_radius * wire_radius;
-    if (wire_radius > this.skin_depth) {
-      var unused_radius = wire_radius - this.skin_depth;
+    if (wire_radius > this.skin_depth_pwm) {
+      var unused_radius = wire_radius - this.skin_depth_pwm;
       strand_area -= Math.PI * unused_radius * unused_radius;
     }
     this.wire_dia_in           = this.mm_to_in(this.wire_entry.dia_mm);
     this.wire_strand_dia_in    = this.mm_to_in(this.wire_entry.strand_dia_mm);
     
-    var wa_entry               = oa.wire_ampacity_table.find(entry => entry[0] == this.wire_entry.awg);
-    this.wire_i                = strand_area * this.wire_entry.strands * cfg.j_cond;
-    this.wire_i_status         = this.wire_i < cfg.out_amps ? 'red' : 'green';
+    this.wire_i_sw             = strand_area * this.wire_entry.strands * cfg.j_cond;
+    this.wire_i_sw_status      = this.wire_i_sw < this.i_in_max ? 'red' : 'green';
+    
+    strand_area                = Math.PI * wire_radius * wire_radius;
+    if (wire_radius > this.skin_depth_out) {
+      var unused_radius = wire_radius - this.skin_depth_out;
+      strand_area -= Math.PI * unused_radius * unused_radius;
+    }
+    this.wire_i_out            = strand_area * this.wire_entry.strands * cfg.j_cond;
+    this.wire_i_out_status     = this.wire_i_out < cfg.out_amps ? 'red' : 'green';
     
     this.bb_min_width_in       = this.mm_to_in(cfg.bb_min_width);
     
     // look for available thickness at least 90% of what's needed
-    var minThickness = this.skin_depth * 2 * 0.90;
+    var minThickness = this.skin_depth_pwm * 2 * 0.90;
     this.bb_cu_recommend = oa.Derived.cu_thickness_opt_mm.find(val => val >= minThickness);
     
     // if bb_cu_use_recommend is checked, automatically update bb_cu_thickness to the recommended value
@@ -508,13 +527,17 @@ icosalogic.inv_design.Derived.prototype = {
     this.bb_sub_thickness_in   = this.mm_to_in(cfg.bb_sub_thickness);
     this.bb_ild_thickness_in   = this.mm_to_in(cfg.bb_ild_thickness); 
 
-    this.bb_num_layers         = Math.floor(cfg.out_amps / (cfg.j_cond * cfg.bb_min_width * cfg.bb_cu_thickness) + 0.999);
+    var usable_thickness       = this.skin_depth_pwm * 2;
+    this.bb_num_layers         = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness) + 0.7);
     var cur_th                 = this.bb_cu_recommend < cfg.bb_cu_thickness ? this.bb_cu_recommend : cfg.bb_cu_thickness;
     this.bb_i                  = cur_th * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
     this.bb_total_thickness    = cfg.bb_sub_thickness + 2 * this.bb_num_layers * cfg.bb_cu_thickness + 2 * (this.bb_num_layers - 1) * cfg.bb_ild_thickness;
     this.bb_total_thickness_in = this.mm_to_in(this.bb_total_thickness);
     this.bb_i_status           = this.bb_i < cfg.out_amps ? 'red' : 'green';
-    this.bb_status             = cfg.bus_type == 'p2p' ? this.wire_i_status : this.bb_i_status;
+    this.bb_status             = this.bb_i_status;
+    if (cfg.bus_type == 'p2p') {
+      this.bb_status           = this.wire_i_sw_status == 'green' && this.wire_i_out_status == 'green' ? 'green' : 'red';
+    }
 
     this.dcl_i_rms_max         = this.i_in_max * cfg.dcl_dc_rms_factor;
     this.dcl_z_ripple          = cfg.dcl_v_ripple / this.dcl_i_rms_max;
