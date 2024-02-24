@@ -100,6 +100,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
 	  console.log('DerivedInd.derive: enter: ind' + cfgInd.inum + ' ind_type=' + cfgInd.ind_type + ' * * * * * * * * * * * * * *');
   
     var oa = icosalogic.inv_design;
+    var amps_per_ind = cfg.out_amps / cfgInd.count;
 
     if (cfgInd.ind_type == 'ots') {
       this.ind_entry = oa.ind_table.find(entry => entry.pn == cfgInd.pn);
@@ -108,7 +109,6 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.cor_mat_entry    = null;
       this.cor_dc_mag_entry = null;
       
-      var amps_per_ind = cfg.out_amps / cfgInd.count;
       this.h_total               = this.ind_entry.l_uh * 1e-6 / cfgInd.count;
       this.h_totalb              = this.ind_entry.i_dt40 < this.ind_entry.i_sat20 ? this.h_total : this.h_total * 0.8;
       this.r_total               = this.ind_entry.r_dc_max_mohm / cfgInd.count;
@@ -163,7 +163,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
     
       // console.log('cor_size_entry: shape=' + this.cor_size_entry.shape + ' mat=' + this.cor_pn_entry.mat);
     
-      this.lii                   = cfgInd.target * cfg.out_amps * cfg.out_amps;
+      this.lii                   = cfgInd.target * amps_per_ind * amps_per_ind;
       var est_k                  = 0.7; // what is a good estimate? 0.5?
       this.target_ap             = this.lii * oa.sqrt_2  * 1e6 / (this.cor_mat_entry.B_max * this.cor_mat_entry.max_j * est_k);
     
@@ -172,8 +172,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
     
       // console.log('Al=' + this.cor_pn_entry.Al + ' Al_min=' + Al_min + ' n1=' + n1);
     
-      var bias = n1 * cfg.out_amps * 10 / this.cor_size_entry.Le;
-      // console.log('n1=' + n1 + ' I=' + cfg.out_amps + ' Le=' + this.cor_size_entry.Le + ' bias=' + bias);
+      var bias = n1 * amps_per_ind * 10 / this.cor_size_entry.Le;
+      // console.log('n1=' + n1 + ' I=' + amps_per_ind + ' Le=' + this.cor_size_entry.Le + ' bias=' + bias);
     
       var ep = this.get_ep(this.cor_pn_entry.mu, bias);                         // ep = 1 / (a + b H**c)
       var n2 = Math.round(n1 * 100 / ep);
@@ -183,7 +183,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var wire_area = Math.PI * wire_dia * wire_dia / 4;
       this.winding_factor = wire_area * n2 * 100 / this.cor_size_entry.Aw;
     
-      var bias2 = n2 * cfg.out_amps * 10 / this.cor_size_entry.Le;
+      var bias2 = n2 * amps_per_ind * 10 / this.cor_size_entry.Le;
       var ep2 = this.get_ep(this.cor_pn_entry.mu, bias2);
       this.al_biased = Al_min * ep2 / 100;
       var L_unbiased = this.cor_pn_entry.Al * n2 * n2 * 1e-9;
@@ -203,8 +203,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.r_total               = this.r_eff / cfgInd.count;
       
       // Calculate core loss: Method 1 from Magnetics Powder Core catalog (dated 2020) page 20
-      var i_dc                   = 0;                          // cfg.out_amps
-      var i_ac_pk                = cfg.out_amps * oa.sqrt_2;   // cfg.out_amps * 0.41
+      var i_dc                   = 0;                          // amps_per_ind
+      var i_ac_pk                = amps_per_ind * oa.sqrt_2;   // amps_per_ind * 0.41
       var h_ac_max               = 4 * Math.PI * (this.turns * (i_dc + i_ac_pk) / this.cor_size_entry.Le );
       var h_ac_min               = 4 * Math.PI * (this.turns * (i_dc - i_ac_pk) / this.cor_size_entry.Le );
       var b_ac_max               = this.get_b(h_ac_max);
@@ -216,7 +216,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var f_kHz                  = cfg.pwm_freq / 1000;
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
-  // this.power                  = cfg.out_amps * cfg.out_amps * this.r_total / 1000;
+  // this.power                  = amps_per_ind * amps_per_ind * this.r_total / 1000;
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;
       
       console.log('h_ac_max=' + h_ac_max + ' h_ac_min=' + h_ac_min + ' b_ac_max=' + b_ac_max + ' b_ac_min=' + b_ac_min);
@@ -248,21 +248,6 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.t_status              = this.t_core > 155.0 ? 'red' : 'green';
     
       // console.log('h_total=' + this.h_total + ' h_totalb=' + this.h_totalb + ' count=' + cfgInd.count);
-
-      /*
-      if (this.ind_entry.i_dt40 < this.ind_entry.i_dt100) {
-        var amps_per_ind = cfg.out_amps / cfg.ind_count;
-        if (amps_per_ind > this.ind_entry.i_dt40) {
-          // for I between i_dt40 and i_dt100, interpolate between 40 and 100*C rise
-          this.th_t_ind_core += 40.0 + (amps_per_ind - this.ind_entry.i_dt40) * 60 /
-                                (this.ind_entry.i_dt100 - this.ind_entry.i_dt40);
-        } else {
-          // for I between 0 and i_dt40, interpolate between 0 and 40*C rise
-          this.th_t_ind_core += amps_per_ind * 40 / this.ind_entry.i_dt40;
-        }
-      }
-      console.log('derive: t_ambient=' + cfg.t_ambient + ' t_ind_core=' + this.th_t_ind_core);
-      */
     }
   },
   
