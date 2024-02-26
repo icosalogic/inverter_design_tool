@@ -651,10 +651,11 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_p_oc                = i_rms_per_cap_oc * i_rms_per_cap_oc * this.out_cap_entry.esr;
     this.th_t_oc_core           = cfg.t_ambient + this.th_p_oc * (eff_th_cc_oc + this.out_cap_entry.th_ca);
     var ind2_power              = this.lcl.filter_type == 'LCL' ? this.ind2.power * cfg.ind2.count : 0.0;
-    this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + this.th_pgsw + 
+    this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + 
+                                  (this.th_pgsw + 
                                   (this.th_prgint + this.th_prgext + this.th_pfi) * cfg.fet_count + 
                                   this.th_p_oc * cfg.oc_count +
-                                  this.ind1.power * cfg.ind1.count + ind2_power;
+                                  this.ind1.power * cfg.ind1.count + ind2_power) * cfg.out_lines;
     this.th_calc_eff            = 100.0 - this.th_total_loss * 100 / this.out_watts;
     
     this.th_t_dcl_status          = this.th_t_dcl_core >  70.0 ? 'red' : 'green';
