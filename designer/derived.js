@@ -85,7 +85,6 @@ icosalogic.inv_design.DerivedInd.prototype = {
   h_biased:                 1.0,
   h_total:                  1.0,
   h_totalb:                 1.0,
-  p_loss:                   1.0,
   r_eff:                    1.0,
   r_total:                  1.0,
   power:                    1.0,
@@ -205,22 +204,21 @@ icosalogic.inv_design.DerivedInd.prototype = {
       // Calculate core loss: Method 1 from Magnetics Powder Core catalog (dated 2020) page 20
       var i_dc                   = 0;                          // amps_per_ind
       var i_ac_pk                = amps_per_ind * oa.sqrt_2;   // amps_per_ind * 0.41
-      var h_ac_max               = 4 * Math.PI * (this.turns * (i_dc + i_ac_pk) / this.cor_size_entry.Le );
-      var h_ac_min               = 4 * Math.PI * (this.turns * (i_dc - i_ac_pk) / this.cor_size_entry.Le );
+      var h_ac_com               = 4 * Math.PI * (this.turns / this.cor_size_entry.Le);
+      var h_ac_max               = h_ac_com * (i_dc + i_ac_pk / 2);
+      var h_ac_min               = h_ac_com * (i_dc - i_ac_pk / 2);
+      console.log('turns=' + this.turns + ' i_ac_pk=' + i_ac_pk + ' Le=' + this.cor_size_entry.Le);
+      
       var b_ac_max               = this.get_b(h_ac_max);
-      var b_ac_min               = this.get_b(h_ac_min);
-      if (Number.isNaN(b_ac_min)) {
-        b_ac_min                 = 0 - b_ac_max;
-      }
+      var b_ac_min               = 0 - b_ac_max;               // for 100% AC inputs to inductor, no DC bias
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
       var f_kHz                  = cfg.pwm_freq / 1000;
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
-  // this.power                  = amps_per_ind * amps_per_ind * this.r_total / 1000;
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;
       
       console.log('h_ac_max=' + h_ac_max + ' h_ac_min=' + h_ac_min + ' b_ac_max=' + b_ac_max + ' b_ac_min=' + b_ac_min);
-      console.log('b_pk=' + b_pk + ' pld=' + pld + ' power=' + this.power);
+      console.log('f=' + f_kHz + ' b_pk=' + b_pk + ' pld=' + pld + ' power=' + this.power);
       
       // calculate the number of layers used in the windings
       var layers_used = 0;
@@ -229,25 +227,17 @@ icosalogic.inv_design.DerivedInd.prototype = {
         turns_left -= turns_layer[layers_used];
       }
       
-      // calculate the estimated surface area of the wound core, then the temperature gain
-      var wound_radius           = this.cor_size_entry.OD / 2 + layers_used * wire_dia;
-      var wound_area1            = wound_radius * wound_radius * Math.PI;
-      var wound_dia              = wound_radius * 2;
-      var wound_circum           = wound_dia * Math.PI;
-      var wound_ht               = this.cor_size_entry.HT + layers_used * wire_dia * 2;
-      var wound_outer            = wound_circum * wound_ht;
-      this.wound_area            = (wound_area1 * 2 + wound_outer) / 100;
+      // area of a torus is 4 * pi**2 * r1 * r2
+      var xd = (this.cor_size_entry.OD - this.cor_size_entry.ID) / 2;
+      var r1 = (this.cor_size_entry.OD + this.cor_size_entry.ID) / 4;
+      var r2 = Math.sqrt(xd * xd + this.cor_size_entry.HT * this.cor_size_entry.HT) / 2;
+      this.wound_area = 4 * Math.PI * Math.PI * r1 * r2 / 100;
+      console.log('r1=' + r1 + ' r2=' + r2 + ' area=' + this.wound_area);
       
-      console.log('radius=' + wound_radius + ' dia=' + wound_dia + ' circum=' + wound_circum + ' ht=' + wound_ht);
-      console.log('wound_area=' + this.wound_area + ' wound_area1=' + wound_area1 + ' outer=' + wound_outer);
-      
-      this.t_core                = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);    // TODO
-      
-      console.log('power=' + this.power + ' wound_area=' + this.wound_area + ' t_core=' + this.t_core);
-
+      this.t_core                = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);
       this.t_status              = this.t_core > 155.0 ? 'red' : 'green';
     
-      // console.log('h_total=' + this.h_total + ' h_totalb=' + this.h_totalb + ' count=' + cfgInd.count);
+      console.log('power=' + this.power + ' wound_area=' + this.wound_area + ' t_core=' + this.t_core);
     }
   },
   
@@ -303,11 +293,11 @@ icosalogic.inv_design.DerivedInd.prototype = {
    * B = ((a + bH + cH**2) / (1 + dH + eH**2)) ** x
    */
   get_b: function(h) {
-	  console.log('DerivedInd.get_b: enter: h=' + h);
+	  // console.log('DerivedInd.get_b: enter: h=' + h);
     
     var dcm = this.cor_dc_mag_entry;
     var b = Math.pow((dcm.a + dcm.b * h + dcm.c * h * h) / (1 + dcm.d * h + dcm.e * h *  h), dcm.x);
-    console.log('get_b: b=' + b);
+    // console.log('get_b: b=' + b);
     
     return b;
   },
@@ -346,7 +336,7 @@ icosalogic.inv_design.Derived.prototype = {
   bb_total_thickness:       0.0,
   bb_total_thickness_in:    0.0,
   bb_i_status:              'red',
-  bb_status:                'redderive(',
+  bb_status:                'red',
   fet_i_max_actual:         10,
   fet_i_actual_status:      'red',
   fet_status:               'red',
@@ -401,6 +391,8 @@ icosalogic.inv_design.Derived.prototype = {
   th_t_dcl_core:            25.0,
   th_t_fet_junction:        25.0,
   th_t_oc_core:             25.0,
+  th_total_loss:            1.0,
+  th_calc_eff:              50.0,
   th_t_dcl_status:          'red',
   th_t_fet_junction_status: 'red',
   th_t_oc_status:           'red',
@@ -523,6 +515,8 @@ icosalogic.inv_design.Derived.prototype = {
     if (cfg.bus_type == 'p2p') {
       this.bb_status           = this.wire_i_sw_status == 'green' && this.wire_i_out_status == 'green' ? 'green' : 'red';
     }
+    console.log('bb_status=' + this.bb_status + ' wire_i_sw_status=' + this.wire_i_sw_status +
+                ' wire_i_out_status=' + this.wire_i_out_status);
 
     this.dcl_i_rms_max         = this.i_in_max * cfg.dcl_dc_rms_factor;
     this.dcl_z_ripple          = cfg.dcl_v_ripple / this.dcl_i_rms_max;
@@ -656,7 +650,12 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_t_fet_junction      = cfg.t_ambient + fet_power * (fe.r_th_jc + cfg.fet_r_th_ca);
     this.th_p_oc                = i_rms_per_cap_oc * i_rms_per_cap_oc * this.out_cap_entry.esr;
     this.th_t_oc_core           = cfg.t_ambient + this.th_p_oc * (eff_th_cc_oc + this.out_cap_entry.th_ca);
-    
+    var ind2_power              = this.lcl.filter_type == 'LCL' ? this.ind2.power * cfg.ind2.count : 0.0;
+    this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + this.th_pgsw + 
+                                  (this.th_prgint + this.th_prgext + this.th_pfi) * cfg.fet_count + 
+                                  this.th_p_oc * cfg.oc_count +
+                                  this.ind1.power * cfg.ind1.count + ind2_power;
+    this.th_calc_eff            = 100.0 - this.th_total_loss * 100 / this.out_watts;
     
     this.th_t_dcl_status          = this.th_t_dcl_core >  70.0 ? 'red' : 'green';
     this.th_t_fet_junction_status = this.th_t_fet_junction > 175.0 ? 'red' : 'green';
@@ -667,49 +666,24 @@ icosalogic.inv_design.Derived.prototype = {
                                     this.th_t_oc_status == 'red' ? 'red' : 'green';
     
     this.deriveCfgStatus();
-    /*
-    // roll up all the status values to the current config
-    var cfg_status = 'green';
-    for (var pName in this) {
-      if (pName.endsWith('_status') && pName != 'cfg_status') {
-        var pValue = this[pName];
-        if (pValue == 'red') {
-          console.log('status: ' + pName + '=' + pValue);
-          cfg_status = 'red';
-        } else if (pValue == 'yellow' && cfg_status == 'green') {
-          console.log('status: ' + pName + '=' + pValue);
-          cfg_status = 'yellow';
-        }
-        // console.log('derive: cfg_status=' + cfg_status + ' ' + pName + '=' + pValue);
-      }
-    }
-    
-    this.cfg_status             = cfg_status;
-    */
   },
   
   /*
-   * Synthesize the status of the configuration by examining all the other status values.
+   * Synthesize the status of the configuration by examining all the other section status values.
+   * Does not examine incremental status values within a section.
    */
   deriveCfgStatus: function() {
-	  console.log('Derived.computeCfgStatus: enter');
+	  console.log('deriveCfgStatus: enter');
     
-    var cfg_status = 'green';
-    for (var pName in this) {
-      if (pName.endsWith('_status') && pName != 'cfg_status' && pName != 'of_sugg_status') {
-        var pValue = this[pName];
-        if (pValue == 'red') {
-          console.log('status: ' + pName + '=' + pValue);
-          cfg_status = 'red';
-        } else if (pValue == 'yellow' && cfg_status == 'green') {
-          console.log('status: ' + pName + '=' + pValue);
-          cfg_status = 'yellow';
-        }
-        // console.log('derive: cfg_status=' + cfg_status + ' ' + pName + '=' + pValue);
-      }
-    }
+    this.cfg_status = 'green';
+    this.updateCfgStatus(this.bat_status);
+    this.updateCfgStatus(this.bb_status);
+    this.updateCfgStatus(this.dcl_status);
+    this.updateCfgStatus(this.fet_status);
+    this.updateCfgStatus(this.of_status);
+    this.updateCfgStatus(this.thermal_status);
     
-    this.cfg_status = cfg_status;
+    console.log('deriveCfgStatus: cfg_status=' + this.cfg_status);
   },
  
   /*
@@ -717,13 +691,11 @@ icosalogic.inv_design.Derived.prototype = {
    * Use by setting status to 'green', then invoke this method on all subsequent status values
    * to lower the cfg status to the appropriate value.
    */
-  updateCfgStatus: function(entry) {
-    if (entry.key.endsWith('_status')) {
-      if (entry.value == 'red') {
-        cfg_status = 'red';
-      } else if (entry.value == 'yellow' && cfg_status == 'green') {
-        cfg_status = 'yellow';
-      }
+  updateCfgStatus: function(newStatus) {
+    if (newStatus == 'red') {
+      this.cfg_status = 'red';
+    } else if (newStatus == 'yellow' && this.cfg_status == 'green') {
+      this.cfg_status = 'yellow';
     }
   },
   

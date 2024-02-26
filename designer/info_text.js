@@ -305,4 +305,8 @@ icosalogic.inv_design.info_text = [
                                   'Equal to t<sub>ambient</sub> + P<sub>oc</sub> * ([effective] R<sub>oc_θ_cc</sub> + R<sub>oc_θ_ca</sub>).<br>' +
                                   'Effective R<sub>oc_θ_cc</sub> above 10 kHz is R<sub>oc_θ_cc</sub> * (f<sub>pwm</sub> / 1000 - 10) / 100.<br>' +
                                   'This value should be less than 70°C. (Read only)'},
+{key: 'th_total_loss',      itxt: '<b>P<sub>total_loss</sub>:</b> The total power dissipated by the various components listed above.<br>' +
+                                  'Each component loss is multiplied by the number of instances of that component. (Read only)'},
+{key: 'th_calc_eff',        itxt: '<b>η<sub>calc</sub>:</b> The calculated efficiency of the inverter.<br>' +
+                                  'Equal to 100 - P<sub>total_loss</sub> * 100 / P<sub>out</sub>. (Read only)'},
 ];

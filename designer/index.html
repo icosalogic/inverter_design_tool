@@ -185,7 +185,7 @@
           </tr>
           <tr class='sh_basics'>
             <td><label for='est_eff' >Estimated Efficiency</label></td>
-            <td>η</td>
+            <td>η<sub>est</sub></td>
             <td><input id='est_eff' type='number' value='90'></td>
             <td colspan='4'>%</td>
             <td id='info_est_eff'>ⓘ</td>
@@ -1701,6 +1701,20 @@
             <td colspan='2'></td>
             <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_ind2_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
             <td id='info_th_t_ind_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_total_loss'  >Total Loss</label></td>
+            <td>P<sub>total_loss</sub></td>
+            <td><input id='th_total_loss'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_total_loss'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_calc_eff'  >Calculated Efficiency</label></td>
+            <td>η<sub>calc</sub></td>
+            <td><input id='th_calc_eff'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>%</td>
+            <td id='info_th_calc_eff'>ⓘ</td>
           </tr>
 
        </table>

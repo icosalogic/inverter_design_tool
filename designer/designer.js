@@ -1258,6 +1258,8 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('th_t_ind2_core').value        = Number(derived.ind2.t_core).toFixed(3);
   document.getElementById('th_p_oc').value               = derived.th_p_oc.toFixed(3);
   document.getElementById('th_t_oc_core').value          = derived.th_t_oc_core.toFixed(3);
+  document.getElementById('th_total_loss').value         = derived.th_total_loss.toFixed(2);
+  document.getElementById('th_calc_eff').value           = derived.th_calc_eff.toFixed(3);
 
   document.getElementById('bat_v_min_status'        ).setAttributeNS(null, 'fill', derived.bat_v_min_status);
   document.getElementById('bat_status'              ).setAttributeNS(null, 'fill', derived.bat_status);
