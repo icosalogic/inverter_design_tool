@@ -193,19 +193,23 @@ icosalogic.lcl.Derived.prototype = {
   sweep_l_i: function(do_lcl) {
 	  // console.log('Derived.sweep_l_i: enter: ');
     
+    /*
     var numSteps = 20;
     var l_incr = (this.l_i_max - this.l_i_min) / numSteps;
-    
-    this.l_i = this.l_i_min;  //  + l_incr;
+    console.log('sweep_l_i: min=' + Number(this.l_i_min * 1e6).toFixed(3) +
+                ' max=' + Number(this.l_i_max * 1e6).toFixed(3) + 
+                ' incr=' + Number(l_incr * 1e6).toFixed(3));
     
     var n;
-    for (n = 0; n <= numSteps; n++) {
+    */
+    
+    var multiplier = 1.5;
+    for (this.l_i = this.l_i_min; this.l_i < this.l_i_max; this.l_i *= multiplier) {
       if (do_lcl) {
         this.sweep_delta();
       } else {
         this.validate_lc();
       }
-      this.l_i += l_incr;
     }
   },
   

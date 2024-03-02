@@ -123,6 +123,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
   pn:                  'IHXL1500VZEB3R3M51',
   core_pn:             '0077102A7',
   n:                   25,
+  r:                   2,
   count:               1,
   
   setDefaultValues: function(inum) {
@@ -134,6 +135,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.pn                  = 'IHXL1500VZEB3R3M51';
     this.core_pn             = '0077102A7';
     this.n                   = 25;
+    this.r                   = 2;
     this.count               = 1;
   },
   
@@ -147,6 +149,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.loadItem(parent, 'pn'                 , false);
     this.loadItem(parent, 'core_pn'            , false);
     this.loadItem(parent, 'n'                  , true);
+    this.loadItem(parent, 'r'                  , true);
     this.loadItem(parent, 'count'              , true);
   },
  
@@ -181,6 +184,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     localStorage.setItem(prefix2 + 'pn', this.pn);
     localStorage.setItem(prefix2 + 'core_pn', this.core_pn);
     localStorage.setItem(prefix2 + 'n', this.n);
+    localStorage.setItem(prefix2 + 'r', this.r);
     localStorage.setItem(prefix2 + 'count', this.count);
   },
   
@@ -193,6 +197,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     console.log('  pn='            + this.pn);
     console.log('  core_pn='       + this.core_pn);
     console.log('  n='             + this.n);
+    console.log('  r='             + this.r);
     console.log('  count='         + this.count);
   },
   

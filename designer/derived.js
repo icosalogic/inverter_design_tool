@@ -81,6 +81,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
   turns_status:             'red',
   winding_factor:           1.0,
   wound_area:               1.0,
+  len:                      3.0,
   h_eff:                    1.0,
   h_biased:                 1.0,
   h_total:                  1.0,
@@ -238,6 +239,47 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.t_status              = this.t_core > 155.0 ? 'red' : 'green';
     
       console.log('power=' + this.power + ' wound_area=' + this.wound_area + ' t_core=' + this.t_core);
+      
+    } else if (cfgInd.ind_type == 'air') {  // custom wound air core inductor
+      /*
+       * References:
+       *     https://www.circuits.dk/calculator_multi_layer_aircore.htm
+       *     https://shadyelectronics.com/how-to-make-single-layer-air-core-inductor-coil/
+       */
+      console.log('ind [air]: r=' + cfgInd.r + ' target=' + Number(cfgInd.target * 1e6).toFixed(3) + ' uH');
+      var core_len = 1;
+      var last = 0.001;
+      var L = 0.1;
+      var n = 1;
+      for ( ; n < 100; n++) {
+        core_len = n * wire_dia;
+        last = L;
+        L = (n * n * cfgInd.r * cfgInd.r) / (9 * cfgInd.r + 10 * core_len);  // in uH
+        L = L * 1e-6;                                                        // convert to H
+        if (L >= cfgInd.target) {
+          break;
+        }
+      }
+      
+      // pick closest solution between current and previous options
+      if (cfgInd.target - last < L - cfgInd.target) {
+        // previous solution was closer to target
+        L = last;
+        n = n - 1;
+        core_len = (n + 0.5) * wire_dia;
+      }
+      
+      this.turns        = n;
+      this.turns_l1     = n
+      this.turns_status = 'green';
+      this.h_eff        = L;
+      this.h_biased     = L;
+      this.len          = core_len;
+      this.h_total      = this.h_eff / cfgInd.count;
+      this.h_totalb     = this.h_total;
+      this.t_status     = 'green';
+      
+      console.log('ind [air]: n=' + n + ' len=' + core_len + ' L=' + Number(L * 1e6).toFixed(3) + ' uH');
     }
   },
   
@@ -333,9 +375,11 @@ icosalogic.inv_design.Derived.prototype = {
   bb_ild_thickness_in:      0.0,
   bb_num_layers:            1,
   bb_i:                     10,
+  bb_i_out:                 10,
   bb_total_thickness:       0.0,
   bb_total_thickness_in:    0.0,
   bb_i_status:              'red',
+  bb_i_out_status:          'red',
   bb_status:                'red',
   fet_i_max_actual:         10,
   fet_i_actual_status:      'red',
@@ -504,14 +548,24 @@ icosalogic.inv_design.Derived.prototype = {
     this.bb_sub_thickness_in   = this.mm_to_in(cfg.bb_sub_thickness);
     this.bb_ild_thickness_in   = this.mm_to_in(cfg.bb_ild_thickness); 
 
-    var usable_thickness       = this.skin_depth_pwm * 2;
-    this.bb_num_layers         = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness) + 0.7);
+    var max_thickness_pwm      = this.skin_depth_pwm * 2;
+    var max_thickness_out      = this.skin_depth_out * 2;
+    var usable_thickness_pwm   = max_thickness_pwm < cfg.bb_cu_thickness ? max_thickness_pwm : cfg.bb_cu_thickness;
+    var usable_thickness_out   = max_thickness_out < cfg.bb_cu_thickness ? max_thickness_out : cfg.bb_cu_thickness;
+    var bb_num_layers_pwm      = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness_pwm) + 0.75);
+    var bb_num_layers_out      = Math.floor(cfg.out_amps / (cfg.j_cond * cfg.bb_min_width * usable_thickness_out) + 0.75);
+    this.bb_num_layers         = Math.max(bb_num_layers_pwm, bb_num_layers_out);
+    console.log( 'pwm: max/usable/layers=' + max_thickness_pwm + '/' + usable_thickness_pwm + '/' + bb_num_layers_pwm +
+                ' out: max/usable/layers=' + max_thickness_out + '/' + usable_thickness_out + '/' + bb_num_layers_out);
+    
     var cur_th                 = this.bb_cu_recommend < cfg.bb_cu_thickness ? this.bb_cu_recommend : cfg.bb_cu_thickness;
-    this.bb_i                  = cur_th * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
+    this.bb_i                  = usable_thickness_pwm * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
+    this.bb_i_out              = usable_thickness_out * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
     this.bb_total_thickness    = cfg.bb_sub_thickness + 2 * this.bb_num_layers * cfg.bb_cu_thickness + 2 * (this.bb_num_layers - 1) * cfg.bb_ild_thickness;
     this.bb_total_thickness_in = this.mm_to_in(this.bb_total_thickness);
-    this.bb_i_status           = this.bb_i < cfg.out_amps ? 'red' : 'green';
-    this.bb_status             = this.bb_i_status;
+    this.bb_i_status           = this.bb_i < this.i_in_max ? 'red' : 'green';
+    this.bb_i_out_status       = this.bb_i_out < cfg.out_amps ? 'red' : 'green';
+    this.bb_status             = this.bb_i_status == 'green' && this.bb_i_out_status == 'green' ? 'green' : 'red';
     if (cfg.bus_type == 'p2p') {
       this.bb_status           = this.wire_i_sw_status == 'green' && this.wire_i_out_status == 'green' ? 'green' : 'red';
     }

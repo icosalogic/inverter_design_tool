@@ -39,6 +39,12 @@
 <body onload='icosalogic.inv_design.onLoadHandler()'>
   <h1 id='main_title' style='text-align: center'>Icosalogic Inverter Design Tool</h1>
   <div id='version_info' style='text-align: center'></div>
+  <div id='gitlink' style='text-align: center'>
+    This open source software is available at
+    <a href='https://github.com/icosalogic/inverter_design_tool' rel='noreferrer noopener' target='_blank'>
+      github.com
+    </a>.
+  </div>
   <div class='oa_text'>
         <table>
           <tr>
@@ -385,12 +391,20 @@
             <td id='info_bb_num_layers'>ⓘ</td>
           </tr>
           <tr class='sh_bus sh_bus_bar'>
-            <td> <label for='bb_i'  >Current Capacity</label></label></td>
+            <td> <label for='bb_i'  >Current Capacity (PWM)</label></label></td>
             <td>I<sub>bb</sub></td>
             <td><input id='bb_i' type='number' value='5' readonly='readonly'></td>
             <td colspan='3'></td>
             <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bb_i_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
             <td id='info_bb_i'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_bar'>
+            <td> <label for='bb_i_out'  >Current Capacity (Out)</label></label></td>
+            <td>I<sub>bb_out</sub></td>
+            <td><input id='bb_i_out' type='number' value='5' readonly='readonly'></td>
+            <td colspan='3'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='bb_i_out_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_bb_i_out'>ⓘ</td>
           </tr>
           <tr class='sh_bus sh_bus_bar'>
             <td> <label for='bb_sub_thickness'  >Substrate thickness</label></label></td>
@@ -1017,6 +1031,7 @@
               <select id='ind1_type' name='ind1_type' >
                 <option id='ind1_type_ots' value='ots'>Off-the-shelf</option>
                 <option id='ind1_type_custom' value='custom'>Custom</option>
+                <option id='ind1_type_air' value='air'>Air Core</option>
               </select>
             </td>
             <td colspan='4'></td>
@@ -1091,7 +1106,7 @@
             <td id='info_ind_i_sat30'>ⓘ</td>
           </tr>
           
-          <tr class='sh_out_ind1 sh_ind1_cust'>
+          <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
             <td><label for='ind1_target'  >Target Inductance</label></td>
             <td>L<sub>1_target</sub></td>
             <td><input id='ind1_target'   type='number' value='20'></td>
@@ -1186,7 +1201,7 @@
             <td colspan='4'></td>
             <td id='info_ind_turns_l1'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind1 sh_ind1_cust'>
+          <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
             <td><label for='ind1_turns'  >Turns</label></td>
             <td>ind1_turns</td>
             <td><input id='ind1_turns'   type='number' value='20' readonly='readonly'></td>
@@ -1222,7 +1237,23 @@
             <td colspan='3'>nH / turns<sup>2</sup></td>
             <td id='info_ind_al'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind1 sh_ind1_cust'>
+          
+          <tr class='sh_out_ind1 sh_ind1_air'>
+            <td><label for='ind1_r_core'>Core Radius</label></td>
+            <td>r<sub>ind1_core</sub></td>
+            <td><input id='ind1_r_core'  type='number' value='2'</td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_r_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_air'>
+            <td><label for='ind1_len'  >Length</label></td>
+            <td>ind1_len</td>
+            <td><input id='ind1_len'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_len'>ⓘ</td>
+          </tr>
+          
+          <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
             <td><label for='ind1_h_eff'  >Inductance</label></td>
             <td>L<sub>ind</sub></td>
             <td><input id='ind1_h_eff'   type='number' value='20' readonly='readonly'></td>
@@ -1433,7 +1464,7 @@
             <td id='info_ind_i_sat30'>ⓘ</td>
           </tr>
 
-          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_target'  >Target Inductance</label></td>
             <td>L<sub>2_target</sub></td>
             <td><input id='ind2_target'   type='number' value='20'></td>
@@ -1528,7 +1559,7 @@
             <td colspan='4'></td>
             <td id='info_ind_turns_l1'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_turns'  >Turns</label></td>
             <td>ind2_turns</td>
             <td><input id='ind2_turns'   type='number' value='20' readonly='readonly'></td>
@@ -1564,7 +1595,7 @@
             <td colspan='3'>nH / turns<sup>2</sup></td>
             <td id='info_ind_al'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
+          <tr class='sh_out_ind2 sh_ind2_cust sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_h_eff'  >Inductance</label></td>
             <td>L<sub>ind</sub></td>
             <td><input id='ind2_h_eff'   type='number' value='20' readonly='readonly'></td>
@@ -1572,6 +1603,22 @@
             <td colspan='3'>µH</td>
             <td id='info_ind_h_eff'>ⓘ</td>
           </tr>
+          
+          <tr class='sh_out_ind2 sh_of_lcl sh_ind2_air'>
+            <td><label for='ind2_r_core'>Core Radius</label></td>
+            <td>r<sub>ind2_core</sub></td>
+            <td><input id='ind2_r_core'  type='number' value='2'</td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_r_core'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_of_lcl sh_ind2_air'>
+            <td><label for='ind2_len'  >Length</label></td>
+            <td>ind2_len</td>
+            <td><input id='ind2_len'  type='number' value='1' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_len'>ⓘ</td>
+          </tr>
+          
           <tr class='sh_out_ind2 sh_of_lcl'>
             <td><label for='ind2_count'  >Number of Inductors</label></td>
             <td>ind2_count</td>

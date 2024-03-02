@@ -78,8 +78,14 @@ icosalogic.inv_design.info_text = [
 				  'Wider current paths usually require fewer layers in the bus bar (to a point).'},
 {key: 'bb_num_layers',      itxt: '<b>cu_layers:</b> Number of CU layers required to carry I<sub>in</sub>, taking into account skin effect at f<sub>pwm</sub>.<br>' +
                                   'Equal to I<sub>out</sub> / (J<sub>cond</sub> * bb_min_width * 2 * d<sub>skin_pwm</sub>). (Read only)'},
-{key: 'bb_i',               itxt: '<b>I<sub>bb</sub>:</b> The current capacity of the bus bar.<br>' +
-                                  'Equal to d<sub>CU actual</sub> * min_cond_width * cu_layers * J<sub>cond</sub>. (Read only)'},
+{key: 'bb_i',               itxt: '<b>I<sub>bb</sub>:</b> The current capacity of the bus bar taking into account skin depth at f<sub>pwm</sub>.<br>' +
+                                  'The usable thickness UT = min(2 * d<sub>skin_pwm</sub>, d<sub>CU actual</sub>).<br>' +
+                                  'Equal to UT * min_cond_width * cu_layers * J<sub>cond</sub>.<br>' +
+				  'This value should be greater than I<sub>in_max</sub>. (Read only)'},
+{key: 'bb_i_out',           itxt: '<b>I<sub>bb_out</sub>:</b> The current capacity of the bus bar taking into account skin depth at f<sub>out</sub>.<br>' +
+                                  'The usable thickness UT = min(2 * d<sub>skin_out</sub>, d<sub>CU actual</sub>).<br>' +
+                                  'Equal to UT * min_cond_width * cu_layers * J<sub>cond</sub>.<br>' +
+				  'This value should be greater than I<sub>out</sub>. (Read only)'},
 {key: 'bb_sub_thickness',   itxt: '<b>d<sub>substrate</sub>:</b> Enter the thickness of the substrate on which the bus bar is built.<br>' +
                                   'Usually, this is 1.6 mm FR-4.'},
 {key: 'bb_ild_thickness',   itxt: '<b>d<sub>ild</sub>:</b> Enter the thickness of the insulating layer between CU layers.'},
@@ -207,7 +213,7 @@ icosalogic.inv_design.info_text = [
 				  'Depending on the resonant frequency, the damping resistor may be optional. (Read only)'},
  
 // Inductors
-{key: 'ind_type',           itxt: '<b>ind_type:</b> Select either off-the-shelf or custom, for a hand-wound inductor.)'},
+{key: 'ind_type',           itxt: '<b>ind_type:</b> Select either off-the-shelf, custom, or air-core inductor.)'},
 {key: 'ind1_target',        itxt: '<b>L<sub>1_target</sub>:</b> Enter the desired inductance value for L1.'},
 {key: 'ind2_target',        itxt: '<b>L<sub>2_target</sub>:</b> Enter the desired inductance value for L2.'},
 {key: 'ind_lii',            itxt: '<b>LI<sup>2</sup>:</b> The inductance times the current squared.  This value is used to select<br>' +
@@ -233,11 +239,20 @@ icosalogic.inv_design.info_text = [
                                   'This takes into account the inductance change of the core at 100% load. (Read only)'},
 {key: 'ind_winding_factor', itxt: '<b>winding_factor:</b> The percentage of the inductor inside window area taken by the winding.<br>' +
                                   'This number cannot exceed 100%. (Read only)'},
+{key: 'ind_r_core',         itxt: '<b>r<sub>ind_core</sub>:</b> Select the radius of the air core inductor.<br>' +
+                                  'A larger radius gives more inductance per turn.'},
+{key: 'ind_len',            itxt: '<b>ind_len:</b> The length of the inductor winding.<br>' +
+                                  'Equal to ind_turns * wire_dia.<br>' +
+				  'If you use a laminated bus bar, you can temporarily change the bus bar type<br>' +
+				  'to point-to-point, select a wire option, then change back to laminated bus bar.<br>' +
+				  'The selected wire option will be used in the inductor calculations,<br>' +
+				  'even after switching back to laminated bus bar. (Read only)'},
 {key: 'ind_wound_area',     itxt: '<b>ind_wound_area:</b> An estimate of the surface area of the wound inductor.<br>' +
 				  'This is used to estimate temperature rise under load. (Read only)'},
 {key: 'ind_h_eff',          itxt: '<b>L<sub>ind</sub>:</b> The computed inductance for this configuration.<br>' +
                                   'This value is computed for both zero and 100% load, since the inductance changes under load.<br>' +
-                                  'Equal to ind_turns<sup>2</sup> * A<sub>l</sub>. (Read only)'},
+                                  'For custom inductors, this is equal to ind_turns<sup>2</sup> * A<sub>l</sub>.<br>' +
+				  'For air core inductors, this is equal to (ind_turns<sup>2</sup> * ind_r_core<sup>2</sup>) / (9 * ind_r_core + 10 * ind_len). (Read only)'},
 {key: 'ind_pn',             itxt: '<b>ind_pn:</b> Select an inductor to satisfy the requirements.'},
 {key: 'ind_mfg',            itxt: '<b>ind_mfg:</b>                From the datasheet. (Read only)'},
 {key: 'ind_h',              itxt: '<b>L<sub>ind</sub>:</b>        From the datasheet. (Read only)'},
