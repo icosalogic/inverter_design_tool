@@ -98,27 +98,29 @@ icosalogic.lcl.Derived.prototype = {
     
     // cfg.dump();
 
+    var sw_freq_eff             = cfg.sw_freq / 2;
+    
     this.filter_type            = 'LCL';
     this.omega_grid             = 2 * Math.PI * cfg.out_freq;
-    this.omega_switch           = 2 * Math.PI * cfg.pwm_freq;
+    this.omega_switch           = 2 * Math.PI * sw_freq_eff;
     this.out_voltage_ll         = cfg.out_voltage * oa.sqrt_3;
     this.out_voltage_peak       = cfg.out_voltage * oa.sqrt_2;
     this.out_voltage_pp         = this.out_voltage_peak * 2;
     this.out_watts              = this.out_voltage_ll * cfg.out_amps;
     this.f_res_min              = cfg.out_freq * 10;               // LCL constraints
-    this.f_res_max              = cfg.pwm_freq / 2;
-    this.f_c_min                = cfg.pwm_freq / 6;
-    this.f_c_max                = cfg.pwm_freq / 3;  // cfg.pwm_freq / 2;
+    this.f_res_max              = sw_freq_eff / 2;
+    this.f_c_min                = sw_freq_eff / 6;
+    this.f_c_max                = sw_freq_eff / 3;  // sw_freq_eff / 2;
     this.f_lc_min5              = cfg.out_freq * Math.pow(2,5),    // LC constraints
-    this.f_lc_max5              = cfg.pwm_freq * Math.pow(2,-5),
+    this.f_lc_max5              = sw_freq_eff  * Math.pow(2,-5),
     this.f_lc_min6              = cfg.out_freq * Math.pow(2,6),
-    this.f_lc_max6              = cfg.pwm_freq * Math.pow(2,-6),
+    this.f_lc_max6              = sw_freq_eff  * Math.pow(2,-6),
 
     this.z_base                 = this.out_voltage_ll / cfg.out_amps; // cfg.out_voltage / cfg.out_amps;
     this.l_total_base           = this.z_base / this.omega_grid;
     this.l_total_max            = this.l_total_base * 0.10;
     
-    // I have no confidence in the following 3 values; at the least, it should also be a function of pwm_freq.
+    // I have no confidence in the following 3 values; at the least, it should also be a function of sw_freq.
     this.i_2_max                = this.out_watts / this.out_voltage_ll;  // cfg.out_amps * oa.sqrt_2;  // 
     
     var vDropInd1               = this.l_total_max * this.omega_grid * this.i_2_max;

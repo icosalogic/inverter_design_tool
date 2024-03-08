@@ -213,7 +213,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var b_ac_max               = this.get_b(h_ac_max);
       var b_ac_min               = 0 - b_ac_max;               // for 100% AC inputs to inductor, no DC bias
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
-      var f_kHz                  = cfg.pwm_freq / 1000;
+      var f_kHz                  = this.sw_freq_eff / 1000;
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;
@@ -353,14 +353,15 @@ icosalogic.inv_design.Derived.prototype = {
   out_cap_entry:            null,
   cfg_status:               'red',
   out_freq_omega:           0.0,
-  pwm_freq_omega:           0.0,
-  pwm_cycle_ns:             0.0,
+  sw_freq_eff:              1.0,
+  sw_freq_omega:            0.0,
+  sw_cycle_ns:              0.0,
   out_voltage_pp:           0.0,
   out_watts:                0.0,
   skin_depth_out:           0.0,
   skin_depth_out_in:        0.0,
-  skin_depth_pwm:           0.0,
-  skin_depth_pwm_in:        0.0,
+  skin_depth_sw:            0.0,
+  skin_depth_sw_in:         0.0,
   wire_dia_in:              0.0,
   wire_strand_dia_in:       0.0,
   wire_i_sw:                0.0,
@@ -480,6 +481,8 @@ icosalogic.inv_design.Derived.prototype = {
       console.log('could not find out cap entry for ' + cfg.oc_pn);
     }
     
+    this.sw_freq_eff           = cfg.sw_freq / 2;
+    
     this.ind1.derive(cfg, cfg.ind1, this.wire_entry.dia_mm);
     this.ind2.derive(cfg, cfg.ind2, this.wire_entry.dia_mm);
     
@@ -498,23 +501,23 @@ icosalogic.inv_design.Derived.prototype = {
     this.t_dead = this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on;
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
-    this.pwm_freq_omega        = 2 * Math.PI * cfg.pwm_freq;
-    this.pwm_cycle_ns          = 1e9 / cfg.pwm_freq;
+    this.sw_freq_omega         = 2 * Math.PI * this.sw_freq_eff;
+    this.sw_cycle_ns           = 1e9 / cfg.sw_freq;
     this.out_voltage_pp        = cfg.out_voltage * oa.sqrt_2 * 2;
     this.out_watts             = cfg.out_voltage * cfg.out_amps * cfg.out_lines;
     this.skin_depth_out        = 503000 * Math.sqrt(oa.cu_rho / cfg.out_freq);
     this.skin_depth_out_in     = this.mm_to_in(this.skin_depth_out);
-    this.skin_depth_pwm        = 503000 * Math.sqrt(oa.cu_rho / cfg.pwm_freq);
-    this.skin_depth_pwm_in     = this.mm_to_in(this.skin_depth_pwm);
+    this.skin_depth_sw         = 503000 * Math.sqrt(oa.cu_rho / this.sw_freq_eff);
+    this.skin_depth_sw_in      = this.mm_to_in(this.skin_depth_sw);
 
     this.bat_v_min_status = this.v_pack_min < this.out_voltage_pp ? 'red' : 'green';
     this.bat_status = this.bat_v_min_status;
 
-    // Calculate wire current capacity at f_pwm
+    // Calculate wire current capacity at f_sw
     var wire_radius            = this.wire_entry.strand_dia_mm / 2;
     var strand_area            = Math.PI * wire_radius * wire_radius;
-    if (wire_radius > this.skin_depth_pwm) {
-      var unused_radius = wire_radius - this.skin_depth_pwm;
+    if (wire_radius > this.skin_depth_sw) {
+      var unused_radius = wire_radius - this.skin_depth_sw;
       strand_area -= Math.PI * unused_radius * unused_radius;
     }
     this.wire_dia_in           = this.mm_to_in(this.wire_entry.dia_mm);
@@ -534,7 +537,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.bb_min_width_in       = this.mm_to_in(cfg.bb_min_width);
     
     // look for available thickness at least 90% of what's needed
-    var minThickness = this.skin_depth_pwm * 2 * 0.90;
+    var minThickness = this.skin_depth_sw * 2 * 0.90;
     this.bb_cu_recommend = oa.Derived.cu_thickness_opt_mm.find(val => val >= minThickness);
     
     // if bb_cu_use_recommend is checked, automatically update bb_cu_thickness to the recommended value
@@ -548,18 +551,18 @@ icosalogic.inv_design.Derived.prototype = {
     this.bb_sub_thickness_in   = this.mm_to_in(cfg.bb_sub_thickness);
     this.bb_ild_thickness_in   = this.mm_to_in(cfg.bb_ild_thickness); 
 
-    var max_thickness_pwm      = this.skin_depth_pwm * 2;
+    var max_thickness_sw       = this.skin_depth_sw * 2;
     var max_thickness_out      = this.skin_depth_out * 2;
-    var usable_thickness_pwm   = max_thickness_pwm < cfg.bb_cu_thickness ? max_thickness_pwm : cfg.bb_cu_thickness;
+    var usable_thickness_sw    = max_thickness_sw < cfg.bb_cu_thickness ? max_thickness_sw : cfg.bb_cu_thickness;
     var usable_thickness_out   = max_thickness_out < cfg.bb_cu_thickness ? max_thickness_out : cfg.bb_cu_thickness;
-    var bb_num_layers_pwm      = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness_pwm) + 0.75);
+    var bb_num_layers_sw       = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness_sw) + 0.75);
     var bb_num_layers_out      = Math.floor(cfg.out_amps / (cfg.j_cond * cfg.bb_min_width * usable_thickness_out) + 0.75);
-    this.bb_num_layers         = Math.max(bb_num_layers_pwm, bb_num_layers_out);
-    console.log( 'pwm: max/usable/layers=' + max_thickness_pwm + '/' + usable_thickness_pwm + '/' + bb_num_layers_pwm +
+    this.bb_num_layers         = Math.max(bb_num_layers_sw, bb_num_layers_out);
+    console.log( 'sw: max/usable/layers=' + max_thickness_sw + '/' + usable_thickness_sw + '/' + bb_num_layers_sw +
                 ' out: max/usable/layers=' + max_thickness_out + '/' + usable_thickness_out + '/' + bb_num_layers_out);
     
     var cur_th                 = this.bb_cu_recommend < cfg.bb_cu_thickness ? this.bb_cu_recommend : cfg.bb_cu_thickness;
-    this.bb_i                  = usable_thickness_pwm * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
+    this.bb_i                  = usable_thickness_sw * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
     this.bb_i_out              = usable_thickness_out * cfg.bb_min_width * this.bb_num_layers * cfg.j_cond;
     this.bb_total_thickness    = cfg.bb_sub_thickness + 2 * this.bb_num_layers * cfg.bb_cu_thickness + 2 * (this.bb_num_layers - 1) * cfg.bb_ild_thickness;
     this.bb_total_thickness_in = this.mm_to_in(this.bb_total_thickness);
@@ -574,8 +577,8 @@ icosalogic.inv_design.Derived.prototype = {
 
     this.dcl_i_rms_max         = this.i_in_max * cfg.dcl_dc_rms_factor;
     this.dcl_z_ripple          = cfg.dcl_v_ripple / this.dcl_i_rms_max;
-    this.dcl_c_req             = 1000000 / (this.pwm_freq_omega * this.dcl_z_ripple);
-    this.dcl_fom               = cfg.dcl_v_ripple * this.pwm_freq_omega;
+    this.dcl_c_req             = 1000000 / (this.sw_freq_omega * this.dcl_z_ripple);
+    this.dcl_fom               = cfg.dcl_v_ripple * this.sw_freq_omega;
     this.dcl_fom_cap           = this.dcl_cap_entry.i_rms * 1000000 / this.dcl_cap_entry.c;
     this.dcl_fom_total         = cfg.dcl_count * this.dcl_fom_cap;
     this.dcl_i_total           = cfg.dcl_count * this.dcl_cap_entry.i_rms;
@@ -599,7 +602,7 @@ icosalogic.inv_design.Derived.prototype = {
     var r_fet                  = this.fet_entry.r_g_ext + this.fet_entry.r_g_int;
     var c_gate                 = this.fet_entry.qg / (v_gd_total - cfg.gd_bs_vf);
     this.gd_c_bs               = c_gate * cfg.fet_count * cfg.gd_bs_cf;
-    this.gd_r_bs               = 1e9 / (this.pwm_freq_omega * c_gate /*this.gd_c_bs */ );
+    this.gd_r_bs               = 1e9 / (this.sw_freq_omega * c_gate /*this.gd_c_bs */ );
     this.gd_c_vdd              = this.gd_c_bs * cfg.gd_bs_cf;
     this.gd_i_on               = v_gd_total / (r_fet / cfg.fet_count + cfg.gd_r_on );
     this.gd_i_off              = v_gd_total / (r_fet / cfg.fet_count + cfg.gd_r_off);
@@ -673,8 +676,8 @@ icosalogic.inv_design.Derived.prototype = {
     
     var fe = this.fet_entry;
     // resistor max duty cycle is alternating on/off every cycle, i.e., (on + off) / 2
-    this.gd_dc_on               = (fe.t_d_on  + fe.t_rise) / this.pwm_cycle_ns;
-    this.gd_dc_off              = (fe.t_d_off + fe.t_fall) / this.pwm_cycle_ns;
+    this.gd_dc_on               = (fe.t_d_on  + fe.t_rise) / this.sw_cycle_ns;
+    this.gd_dc_off              = (fe.t_d_off + fe.t_fall) / this.sw_cycle_ns;
     this.gd_i_avg               = this.gd_i_on * this.gd_dc_on + this.gd_i_off * this.gd_dc_off;
     this.gd_p_avg               = this.gd_i_avg * v_gd_total;
     var fet_r_i                 = v_gd_total / r_fet;
@@ -685,16 +688,16 @@ icosalogic.inv_design.Derived.prototype = {
                 ' fet r factor on=' + on_factor + ' off=' + off_factor);
     var eff_th_cc_dcl           = this.dcl_cap_entry.th_cc;
     var eff_th_cc_oc            = this.out_cap_entry.th_cc;
-    if (cfg.pwm_freq > 10000) {
-      eff_th_cc_dcl = eff_th_cc_dcl * (cfg.pwm_freq / 1000 - 10) / 100;
-      eff_th_cc_oc  = eff_th_cc_oc  * (cfg.pwm_freq / 1000 - 10) / 100;
+    if (this.sw_freq_eff > 10000) {
+      eff_th_cc_dcl = eff_th_cc_dcl * (this.sw_freq_eff / 1000 - 10) / 100;
+      eff_th_cc_oc  = eff_th_cc_oc  * (this.sw_freq_eff / 1000 - 10) / 100;
     }
     var i_rms_per_cap_dcl       = this.dcl_i_rms_max / cfg.dcl_count;
     var oc_cap_power_factor     = 0.1;                                  // 10% generous, 5% target
     var i_rms_per_cap_oc        = cfg.out_amps * oc_cap_power_factor / cfg.oc_count;
     
     
-    this.th_pgsw                = v_gd_total * v_gd_total * fe.qg * cfg.pwm_freq / 2e9;  // worst case: 1 on/off cycle every 2 pwm cycles
+    this.th_pgsw                = v_gd_total * v_gd_total * fe.qg * this.sw_freq_eff / 1e9;
     this.th_prgext              = fe.r_g_ext * (on_factor + off_factor) / 2;
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
     this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle

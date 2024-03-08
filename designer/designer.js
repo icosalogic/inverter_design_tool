@@ -1074,12 +1074,12 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('out_freq_omega').value        = derived.out_freq_omega.toFixed(2);
   document.getElementById('skin_depth_out').value        = derived.skin_depth_out.toFixed(4);
   document.getElementById('skin_depth_out_in').value     = derived.skin_depth_out_in.toFixed(4);
-  document.getElementById('pwm_omega').value             = derived.pwm_freq_omega.toFixed(0);
-  document.getElementById('pwm_cycle_us').value          = Number(derived.pwm_cycle_ns / 1000).toFixed(3);
+  document.getElementById('sw_omega').value              = derived.sw_freq_omega.toFixed(0);
+  document.getElementById('sw_cycle_us').value           = Number(derived.sw_cycle_ns / 1000).toFixed(3);
   document.getElementById('out_voltage_pp').value        = derived.out_voltage_pp.toFixed(2);
   document.getElementById('out_watts').value             = derived.out_watts.toFixed(0) / 1000;
-  document.getElementById('skin_depth_pwm').value        = derived.skin_depth_pwm.toFixed(4);
-  document.getElementById('skin_depth_pwm_in').value     = derived.skin_depth_pwm_in.toFixed(4);
+  document.getElementById('skin_depth_sw').value         = derived.skin_depth_sw.toFixed(4);
+  document.getElementById('skin_depth_sw_in').value      = derived.skin_depth_sw_in.toFixed(4);
   document.getElementById('wire_awg').value              = derived.wire_entry.awg;
   document.getElementById('wire_strands').value          = derived.wire_entry.strands;
   document.getElementById('wire_strand_dia').value       = derived.wire_entry.strand_dia_mm.toFixed(5);
@@ -1356,7 +1356,7 @@ icosalogic.inv_design.displayConfig = function()
   var cfg = oa.config;
   
   document.getElementById('out_freq').value              = cfg.out_freq;
-  document.getElementById('pwm_freq').value              = cfg.pwm_freq;
+  document.getElementById('sw_freq').value               = cfg.sw_freq;
   document.getElementById('out_amps').value              = cfg.out_amps;
   document.getElementById('out_voltage').value           = cfg.out_voltage;
   document.getElementById('bus_type').value              = cfg.bus_type;
@@ -1423,7 +1423,7 @@ icosalogic.inv_design.readAllInputs = function()
   var cfg = oa.config;
   
   cfg.out_freq            = document.getElementById('out_freq').value;
-  cfg.pwm_freq            = document.getElementById('pwm_freq').value;
+  cfg.sw_freq             = document.getElementById('sw_freq').value;
   cfg.out_amps            = parseFloat(document.getElementById('out_amps').value);
   cfg.out_voltage         = parseFloat(document.getElementById('out_voltage').value);
   cfg.out_lines           = parseFloat(document.getElementById('out_lines').value);
@@ -1619,13 +1619,13 @@ icosalogic.inv_design.printDerived = function() {
   var outStr = '\n';
   
   outStr += 'out_freq_omega'        + '=' + derived.out_freq_omega.toFixed(2) + '\n';
-  outStr += 'pwm_omega'             + '=' + derived.pwm_freq_omega.toFixed(0) + '\n';
+  outStr += 'sw_omega'              + '=' + derived.sw_freq_omega.toFixed(0) + '\n';
   outStr += 'out_voltage_pp'        + '=' + derived.out_voltage_pp.toFixed(2) + '\n';
   outStr += 'out_watts'             + '=' + derived.out_watts.toFixed(0) / 1000 + '\n';
   outStr += 'skin_depth_out'        + '=' + derived.skin_depth_out.toFixed(4) + '\n';
   outStr += 'skin_depth_out_in'     + '=' + derived.skin_depth_out_in.toFixed(4) + '\n';
-  outStr += 'skin_depth_pwm'        + '=' + derived.skin_depth_pwm.toFixed(4) + '\n';
-  outStr += 'skin_depth_pwm_in'     + '=' + derived.skin_depth_pwm_in.toFixed(4) + '\n';
+  outStr += 'skin_depth_sw'         + '=' + derived.skin_depth_sw.toFixed(4) + '\n';
+  outStr += 'skin_depth_sw_in'      + '=' + derived.skin_depth_sw_in.toFixed(4) + '\n';
   outStr += 'wire_awg'              + '=' + derived.wire_entry.awg + '\n';
   outStr += 'wire_strands'          + '=' + derived.wire_entry.strands + '\n';
   outStr += 'wire_strand_dia'       + '=' + derived.wire_entry.strand_dia_mm.toFixed(5) + '\n';
@@ -1780,7 +1780,7 @@ icosalogic.inv_design.printConfig = function() {
   var outStr = '';
   
   outStr += 'out_freq'            + '=' + cfg.out_freq + '\n';
-  outStr += 'pwm_freq'            + '=' + cfg.pwm_freq + '\n';
+  outStr += 'sw_freq'             + '=' + cfg.sw_freq + '\n';
   outStr += 'out_amps'            + '=' + cfg.out_amps + '\n';
   outStr += 'out_voltage'         + '=' + cfg.out_voltage + '\n';
   outStr += 'bus_type'            + '=' + cfg.bus_type + '\n';

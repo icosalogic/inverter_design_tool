@@ -21,16 +21,21 @@ icosalogic.inv_design.info_text = [
 {key: 'out_freq',           itxt: '<b>f<sub>out</sub>:</b> The 2 commonly used AC frequencies are 50 and 60 Hz.'},
 {key: 'out_freq_omega',     itxt: '<b>ω<sub>out</sub>:</b> Omega value for the output frequency.  Equal to 2 * π * f<sub>out</sub>.  (Read only)'},
 {key: 'skin_depth_out',     itxt: '<b>d<sub>skin_out</sub>:</b> Skin depth at f<sub>out</sub>.<br>' +
-                                  'Skin depth at f<sub>out</sub> will be greater than at f<sub>pwm</sub>, see below.<br>' +
+                                  'Skin depth at f<sub>out</sub> will be greater than at f<sub>sw</sub>, see below.<br>' +
                                   'Equal to 503000 * sqrt(1.678e-8 / f<sub>out</sub>) mm. (Read only)'},
-{key: 'pwm_freq',           itxt: '<b>f<sub>pwm</sub>:</b> This is the output transistor switching frequency.'},
-{key: 'pwm_omega',          itxt: '<b>ω<sub>pwm</sub>:</b> Omega value for the PWM frequency.<br>Equal to 2 * π * f<sub>pwm</sub>. (Read only)'},
-{key: 'pwm_cycle_us',       itxt: '<b>t<sub>pwm</sub>:</b> Cycle time for the PWM frequency in microseconds.<br>' +
-                                  'Equal to 1e6 / f<sub>pwm</sub>. (Read only)'},
-{key: 'skin_depth_pwm',     itxt: '<b>d<sub>skin_pwm</sub>:</b> Skin depth at f<sub>pwm</sub>.<br>' +
-                                  'Designers of inverters operating at higher frequencies must take skin<br>' +
+{key: 'sw_freq',            itxt: '<b>f<sub>sw</sub>:</b> This is the output transistor switching frequency.<br>' +
+                                  'More precisely, this is the frequency at which we decide to turn the FET on/off.<br>' +
+				  'Calculations involving both on and off phases should consider f<sub>sw</sub> / 2 as<br>' +
+				  'the effective maximum frequency.'},
+{key: 'sw_omega',           itxt: '<b>ω<sub>sw</sub>:</b> Omega value for the sw frequency.<br>Equal to 2 * π * f<sub>sw</sub>. (Read only)'},
+{key: 'sw_cycle_us',        itxt: '<b>t<sub>sw</sub>:</b> Cycle time for the sw frequency in microseconds.<br>' +
+                                  'Equal to 1e6 / f<sub>sw</sub>. (Read only)'},
+{key: 'skin_depth_sw',      itxt: '<b>d<sub>skin_sw</sub>:</b> Skin depth at f<sub>sw</sub>.<br>' +
+				  'Designers of inverters operating at higher frequencies must take skin<br>' +
 				  'depth into account when selecting conductors.<br>' +
-                                  'Equal to 503000 * sqrt(1.678e-8 / f<sub>pwm</sub>) mm. (Read only)'},
+                                  'Since cycle-by-cycle switching takes at minimum 2 cycles for a complete on/off<br>' +
+				  'transition, the skin depth is calculated at f<sub>sw</sub> / 2.<br>' +
+                                  'Equal to 503000 * sqrt(1.678e-8 / (f<sub>sw</sub> / 2)) mm. (Read only)'},
 {key: 'out_amps',           itxt: '<b>I<sub>out</sub>:</b> Enter the max output current for this config.'},
 {key: 'out_voltage',        itxt: '<b>V<sub>rms</sub>:</b> Enter the output RMS voltage produced for this config.'},
 {key: 'out_voltage_pp',     itxt: '<b>V<sub>pp</sub>:</b> The peak-to-peak output voltage.  Equal to V<sub>rms</sub> * sqrt(2) * 2. (Read only)'},
@@ -62,24 +67,24 @@ icosalogic.inv_design.info_text = [
 {key: 'wire_strand_dia',    itxt: '<b>wire_strand_dia:</b> The diameter of a single strand in the wire. (Read only)'},
 {key: 'wire_strands',       itxt: '<b>wire_strands:</b> The number of strands in the wire.  Must be 1 or more. (Read only)'},
 {key: 'wire_i_sw',          itxt: '<b>I<sub>wire_in</sub>:</b> The current carrying capacity of the wire at the switching frequency, assuming J<sub>cond</sub> A/mm<sup>2</sup>, and including skin effect.<br>' +
-                                  'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_pwm</sub>, or<br>' +
-				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_pwm</sub>)<sup>2</sup>) * π if SR > d<sub>skin_pwm</sub>.<br>' +
+                                  'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_sw</sub>, or<br>' +
+				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_sw</sub>)<sup>2</sup>) * π if SR > d<sub>skin_sw</sub>.<br>' +
 				  'This value should be greater than I<sub>in_max</sub>. (Read only)'},
 {key: 'wire_i_out',         itxt: '<b>I<sub>wire_in</sub>:</b> The current carrying capacity of the wire at the output frequency, assuming J<sub>cond</sub> A/mm<sup>2</sup>, and including skin effect.<br>' +
                                   'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_out</sub>, or<br>' +
 				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_out</sub>)<sup>2</sup>) * π if SR > d<sub>skin_out</sub>.<br>' +
 				  'This value should be greater than I<sub>out</sub>. (Read only)'},
-{key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin_pwm</sub>. (Read only)'},
+{key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin_sw</sub>. (Read only)'},
 {key: 'bb_cu_use_recommend',itxt: '<b>use_cu_recommend:</b> Check this box if you would like to use the recommended CU thickness.'},
 {key: 'bb_cu_thickness',    itxt: '<b>d<sub>CU actual</sub>:</b> Enter the CU thickness of each layer used in the bus bar.<br>' +
                                   'This value is set to d<sub>CU recommend</sub> if use_cu_recommend is checked.<br>' +
-				  'If setting manually, choose a value greater than or equal to 2 * d<sub>skin_pwm</sub>.'},
+				  'If setting manually, choose a value greater than or equal to 2 * d<sub>skin_sw</sub>.'},
 {key: 'bb_min_width',       itxt: '<b>min_cond_width:</b> Enter the minimum current path width in the bus bar.<br>' +
 				  'Wider current paths usually require fewer layers in the bus bar (to a point).'},
-{key: 'bb_num_layers',      itxt: '<b>cu_layers:</b> Number of CU layers required to carry I<sub>in</sub>, taking into account skin effect at f<sub>pwm</sub>.<br>' +
-                                  'Equal to I<sub>out</sub> / (J<sub>cond</sub> * bb_min_width * 2 * d<sub>skin_pwm</sub>). (Read only)'},
-{key: 'bb_i',               itxt: '<b>I<sub>bb</sub>:</b> The current capacity of the bus bar taking into account skin depth at f<sub>pwm</sub>.<br>' +
-                                  'The usable thickness UT = min(2 * d<sub>skin_pwm</sub>, d<sub>CU actual</sub>).<br>' +
+{key: 'bb_num_layers',      itxt: '<b>cu_layers:</b> Number of CU layers required to carry I<sub>in</sub>, taking into account skin effect at f<sub>sw</sub>.<br>' +
+                                  'Equal to I<sub>out</sub> / (J<sub>cond</sub> * bb_min_width * 2 * d<sub>skin_sw</sub>). (Read only)'},
+{key: 'bb_i',               itxt: '<b>I<sub>bb</sub>:</b> The current capacity of the bus bar taking into account skin depth at f<sub>sw</sub>.<br>' +
+                                  'The usable thickness UT = min(2 * d<sub>skin_sw</sub>, d<sub>CU actual</sub>).<br>' +
                                   'Equal to UT * min_cond_width * cu_layers * J<sub>cond</sub>.<br>' +
 				  'This value should be greater than I<sub>in_max</sub>. (Read only)'},
 {key: 'bb_i_out',           itxt: '<b>I<sub>bb_out</sub>:</b> The current capacity of the bus bar taking into account skin depth at f<sub>out</sub>.<br>' +
@@ -98,9 +103,9 @@ icosalogic.inv_design.info_text = [
                                   'Equal to I<sub>in_max</sub> * dcl_dc_rms_factor. (Read only)'},
 {key: 'dcl_v_ripple',       itxt: '<b>dcl_v_ripple:</b> The maximum desired voltage ripple on the input.'},
 {key: 'dcl_z_ripple',       itxt: '<b>dcl_z_ripple:</b> Equal to dcl_v_ripple / dcl_i_rms_max. (Read only)'},
-{key: 'dcl_c_req',          itxt: '<b>C<sub>required</sub>:</b> Equal to 1000000 / (ω<sub>pwm</sub> * dcl_z_ripple). (Read only)'},
+{key: 'dcl_c_req',          itxt: '<b>C<sub>required</sub>:</b> Equal to 1000000 / (ω<sub>sw</sub> * dcl_z_ripple). (Read only)'},
 {key: 'dcl_fom',            itxt: '<b>FoM:</b> A dimensionless value used to size the capacitor.<br>' +
-                                  'Equal to dcl_v_ripple / ω<sub>pwm</sub>. (Read only)'},
+                                  'Equal to dcl_v_ripple / ω<sub>sw</sub>. (Read only)'},
 {key: 'dcl_cap_pn',         itxt: '<b>dcl_cap_pn:</b> Select a capacitor to satisfy the requirements.'},
 {key: 'dcl_mfg',            itxt: '<b>dcl_mfg:</b>              From the datasheet. (Read only)'},
 {key: 'dcl_tech',           itxt: '<b>dcl_tech:</b>             From the datasheet. (Read only)'},
@@ -159,10 +164,10 @@ icosalogic.inv_design.info_text = [
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_on</sub> + R<sub>g_ext</sub> + R<sub>g_int</sub>). (Read only)'},
 {key: 'gd_i_off',           itxt: '<b>I<sub>gd_off</sub>:</b> The estimated current through the gate driver to turn off the FET.<br>' +
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_off</sub> + R<sub>g_ext</sub> + R<sub>g_int</sub>). (Read only)'},
-{key: 'gd_dc_on',           itxt: '<b>gd_dc_on:</b> The FET turn on duty cycle for one PWM cycle.<br>' +
-                                  'Equal to (t<sub>d(on)</sub> + t<sub>rise</sub>) / t<sub>pwm</sub>. (Read only)'},
-{key: 'gd_dc_off',          itxt: '<b>gd_dc_off:</b> The FET turn off duty cycle for one PWM cycle.<br>' +
-                                  'Equal to (t<sub>d(off)</sub> + t<sub>fall</sub>) / t<sub>pwm</sub>. (Read only)'},
+{key: 'gd_dc_on',           itxt: '<b>gd_dc_on:</b> The FET turn on duty cycle for one switching cycle.<br>' +
+                                  'Equal to (t<sub>d(on)</sub> + t<sub>rise</sub>) / t<sub>sw</sub>. (Read only)'},
+{key: 'gd_dc_off',          itxt: '<b>gd_dc_off:</b> The FET turn off duty cycle for one switching cycle.<br>' +
+                                  'Equal to (t<sub>d(off)</sub> + t<sub>fall</sub>) / t<sub>sw</sub>. (Read only)'},
 {key: 'gd_i_avg',           itxt: '<b>I<sub>gd_avg</sub>:</b> The average gate driver current for one FET on/off cycle.<br>' +
                                   'Equal to I<sub>gd_on</sub> * gd_dc_on + I<sub>gd_off</sub> * gd_dc_off. (Read only)'},
 {key: 'gd_p_avg',           itxt: '<b>P<sub>gd_avg</sub>:</b> The average gate driver power for on turn on/off cycle.<br>' +
@@ -174,7 +179,7 @@ icosalogic.inv_design.info_text = [
 {key: 'gd_c_bs',            itxt: '<b>C<sub>bs</sub>:</b> The calculated value of the bootstrap capacitor.<br>' +
                                   'Equal to Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub>) * fet_count * gd_bs_cf. (Read only)'},
 {key: 'gd_r_bs',            itxt: '<b>R<sub>bs</sub>:</b> The calculated value of the bootstrap resistor.<br>' +
-                                  'Equal to 1e9 / (ω<sub>pwm</sub> * Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub>)). (Read only)'},
+                                  'Equal to 1e9 / (ω<sub>sw</sub> * Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub>)). (Read only)'},
 {key: 'gd_c_vdd',           itxt: '<b>C<sub>vdd</sub>:</b> The calculated value of the power supply capacitor feeding the bootstrap diode.<br>' +
                                   'Equal to C<sub>bs</sub> * gd_bs_cf. (Read only)'},
 
@@ -187,8 +192,8 @@ icosalogic.inv_design.info_text = [
 {key: 'of_type',            itxt: '<b>of_type:</b> The type of the output filter, either LCL or LC.<br>' +
                                   'LCL is the default filter type, but at higher frequencies (50-60kHz) the algorithm <br>' +
 				  'may not find valid candidates, so it reverts to an LC filter. (Read only)'},
-{key: 'of_f_5',             itxt: '<b>f<sub>lc_min5</sub>, f<sub>lc_max5</sub>:</b> The target LC frequency range for a 5 octave buffer between f<sub>grid</sub> and f<sub>pwm</sub>. (Read only)'},
-{key: 'of_f_6',             itxt: '<b>f<sub>lc_min6</sub>, f<sub>lc_max6</sub>:</b> The target LC frequency range for a 6 octave buffer between f<sub>grid</sub> and f<sub>pwm</sub>. (Read only)'},
+{key: 'of_f_5',             itxt: '<b>f<sub>lc_min5</sub>, f<sub>lc_max5</sub>:</b> The target LC frequency range for a 5 octave buffer between f<sub>grid</sub> and f<sub>sw</sub>. (Read only)'},
+{key: 'of_f_6',             itxt: '<b>f<sub>lc_min6</sub>, f<sub>lc_max6</sub>:</b> The target LC frequency range for a 6 octave buffer between f<sub>grid</sub> and f<sub>sw</sub>. (Read only)'},
 {key: 'of_ndx_sugg',        itxt: '<b>n<sub>suggested</sub>:</b> The designer evaluates a large number of output filter component alternatives,<br>' +
                                   'eliminating those that do not meet filter and resonance criteria, and allows the user to browse<br>' +
 				  'through them using the + and - buttons.  ' +
@@ -200,10 +205,10 @@ icosalogic.inv_design.info_text = [
 {key: 'of_delta_sugg',      itxt: '<b>δ<sub>suggested</sub>:</b> The δ value for the currently selected filter suggestion.<br>' +
                                   'Generally, lower δ values indicate a better LCL filter solution. (Read only)'},
 {key: 'of_f_res_sugg',      itxt: '<b>f<sub>res_sugg</sub>:</b> For LCL filters, this is the resonant frequency of the current suggested filter solution.<br>' +
-                                  'Preferred values between f<sub>pwm</sub>/2 and f<sub>pwm</sub>/6 may be stable without requiring a damping resistor.<br><br>' +
+                                  'Preferred values between f<sub>sw</sub>/2 and f<sub>sw</sub>/6 may be stable without requiring a damping resistor.<br><br>' +
 				  'For LC filters, this is the cutoff frequency of the current suggested filter solution.<br>' +
-				  'Acceptable values are at least 5 octaves above f<sub>out</sub> and 5 octaves below f<sub>pwm</sub>.<br>' +
-				  'Preferred values are at least 6 octaves above f<sub>out</sub> and 6 octaves below f<sub>pwm</sub>. (Read only)'},
+				  'Acceptable values are at least 5 octaves above f<sub>out</sub> and 5 octaves below f<sub>sw</sub>.<br>' +
+				  'Preferred values are at least 6 octaves above f<sub>out</sub> and 6 octaves below f<sub>sw</sub>. (Read only)'},
 {key: 'of_f_res_actual',    itxt: '<b>f<sub>res_actual</sub>:</b> For LCL filters, this is the resonant frequency of the actual LCL filter as configured.<br>' +
                                   'For LC filters, this is the cutoff frequency of the configured LC filter.<br>' +
                                   'Since inductor values vary under load, this value is given for both zero and 100% load.<br>' +
@@ -288,16 +293,16 @@ icosalogic.inv_design.info_text = [
 {key: 'th_p_dcl',           itxt: '<b>P<sub>dcl</sub>:</b> The power dissipated by the DC link capacitors.<br>' +
                                   'Equal to (dcl_i_rms_max / dcl_count)<sup>2</sup> * ESR<sub>dcl</sub>. (Read only)'},
 {key: 'th_t_dcl_core',      itxt: '<b>t<sub>dcl_core</sub>:</b> Equal to t<sub>ambient</sub> + P<sub>dcl</sub> * ([effective] R<sub>dcl_θ_cc</sub> + R<sub>dcl_θ_ca</sub>).<br>' +
-                                  'Effective R<sub>dcl_θ_cc</sub> above 10 kHz is R<sub>dcl_θ_cc</sub> * (f<sub>pwm</sub> / 1000 - 10) / 100.<br>' +
+                                  'Effective R<sub>dcl_θ_cc</sub> above 10 kHz is R<sub>dcl_θ_cc</sub> * (f<sub>sw</sub> / 1000 - 10) / 100.<br>' +
                                   'This value should be less than 70°C. (Read only)'},
 {key: 'th_pgsw',            itxt: '<b>P<sub>gsd</sub>:</b> The power dissipated inside the gate driver.<br>' +
-                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>)<sup>2</sup> * Q<sub>g</sub> * f<sub>pwm</sub> / 2. (Read only)'},
+                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>)<sup>2</sup> * Q<sub>g</sub> * f<sub>sw</sub> / 2. (Read only)'},
 {key: 'th_prgext',          itxt: '<b>P<sub>rgext</sub>:</b> Power dissipated by the external gate resistor.<br>' +
-                                  'Equal to R<sub>g_ext</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>pwm</sub>) + ' +
-                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>pwm</sub>)). (Read only)'},
+                                  'Equal to R<sub>g_ext</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
+                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
 {key: 'th_prgint',          itxt: '<b>P<sub>rgint</sub>:</b> Power dissipated in the FET due to gate switching.<br>' +
-                                  'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>pwm</sub>) + ' +
-                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>pwm</sub>)). (Read only)'},
+                                  'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
+                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
 {key: 'th_pfi',             itxt: '<b>P<sub>pf</sub>:</b> The power dissipated in the FET due to current conduction.<br>' +
                                   'Equal to I<sub>fet_max_actual</sub><sup>2</sup> * R<sub>ds(on)</sub> * 0.5 (assuming 50% duty cycle). (Read only)'},
 {key: 't_fet_junction',     itxt: '<b>t<sub>fet_junction</sub>:</b> The junction temperature of the FET.<br>' +
@@ -318,7 +323,7 @@ icosalogic.inv_design.info_text = [
                                   'Assumes half the output ripple is consumed by the inductor. (Read only)'},
 {key: 'th_t_oc_core',       itxt: '<b>t<sub>oc_core</sub>:</b> Estimated output capacitor core temperature.<br>' +
                                   'Equal to t<sub>ambient</sub> + P<sub>oc</sub> * ([effective] R<sub>oc_θ_cc</sub> + R<sub>oc_θ_ca</sub>).<br>' +
-                                  'Effective R<sub>oc_θ_cc</sub> above 10 kHz is R<sub>oc_θ_cc</sub> * (f<sub>pwm</sub> / 1000 - 10) / 100.<br>' +
+                                  'Effective R<sub>oc_θ_cc</sub> above 10 kHz is R<sub>oc_θ_cc</sub> * (f<sub>sw</sub> / 1000 - 10) / 100.<br>' +
                                   'This value should be less than 70°C. (Read only)'},
 {key: 'th_total_loss',      itxt: '<b>P<sub>total_loss</sub>:</b> The total power dissipated by the various components listed above.<br>' +
                                   'Each component loss is multiplied by the number of instances of that component. (Read only)'},

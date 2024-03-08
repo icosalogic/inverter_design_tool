@@ -206,7 +206,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
 icosalogic.inv_design.Config.prototype = {
   cfg_name:            '',
   out_freq:            60,
-  pwm_freq:            12000,
+  sw_freq:             12000,
   out_amps:            10.0,
   out_voltage:         120,
   out_lines:           2,
@@ -252,7 +252,7 @@ icosalogic.inv_design.Config.prototype = {
 	  console.log("Config.setDefaultValues: enter");
   
     this.out_freq            = 60;
-    this.pwm_freq            = 12000;
+    this.sw_freq             = 12000;
     this.out_amps            = 10;
     this.out_voltage         = 120;
     this.out_lines           = 2;
@@ -300,7 +300,7 @@ icosalogic.inv_design.Config.prototype = {
     var prefix = 'i20.' + this.cfg_name + '.';
   
     this.loadItem('out_freq'           , true);
-    this.loadItem('pwm_freq'           , true);
+    this.loadItem('sw_freq'            , true);
     this.loadItem('out_amps'           , true);
     this.loadItem('out_voltage'        , true);
     this.loadItem('out_lines'          , true);
@@ -372,7 +372,7 @@ icosalogic.inv_design.Config.prototype = {
     var prefix = 'i20.' + this.cfg_name + '.';
   
     localStorage.setItem(prefix + 'out_freq', this.out_freq);
-    localStorage.setItem(prefix + 'pwm_freq', this.pwm_freq);
+    localStorage.setItem(prefix + 'sw_freq', this.sw_freq);
     localStorage.setItem(prefix + 'out_amps', this.out_amps);
     localStorage.setItem(prefix + 'out_voltage', this.out_voltage);
     localStorage.setItem(prefix + 'out_lines', this.out_lines);
@@ -516,7 +516,7 @@ icosalogic.inv_design.Config.prototype = {
     
     console.log('  cfg_name='            + this.cfg_name);
     console.log('  out_freq='            + this.out_freq);
-    console.log('  pwm_freq='            + this.pwm_freq);
+    console.log('  sw_freq='             + this.sw_freq);
     console.log('  out_amps='            + this.out_amps);
     console.log('  out_voltage='         + this.out_voltage);
     console.log('  out_lines='           + this.out_lines);
