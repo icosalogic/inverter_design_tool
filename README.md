@@ -1,8 +1,17 @@
 # Inverter Design Tool
 
-This tool can be used by designers to set basic parameters and select components of DC-AC inverters.
-The primary design assumption is that the DC source has a minimum voltage greater than two times the
-peak-to-peak AC voltage, thus no output transformer is required.
+This tool can be used by designers to set basic parameters and select components of a DC-AC inverter.
+Here are the primary design assumptions for inverters configured with this tool:
+
+1. The primary target market addressed with this tool is battery-powered residential split-phase inverters
+with output in the range of 50-200 amps.  Parts of this tool may be useful in designing 3-phase traction
+inverters for the mobility market, but that was not an objective.
+2. The inverter will operate at a fast switching rate, and make a cycle-by-cycle decision on whether to turn the FETs
+on or off.  It does not use PWM.  Fast switching rate in this case means up to 1 MHz, which actually has slower FET
+transitions than a 5 kHz 8-bit PWM implementation with a duty cycle of 1 or 254.
+The feedback logic paths do require more attention in this case.
+3. The battery at minimum state of charge is assumed to have a voltage greater than the peak-to-peak AC output voltage,
+thus no output transformer is required.
 
 # Features
 
