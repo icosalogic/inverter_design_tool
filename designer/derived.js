@@ -213,7 +213,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var b_ac_max               = this.get_b(h_ac_max);
       var b_ac_min               = 0 - b_ac_max;               // for 100% AC inputs to inductor, no DC bias
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
-      var f_kHz                  = this.sw_freq_eff / 1000;
+      var f_kHz                  = cfg.sw_freq / 2000;         // /2 to get effective, /1000 to get khz
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;

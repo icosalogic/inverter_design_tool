@@ -703,15 +703,15 @@ icosalogic.inv_design.showHideInductor = function() {
               ' ind2.ind_type=' + oa.config.ind2.ind_type +
               ' filter_type=' + oa.derived.lcl.filter_type);
               
-  // Always show ind1
+  // Always show ind1, and do 'none' entries first
   if (oa.config.ind1.ind_type == 'ots') {
-    oa.setTableRowDisplay('sh_ind1_ots',  'table-row');
     oa.setTableRowDisplay('sh_ind1_cust', 'none');
     oa.setTableRowDisplay('sh_ind1_air',  'none');
+    oa.setTableRowDisplay('sh_ind1_ots',  'table-row');
   } else if (oa.config.ind1.ind_type == 'custom') {
     oa.setTableRowDisplay('sh_ind1_ots',  'none');
-    oa.setTableRowDisplay('sh_ind1_cust', 'table-row');
     oa.setTableRowDisplay('sh_ind1_air',  'none');
+    oa.setTableRowDisplay('sh_ind1_cust', 'table-row');
   } else if (oa.config.ind1.ind_type == 'air') {
     oa.setTableRowDisplay('sh_ind1_ots',  'none');
     oa.setTableRowDisplay('sh_ind1_cust', 'none');
@@ -721,13 +721,13 @@ icosalogic.inv_design.showHideInductor = function() {
   // Show ind2 only for LCL filters
   if (oa.derived.lcl.filter_type == 'LCL') {
     if (oa.config.ind2.ind_type == 'ots') {
-      oa.setTableRowDisplay('sh_ind2_ots',  'table-row');
       oa.setTableRowDisplay('sh_ind2_cust', 'none');
       oa.setTableRowDisplay('sh_ind2_air',  'none');
+      oa.setTableRowDisplay('sh_ind2_ots',  'table-row');
     } else if (oa.config.ind2.ind_type == 'custom') {
       oa.setTableRowDisplay('sh_ind2_ots',  'none');
-      oa.setTableRowDisplay('sh_ind2_cust', 'table-row');
       oa.setTableRowDisplay('sh_ind2_air',  'none');
+      oa.setTableRowDisplay('sh_ind2_cust', 'table-row');
     } else if (oa.config.ind2.ind_type == 'air') {
       oa.setTableRowDisplay('sh_ind2_ots',  'none');
       oa.setTableRowDisplay('sh_ind2_cust', 'none');
