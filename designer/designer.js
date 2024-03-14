@@ -399,6 +399,30 @@ icosalogic.inv_design.ocFilterHandler = function(e) {
 };
 
 /*
+ * Reset the cap filter options if necessary.
+ */
+icosalogic.inv_design.resetCapFilters = function(e) {
+  console.log('icosalogic.inv_design.resetCapFilters: enter ');
+
+  var oa = icosalogic.inv_design;
+  
+  var el = document.getElementById('dcl_filter');
+  if (el.value != 'f') {
+    el.value = 'f';
+    el.innerText = "Filter";
+    oa.addDclCapOptions();
+  }
+  
+  el = document.getElementById('oc_filter');
+  if (el.value != 'f') {
+    el.value = 'f';
+    el.innerText = "Filter";
+    oa.addOutCapOptions();
+  }
+  
+};
+
+/*
  * The handler for scrolling through the output filter suggestions.
  */
 icosalogic.inv_design.ofScroller = function(e) {
@@ -1051,6 +1075,7 @@ icosalogic.inv_design.setConfigActive = function(cfg) {
   cfg.setActive();
   oa.config = cfg;
   oa.derived.derive(cfg);
+  oa.resetCapFilters();
   oa.displayConfig();
   oa.displayDerived();
 

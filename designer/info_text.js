@@ -27,7 +27,7 @@ icosalogic.inv_design.info_text = [
                                   'More precisely, this is the frequency at which we decide to turn the FET on/off.<br>' +
 				  'Calculations involving both on and off phases should consider f<sub>sw</sub> / 2 as<br>' +
 				  'the effective maximum frequency.'},
-{key: 'sw_omega',           itxt: '<b>ω<sub>sw</sub>:</b> Omega value for the sw frequency.<br>Equal to 2 * π * f<sub>sw</sub>. (Read only)'},
+{key: 'sw_omega',           itxt: '<b>ω<sub>sw</sub>:</b> Omega value for the effective sw frequency.<br>Equal to 2 * π * (f<sub>sw</sub> / 2). (Read only)'},
 {key: 'sw_cycle_us',        itxt: '<b>t<sub>sw</sub>:</b> Cycle time for the sw frequency in microseconds.<br>' +
                                   'Equal to 1e6 / f<sub>sw</sub>. (Read only)'},
 {key: 'skin_depth_sw',      itxt: '<b>d<sub>skin_sw</sub>:</b> Skin depth at f<sub>sw</sub>.<br>' +
@@ -147,8 +147,10 @@ icosalogic.inv_design.info_text = [
 {key: 'c_iss',              itxt: '<b>C<sub>iss</sub>:</b>         From the datasheet. (Read only)'},
 {key: 'c_oss',              itxt: '<b>C<sub>oss</sub>:</b>         From the datasheet. (Read only)'},
 {key: 'c_rss',              itxt: '<b>C<sub>rss</sub>:</b>         From the datasheet. (Read only)'},
-{key: 't_dead',             itxt: '<b>T<sub>dead</sub>:</b> Minimum dead time.<br>' +
-                                  'Equal to t<sub>d(off)</sub> + t<sub>fall</sub> - t<sub>d(on)</sub>. (Read only)'},
+{key: 't_dead',             itxt: '<b>t<sub>dead</sub>:</b> Minimum dead time.<br>' +
+                                  'Assume dead_on  = t<sub>d(off)</sub> + t<sub>fall</sub> - t<sub>d(on)</sub><br>' +
+				  'and dead_off = t<sub>d(on)</sub>  + t<sub>rise</sub> - t<sub>d(off)</sub>.<br>' +
+				  'Then t<sub>dead</sub> = max(dead_on, dead_off). (Read only)'},
 {key: 'fet_max_i_actual',   itxt: '<b>I<sub>fet_max_actual</sub>:</b> Maximum current per FET.<br>' +
                                   'Equal to I<sub>out</sub> * sqrt(2) / fet_count.  ' +
 				  'Status is green if this value is less than I<sub>fet_max_hot</sub>.<br>' +
