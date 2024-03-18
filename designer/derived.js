@@ -10,8 +10,6 @@
  * 3. In derive() compute the derived value
  * 4. In displayDerived() [designer.js]
  * 5. In printDerived()   [designer.js] (needs fixing)
- * 
- * After adding new values, you generally need to reset the app using the purge button in the UI.
  */
 
 icosalogic.inv_design.sqrt_2 = Math.sqrt(2);
@@ -96,11 +94,12 @@ icosalogic.inv_design.DerivedInd.prototype = {
    * Calculate all variables derived from the config.
    * Note that we use the minimum value for Al from the nominal +/- 8% range.
    */
-  derive: function(cfg, cfgInd, wire_dia) {
+  derive: function(cfg, cfgInd, parent) {
 	  console.log('DerivedInd.derive: enter: ind' + cfgInd.inum + ' ind_type=' + cfgInd.ind_type + ' * * * * * * * * * * * * * *');
   
     var oa = icosalogic.inv_design;
     var amps_per_ind = cfg.out_amps / cfgInd.count;
+    var wire_dia = parent.wire_entry.dia_mm
 
     if (cfgInd.ind_type == 'ots') {
       this.ind_entry = oa.ind_table.find(entry => entry.pn == cfgInd.pn);
@@ -203,8 +202,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.r_total               = this.r_eff / cfgInd.count;
       
       // Calculate core loss: Method 1 from Magnetics Powder Core catalog (dated 2020) page 20
-      var i_dc                   = 0;                          // amps_per_ind
-      var i_ac_pk                = amps_per_ind * oa.sqrt_2;   // amps_per_ind * 0.41
+      var i_dc                   = 0;
+      var i_ac_pk                = amps_per_ind * oa.sqrt_2;
       var h_ac_com               = 4 * Math.PI * (this.turns / this.cor_size_entry.Le);
       var h_ac_max               = h_ac_com * (i_dc + i_ac_pk / 2);
       var h_ac_min               = h_ac_com * (i_dc - i_ac_pk / 2);
@@ -277,9 +276,32 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.len          = core_len;
       this.h_total      = this.h_eff / cfgInd.count;
       this.h_totalb     = this.h_total;
-      this.t_status     = 'green';
+      
+      // Calculate DC resistance and power dissipation
+      var len_leads_mm  = 25;
+      var wire_len_mm   = cfgInd.r * 2 * Math.PI * this.turns + len_leads_mm * 2;
+      this.r_eff        = (wire_len_mm / 1000) * parent.wire_r_sw;
+      this.power        = amps_per_ind * amps_per_ind * this.r_eff;
+      
+      // Calculate surface area, temperature rise and inductor temp
+      var outer_radius  = cfgInd.r + wire_dia / 2;
+      var outer_circum  = outer_radius * 2 * Math.PI;
+      var outer_area    = outer_circum * this.len;
+      var inner_radius  = 0;
+      var inner_area    = 0;
+      if (cfgInd.r > wire_dia / 2) {
+        inner_radius  = cfgInd.r - wire_dia / 2;
+        var inner_circum  = inner_radius * 2 * Math.PI;
+        inner_area        = inner_circum * this.len;
+      }
+      var end_area      = (outer_radius * outer_radius - inner_radius * inner_radius) * Math.PI;
+      this.wound_area   = (outer_area + inner_area + end_area * 2) / 100;
+      
+      this.t_core       = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);
+      this.t_status     = this.t_core > 155.0 ? 'red' : 'green';
       
       console.log('ind [air]: n=' + n + ' len=' + core_len + ' L=' + Number(L * 1e6).toFixed(3) + ' uH');
+      console.log('outer_area=' + outer_area + ' inner_area=' + inner_area + ' end_area=' + end_area + ' wound_area=' + this.wound_area);
     }
   },
   
@@ -366,8 +388,10 @@ icosalogic.inv_design.Derived.prototype = {
   wire_strand_dia_in:       0.0,
   wire_i_sw:                0.0,
   wire_i_sw_status:         'red',
+  wire_r_sw:                1.0,
   wire_i_out:               0.0,
   wire_i_out_status:        'red',
+  wire_r_out:               1.0,
   bb_cu_recommend:          0.0,
   bb_cu_recommend_in:       0.0,
   bb_cu_thickness_in:       0.0,
@@ -483,9 +507,6 @@ icosalogic.inv_design.Derived.prototype = {
     
     this.sw_freq_eff           = cfg.sw_freq / 2;
     
-    this.ind1.derive(cfg, cfg.ind1, this.wire_entry.dia_mm);
-    this.ind2.derive(cfg, cfg.ind2, this.wire_entry.dia_mm);
-    
     this.v_pack_min = cfg.v_cell_min * cfg.bat_series;
     this.v_pack_nom = cfg.v_cell_nom * cfg.bat_series;
     this.v_pack_max = cfg.v_cell_max * cfg.bat_series;
@@ -525,6 +546,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.wire_dia_in           = this.mm_to_in(this.wire_entry.dia_mm);
     this.wire_strand_dia_in    = this.mm_to_in(this.wire_entry.strand_dia_mm);
     
+    this.wire_r_sw             = oa.cu_rho / (strand_area * this.wire_entry.strands * 1e-6);
     this.wire_i_sw             = strand_area * this.wire_entry.strands * cfg.j_cond;
     this.wire_i_sw_status      = this.wire_i_sw < this.i_in_max ? 'red' : 'green';
     
@@ -533,8 +555,11 @@ icosalogic.inv_design.Derived.prototype = {
       var unused_radius = wire_radius - this.skin_depth_out;
       strand_area -= Math.PI * unused_radius * unused_radius;
     }
+    this.wire_r_out            = oa.cu_rho / (strand_area * this.wire_entry.strands * 1e-6);
     this.wire_i_out            = strand_area * this.wire_entry.strands * cfg.j_cond;
     this.wire_i_out_status     = this.wire_i_out < cfg.out_amps ? 'red' : 'green';
+    
+    console.log('wire_r_sw=' + this.wire_r_sw + ' wire_r_out=' + this.wire_r_out);
     
     this.bb_min_width_in       = this.mm_to_in(cfg.bb_min_width);
     
@@ -577,6 +602,10 @@ icosalogic.inv_design.Derived.prototype = {
     console.log('bb_status=' + this.bb_status + ' wire_i_sw_status=' + this.wire_i_sw_status +
                 ' wire_i_out_status=' + this.wire_i_out_status);
 
+    // Derive the inductor properties after wire properties calculated in bus section
+    this.ind1.derive(cfg, cfg.ind1, this, this.wire_entry.dia_mm);
+    this.ind2.derive(cfg, cfg.ind2, this, this.wire_entry.dia_mm);
+    
     this.dcl_i_rms_max         = this.i_in_max * cfg.dcl_dc_rms_factor;
     this.dcl_z_ripple          = cfg.dcl_v_ripple / this.dcl_i_rms_max;
     this.dcl_c_req             = 1000000 / (this.sw_freq_omega * this.dcl_z_ripple);

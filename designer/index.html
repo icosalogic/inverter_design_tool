@@ -336,7 +336,7 @@
             <td> <label for='wire_i_sw'  >Switching Current Capacity</label></label></td>
             <td>I<sub>wire_sw</sub></td>
             <td><input id='wire_i_sw' type='number' value='5' readonly='readonly'></td>
-            <td colspan='3'></td>
+            <td colspan='3'>A</td>
             <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_sw_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
             <td id='info_wire_i_sw'>ⓘ</td>
           </tr>
@@ -344,9 +344,23 @@
             <td> <label for='wire_i_out'  >Output Current Capacity</label></label></td>
             <td>I<sub>wire_out</sub></td>
             <td><input id='wire_i_out' type='number' value='5' readonly='readonly'></td>
-            <td colspan='3'></td>
+            <td colspan='3'>A</td>
             <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='wire_i_out_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
             <td id='info_wire_i_out'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p'>
+            <td> <label for='wire_r_sw'  >Switching Resistance</label></label></td>
+            <td>R<sub>wire_sw</sub></td>
+            <td><input id='wire_r_sw' type='number' value='5' readonly='readonly'></td>
+            <td colspan='4'>mΩ / m</td>
+            <td id='info_wire_r_sw'>ⓘ</td>
+          </tr>
+          <tr class='sh_bus sh_bus_p2p'>
+            <td> <label for='wire_r_out'  >Output Resistance</label></label></td>
+            <td>R<sub>wire_out</sub></td>
+            <td><input id='wire_r_out' type='number' value='5' readonly='readonly'></td>
+            <td colspan='4'>mΩ / m</td>
+            <td id='info_wire_r_out'>ⓘ</td>
           </tr>
           
           <tr class='sh_bus sh_bus_bar'>
@@ -1217,13 +1231,6 @@
             <td id='info_ind_winding_factor'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_cust'>
-            <td><label for='ind1_wound_area'  >Wound area</label></td>
-            <td>ind1_wound_area</td>
-            <td><input id='ind1_wound_area'   type='number' value='20' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>2</sup></td>
-            <td id='info_ind_wound_area'>ⓘ</td>
-          </tr>
-          <tr class='sh_out_ind1 sh_ind1_cust'>
             <td></td>
             <td></td>
             <td>Unloaded</td>
@@ -1253,6 +1260,13 @@
             <td id='info_ind_len'>ⓘ</td>
           </tr>
           
+          <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
+            <td><label for='ind1_wound_area'  >Wound area</label></td>
+            <td>ind1_wound_area</td>
+            <td><input id='ind1_wound_area'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>2</sup></td>
+            <td id='info_ind_wound_area'>ⓘ</td>
+          </tr>
           <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
             <td><label for='ind1_h_eff'  >Inductance</label></td>
             <td>L<sub>ind</sub></td>
@@ -1575,13 +1589,6 @@
             <td id='info_ind_winding_factor'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
-            <td><label for='ind2_wound_area'  >Wound area</label></td>
-            <td>ind2_wound_area</td>
-            <td><input id='ind2_wound_area'   type='number' value='20' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>2</sup></td>
-            <td id='info_ind_wound_area'>ⓘ</td>
-          </tr>
-          <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
             <td></td>
             <td></td>
             <td>Unloaded</td>
@@ -1619,6 +1626,13 @@
             <td id='info_ind_len'>ⓘ</td>
           </tr>
           
+          <tr class='sh_out_ind2 sh_ind2_cust sh_ind2_air sh_of_lcl'>
+            <td><label for='ind2_wound_area'  >Wound area</label></td>
+            <td>ind2_wound_area</td>
+            <td><input id='ind2_wound_area'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>2</sup></td>
+            <td id='info_ind_wound_area'>ⓘ</td>
+          </tr>
           <tr class='sh_out_ind2 sh_of_lcl'>
             <td><label for='ind2_count'  >Number of Inductors</label></td>
             <td>ind2_count</td>

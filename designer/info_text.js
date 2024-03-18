@@ -74,6 +74,12 @@ icosalogic.inv_design.info_text = [
                                   'Equal to SA * strands * J<sub>cond</sub>, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_out</sub>, or<br>' +
 				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_out</sub>)<sup>2</sup>) * π if SR > d<sub>skin_out</sub>.<br>' +
 				  'This value should be greater than I<sub>out</sub>. (Read only)'},
+{key: 'wire_r_sw',          itxt: '<b>R<sub>wire_in</sub>:</b> The resistance of the wire at the switching frequency, including skin effect.<br>' +
+                                  'Equal to SA * strands * 1.75e-8, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_sw</sub>, or<br>' +
+				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_sw</sub>)<sup>2</sup>) * π if SR > d<sub>skin_sw</sub>. (Read only)'},
+{key: 'wire_r_out',         itxt: '<b>r<sub>wire_in</sub>:</b> The resistance of the wire at the output frequency, including skin effect.<br>' +
+                                  'Equal to SA * strands * 1.75e-8, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_out</sub>, or<br>' +
+				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_out</sub>)<sup>2</sup>) * π if SR > d<sub>skin_out</sub>. (Read only)'},
 {key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin_sw</sub>. (Read only)'},
 {key: 'bb_cu_use_recommend',itxt: '<b>use_cu_recommend:</b> Check this box if you would like to use the recommended CU thickness.'},
 {key: 'bb_cu_thickness',    itxt: '<b>d<sub>CU actual</sub>:</b> Enter the CU thickness of each layer used in the bus bar.<br>' +

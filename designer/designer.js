@@ -27,7 +27,7 @@ icosalogic.inv_design = {};
 icosalogic.inv_design.isLoaded = false;
 
 icosalogic.inv_design.sqrt_2 = 1.41421356237;
-icosalogic.inv_design.cu_rho = 1.678e-8;
+icosalogic.inv_design.cu_rho = 1.75e-8;          // resistivity of ~99% CU
 
 icosalogic.inv_design.config   = {};
 icosalogic.inv_design.derived  = {};
@@ -1113,6 +1113,8 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('wire_dia_in').value           = derived.wire_dia_in.toFixed(6);
   document.getElementById('wire_i_sw').value             = derived.wire_i_sw.toFixed(2);
   document.getElementById('wire_i_out').value            = derived.wire_i_out.toFixed(2);
+  document.getElementById('wire_r_sw').value             = Number(derived.wire_r_sw * 1e3).toFixed(5);
+  document.getElementById('wire_r_out').value            = Number(derived.wire_r_out * 1e3).toFixed(5);
   document.getElementById('bb_cu_recommend').value       = derived.bb_cu_recommend.toFixed(4);
   document.getElementById('bb_cu_recommend_in').value    = derived.bb_cu_recommend_in.toFixed(4);
   document.getElementById('bb_cu_thickness_in').value    = derived.bb_cu_thickness_in.toFixed(4);
@@ -1218,7 +1220,6 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind1_turns_max').value        = derived.ind1.turns_max.toFixed(0);
     document.getElementById('ind1_turns_l1').value         = derived.ind1.turns_l1.toFixed(0);
     document.getElementById('ind1_winding_factor').value   = derived.ind1.winding_factor.toFixed(2);
-    document.getElementById('ind1_wound_area').value       = derived.ind1.wound_area.toFixed(2);
     document.getElementById('ind1_al').value               = derived.ind1.cor_pn_entry.Al.toFixed(2);
     document.getElementById('ind1_alb').value              = derived.ind1.al_biased.toFixed(2);
   }
@@ -1239,6 +1240,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('ind1_h_total').value          = Number(derived.ind1.h_total * 1000000).toFixed(3);  // display uH
   document.getElementById('ind1_h_eff').value            = Number(derived.ind1.h_eff * 1000000).toFixed(3);    // display uH
   document.getElementById('ind1_h_effb').value           = Number(derived.ind1.h_biased * 1000000).toFixed(3); // display uH
+  document.getElementById('ind1_wound_area').value       = derived.ind1.wound_area.toFixed(2);
   
   if (derived.ind2.cor_pn_entry != null) {
     document.getElementById('ind2_lii').value              = Number(derived.ind2.lii * 1e6).toFixed(2);
@@ -1253,7 +1255,6 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind2_turns_max').value        = derived.ind2.turns_max.toFixed(0);
     document.getElementById('ind2_turns_l1').value         = derived.ind2.turns_l1.toFixed(0);
     document.getElementById('ind2_winding_factor').value   = derived.ind2.winding_factor.toFixed(2);
-    document.getElementById('ind2_wound_area').value       = derived.ind2.wound_area.toFixed(2);
     document.getElementById('ind2_al').value               = derived.ind2.cor_pn_entry.Al.toFixed(2);
     document.getElementById('ind2_alb').value              = derived.ind2.al_biased.toFixed(2);
   }
@@ -1274,6 +1275,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('ind2_h_total').value          = Number(derived.ind2.h_total * 1000000).toFixed(3);  // display uH
   document.getElementById('ind2_h_eff').value            = Number(derived.ind2.h_eff * 1000000).toFixed(3);    // display uH
   document.getElementById('ind2_h_effb').value           = Number(derived.ind2.h_biased * 1000000).toFixed(3); // display uH
+  document.getElementById('ind2_wound_area').value       = derived.ind2.wound_area.toFixed(2);
   
   document.getElementById('oc_mfg').value                = derived.out_cap_entry.mfg;
   document.getElementById('oc_tech').value               = derived.out_cap_entry.tech;
@@ -1657,7 +1659,10 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'wire_strand_dia_in'    + '=' + derived.wire_strand_dia_in.toFixed(6) + '\n';
   outStr += 'wire_dia'              + '=' + derived.wire_entry.dia_mm.toFixed(5) + '\n';
   outStr += 'wire_dia_in'           + '=' + derived.wire_dia_in.toFixed(6) + '\n';
-  outStr += 'wire_i'                + '=' + derived.wire_i.toFixed(2) + '\n';
+  outStr += 'wire_i_sw'             + '=' + derived.wire_i_sw.toFixed(2) + '\n';
+  outStr += 'wire_i_out'            + '=' + derived.wire_i_out.toFixed(2) + '\n';
+  outStr += 'wire_r_sw'             + '=' + Number(derived.wire_r_sw * 1e3).toFixed(5) + '\n';
+  outStr += 'wire_r_out'            + '=' + Number(derived.wire_r_out * 1e3).toFixed(5) + '\n';
   outStr += 'bb_cu_recommend'       + '=' + derived.bb_cu_recommend.toFixed(4) + '\n';
   outStr += 'bb_cu_recommend_in'    + '=' + derived.bb_cu_recommend_in.toFixed(4) + '\n';
   outStr += 'bb_cu_thickness_in'    + '=' + derived.bb_cu_thickness_in.toFixed(4) + '\n';
