@@ -1159,6 +1159,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('fet_mfg').value               = derived.fet_entry.mfg;
   document.getElementById('fet_tech').value              = derived.fet_entry.tech;
   document.getElementById('fet_pkg').value               = derived.fet_entry.footprint;
+  document.getElementById('fet_nhb').value               = derived.fet_entry.n_hb;
   document.getElementById('fet_max_v').value             = derived.fet_entry.v_max;
   document.getElementById('fet_max_i').value             = derived.fet_entry.i_max;
   document.getElementById('fet_max_i_hot').value         = derived.fet_entry.i_max_hot;
@@ -1176,6 +1177,9 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('c_iss').value                 = derived.fet_entry.c_iss;
   document.getElementById('c_oss').value                 = derived.fet_entry.c_oss;
   document.getElementById('c_rss').value                 = derived.fet_entry.c_rss;
+  document.getElementById('e_on').value                  = derived.fet_entry.e_on;
+  document.getElementById('e_off').value                 = derived.fet_entry.e_off;
+  document.getElementById('v_swe').value                 = derived.fet_entry.v_swe;
 
   document.getElementById('dcl_mfg').value               = derived.dcl_cap_entry.mfg;
   document.getElementById('dcl_tech').value              = derived.dcl_cap_entry.tech;
@@ -1187,7 +1191,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('dcl_th_cc').value             = derived.dcl_cap_entry.th_cc;
   document.getElementById('dcl_th_ca').value             = derived.dcl_cap_entry.th_ca;
   
-  document.getElementById('t_dead').value                = derived.t_dead;
+  document.getElementById('t_dead').value                = Number(derived.t_dead).toFixed(3);
   document.getElementById('fet_max_i_actual').value      = Number(derived.fet_i_max_actual).toFixed(3);
   
   document.getElementById('i_sat_hr').value              = derived.lcl.i_sat_hr.toFixed(2);
@@ -1293,6 +1297,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('th_prgext').value             = derived.th_prgext.toFixed(3);
   document.getElementById('th_prgint').value             = derived.th_prgint.toFixed(3);
   document.getElementById('th_pfi').value                = derived.th_pfi.toFixed(3);
+  document.getElementById('th_pfsw').value               = derived.th_pfsw.toFixed(3);
   document.getElementById('th_t_fet_junction').value     = derived.th_t_fet_junction.toFixed(2);
   document.getElementById('th_p_ind1').value             = derived.ind1.power.toFixed(3);
   document.getElementById('th_t_ind1_core').value        = Number(derived.ind1.t_core).toFixed(3);
@@ -1699,6 +1704,7 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'fet_mfg'               + '=' + derived.fet_entry.mfg + '\n';
   outStr += 'fet_tech'              + '=' + derived.fet_entry.tech + '\n';
   outStr += 'fet_pkg'               + '=' + derived.fet_entry.footprint + '\n';
+  outStr += 'fet_nhb'               + '=' + derived.fet_entry.n_hb + '\n';
   outStr += 'fet_max_v'             + '=' + derived.fet_entry.v_max + '\n';
   outStr += 'fet_max_i'             + '=' + derived.fet_entry.i_max + '\n';
   outStr += 'fet_max_i_hot'         + '=' + derived.fet_entry.i_max_hot + '\n';
@@ -1713,6 +1719,12 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'r_g_int'               + '=' + derived.fet_entry.r_g_int + '\n';
   outStr += 'v_g_on'                + '=' + derived.fet_entry.v_g_on + '\n';
   outStr += 'v_g_off'               + '=' + derived.fet_entry.v_g_off + '\n';
+  outStr += 'c_iss'                 + '=' + derived.fet_entry.c_iss + '\n';
+  outStr += 'c_oss'                 + '=' + derived.fet_entry.c_oss + '\n';
+  outStr += 'c_rss'                 + '=' + derived.fet_entry.c_rss + '\n';
+  outStr += 'e_on'                  + '=' + derived.fet_entry.e_on + '\n';
+  outStr += 'e_off'                 + '=' + derived.fet_entry.e_off + '\n';
+  outStr += 'v_swe'                 + '=' + derived.fet_entry.v_swe + '\n';
 
   outStr += 'dcl_mfg'               + '=' + derived.dcl_cap_entry.mfg + '\n';
   outStr += 'dcl_tech'              + '=' + derived.dcl_cap_entry.tech + '\n';

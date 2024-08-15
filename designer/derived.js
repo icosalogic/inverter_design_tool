@@ -44,6 +44,7 @@ icosalogic.inv_design.DerivedInd = function() {
 // A list of the available thicknesses of copper foil and sheet, for constructing bus bars
 // Treat these as static, not instance based
 icosalogic.inv_design.Derived.cu_thickness_opt_in = [               // in inches, convert to mm at run time
+  0.003, 0.005,  0.008,
   0.010, 0.0162, 0.020, 0.025, 0.027, 0.032, 0.040, 0.043, 0.050,
   0.062, 0.0625, 0.080, 0.093, 0.125, 0.156, 0.187, 0.250
 ];
@@ -250,7 +251,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var last = 0.001;
       var L = 0.1;
       var n = 1;
-      for ( ; n < 100; n++) {
+      for ( ; n < 10000; n++) {
         core_len = n * wire_dia;
         last = L;
         L = (n * n * cfgInd.r * cfgInd.r) / (9 * cfgInd.r + 10 * core_len);  // in uH
@@ -277,6 +278,10 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.h_total      = this.h_eff / cfgInd.count;
       this.h_totalb     = this.h_total;
       
+      // TODO: Calculate DC resistance appropriately for wire or bus bar.
+      // TODO: Use Dowell's equation to calculate Rac/Rdc, then determine
+      //       power dissipation from AC losses
+      
       // Calculate DC resistance and power dissipation
       var len_leads_mm  = 25;
       var wire_len_mm   = cfgInd.r * 2 * Math.PI * this.turns + len_leads_mm * 2;
@@ -284,6 +289,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.power        = amps_per_ind * amps_per_ind * this.r_eff;
       
       // Calculate surface area, temperature rise and inductor temp
+      // TODO: Calculate wound area differently for P2P wiring vs busbar/flat wound inductor
       var outer_radius  = cfgInd.r + wire_dia / 2;
       var outer_circum  = outer_radius * 2 * Math.PI;
       var outer_area    = outer_circum * this.len;
@@ -297,7 +303,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var end_area      = (outer_radius * outer_radius - inner_radius * inner_radius) * Math.PI;
       this.wound_area   = (outer_area + inner_area + end_area * 2) / 100;
       
-      this.t_core       = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);
+      this.t_core       = cfg.t_ambient; // + Math.pow(this.power * 1000 / this.wound_area, 0.833);
       this.t_status     = this.t_core > 155.0 ? 'red' : 'green';
       
       console.log('ind [air]: n=' + n + ' len=' + core_len + ' L=' + Number(L * 1e6).toFixed(3) + ' uH');
@@ -455,6 +461,7 @@ icosalogic.inv_design.Derived.prototype = {
   th_prgext:                1.0,
   th_prgint:                1.0,
   th_pfi:                   1.0,
+  th_pfsw:                  1.0,
   th_p_dcl:                 1.0,
   th_p_oc:                  1.0,
   th_t_dcl_core:            25.0,
@@ -519,9 +526,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.i_in_nom = this.i_in_line_nom * cfg.out_lines;
     this.i_in_max = this.i_in_line_max * cfg.out_lines;
     
-    var dead_on  = this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on;
-    var dead_off = this.fet_entry.t_d_on  + this.fet_entry.t_rise - this.fet_entry.t_d_off;
-    this.t_dead = Math.max(dead_on, dead_off);
+    this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on, 0);
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
     this.sw_freq_omega         = 2 * Math.PI * this.sw_freq_eff;
@@ -732,16 +737,18 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_prgext              = fe.r_g_ext * (on_factor + off_factor) / 2;
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
     this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle
+    this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff / 1e6 *
+                                  (this.v_pack_max / this.fet_entry.v_swe);
     this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
     this.th_t_dcl_core          = cfg.t_ambient + this.th_p_dcl * (eff_th_cc_dcl + this.dcl_cap_entry.th_ca);
-    var fet_power               = this.th_prgint + this.th_pfi;
+    var fet_power               = this.th_prgint + this.th_pfi + this.th_pfsw;
     this.th_t_fet_junction      = cfg.t_ambient + fet_power * (fe.r_th_jc + cfg.fet_r_th_ca);
     this.th_p_oc                = i_rms_per_cap_oc * i_rms_per_cap_oc * this.out_cap_entry.esr;
     this.th_t_oc_core           = cfg.t_ambient + this.th_p_oc * (eff_th_cc_oc + this.out_cap_entry.th_ca);
     var ind2_power              = this.lcl.filter_type == 'LCL' ? this.ind2.power * cfg.ind2.count : 0.0;
     this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + 
                                   (this.th_pgsw + 
-                                  (this.th_prgint + this.th_prgext + this.th_pfi) * cfg.fet_count + 
+                                  (this.th_prgext + fet_power) * cfg.fet_count * this.fet_entry.n_hb + 
                                   this.th_p_oc * cfg.oc_count +
                                   this.ind1.power * cfg.ind1.count + ind2_power) * cfg.out_lines;
     this.th_calc_eff            = 100.0 - this.th_total_loss * 100 / this.out_watts;

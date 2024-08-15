@@ -11,6 +11,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'CAS300M17BM2',
   tech:      'SiC',
   footprint: 'Module_61x106mm',
+  n_hb:      1,
   v_max:     1700.0,
   i_max:     325.0,
   i_max_hot: 225.0,
@@ -25,9 +26,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   3.7,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     20000.0,                       // in pF
+  c_iss:     20000.0,                   // pF
   c_oss:     2500.0,
   c_rss:     80.0,
+  e_on:      13000.0,                   // uJ
+  e_off:     10000.0,
+  v_swe:     900,                       // e_on/off voltage
 },
 
 {
@@ -35,6 +39,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'CAS120M12BM2',
   tech:      'SiC',
   footprint: 'Module_61x106mm',
+  n_hb:      1,
   v_max:     1200.0,
   i_max:     200.0,
   i_max_hot: 144.0,
@@ -49,9 +54,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.8,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     6470.0,                       // in pF
+  c_iss:     6470.0,                    // pF
   c_oss:     980.0,
   c_rss:     43.8,
+  e_on:      3000.0,                    // uJ
+  e_off:     3400.0,
+  v_swe:     600,                       // e_on/off voltage
 },
 
 {
@@ -59,6 +67,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC017SMA120B',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     113.0,
   i_max_hot: 80.0,
@@ -73,9 +82,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   0.71,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     5280.0,                       // in pF
+  c_iss:     5280.0,                       // pF
   c_oss:     265.0,
   c_rss:     12.0,
+  e_on:      1677.0,                       // uJ
+  e_off:     395.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -83,6 +95,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC025SMA120B',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     103.0,
   i_max_hot: 73.0,
@@ -97,9 +110,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   0.88,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     3020.0,                       // in pF
+  c_iss:     3020.0,                       // pF
   c_oss:     270.0,
   c_rss:     25.0,
+  e_on:      850.0,                        // uJ
+  e_off:     100.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -107,6 +123,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC040SMA120B',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     66.0,
   i_max_hot: 46.0,
@@ -121,9 +138,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.2,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     1990.0,                       // in pF
+  c_iss:     1990.0,                       // pF
   c_oss:     156.0,
   c_rss:     17.0,
+  e_on:      560.0,                        // uJ
+  e_off:     82.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -131,6 +151,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC080SMA120B',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     37.0,
   i_max_hot: 26.0,
@@ -145,9 +166,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.9,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     838.0,                       // in pF
+  c_iss:     838.0,                        // pF
   c_oss:     84.0,
   c_rss:     9.0,
+  e_on:      319.0,                        // uJ
+  e_off:     52.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -155,6 +179,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC025SMA120J',
   tech:      'SiC',
   footprint: 'SOT-227',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     103.0,
   i_max_hot: 73.0,
@@ -169,9 +194,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   0.88,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     3020.0,                       // in pF
+  c_iss:     3020.0,                       // pF
   c_oss:     270.0,
   c_rss:     25.0,
+  e_on:      1040.0,                       // uJ
+  e_off:     670.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -179,6 +207,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'MSC130SM120JCU3',
   tech:      'SiC',
   footprint: 'SOT-227',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     173.0,
   i_max_hot: 138.0,
@@ -193,9 +222,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   2.94,
   v_g_on:    20.0,
   v_g_off:   -5.0,
-  c_iss:     6040.0,                       // in pF
+  c_iss:     6040.0,                       // pF
   c_oss:     540.0,
   c_rss:     50.0,
+  e_on:      1980.0,                       // uJ
+  e_off:     1300.0,
+  v_swe:     600,                          // e_on/off voltage
 },
 
 {
@@ -203,13 +235,14 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R007M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     225.0,
   i_max_hot: 168.0,
   r_ds_on:   0.0099,
   qg:        289,
   t_d_on:    55,
-  t_rise:    65,
+  t_rise:    75,
   t_d_off:   85,
   t_fall:    44,
   r_th_jc:   0.20,
@@ -217,9 +250,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.8,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     9170.0,                       // in pF
+  c_iss:     9170.0,                       // pF
   c_oss:     420.0,
   c_rss:     61.0,
+  e_on:      3470.0,                       // uJ
+  e_off:     1320.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -227,6 +263,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R014M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     127.0,
   i_max_hot: 89.3,
@@ -241,9 +278,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   3.7,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     4580.0,                       // in pF
+  c_iss:     4580.0,                       // pF
   c_oss:     211.0,
   c_rss:     30.0,
+  e_on:      1640.0,                       // uJ
+  e_off:     510.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -251,6 +291,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R020M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     98.0,
   i_max_hot: 71.0,
@@ -265,9 +306,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.8,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     3460.0,                       // in pF
+  c_iss:     3460.0,                       // pF
   c_oss:     159.0,
   c_rss:     23.0,
+  e_on:      1273.0,                       // uJ
+  e_off:     444.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -275,6 +319,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R030M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     56.0,
   i_max_hot: 45.0,
@@ -289,9 +334,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   3.0,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     2120.0,                       // in pF
+  c_iss:     2120.0,                       // pF
   c_oss:     116.0,
   c_rss:     13.0,
+  e_on:      487.0,                        // uJ
+  e_off:     95.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -299,6 +347,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R040M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     55.0,
   i_max_hot: 39.0,
@@ -313,9 +362,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   2.5,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     1620.0,                       // in pF
+  c_iss:     1620.0,                       // pF
   c_oss:     75.0,
   c_rss:     11.0,
+  e_on:      305.0,                        // uJ
+  e_off:     53.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -323,6 +375,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R060M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     36.0,
   i_max_hot: 26.0,
@@ -337,9 +390,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   6.0,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     1060.0,                       // in pF
+  c_iss:     1060.0,                       // pF
   c_oss:     58.0,
   c_rss:     6.5,
+  e_on:      241.0,                        // uJ
+  e_off:     33.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -347,6 +403,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'IMW120R090M1H',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     26.0,
   i_max_hot: 18.0,
@@ -361,9 +418,96 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   9.0,
   v_g_on:    18.0,
   v_g_off:   0.0,
-  c_iss:     707.0,                       // in pF
+  c_iss:     707.0,                        // pF
   c_oss:     39.0,
   c_rss:     4.0,
+  e_on:      161.0,                        // uJ
+  e_off:     19.0,
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'IMZA120R007M1H',
+  tech:      'SiC',
+  footprint: 'TO-247-4',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     225.0,
+  i_max_hot: 168.0,
+  r_ds_on:   0.010,
+  qg:        289,
+  t_d_on:    92,
+  t_rise:    41,
+  t_d_off:   131,
+  t_fall:    39,
+  r_th_jc:   0.20,
+  r_g_ext:   1.0,
+  r_g_int:   1.8,
+  v_g_on:    18.0,
+  v_g_off:   0.0,
+  c_iss:     9170.0,                       // pF
+  c_oss:     420.0,
+  c_rss:     61.0,
+  e_on:      2040.0,                       // uJ
+  e_off:     440.0,
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'IMZA120R014M1H',
+  tech:      'SiC',
+  footprint: 'TO-247-4',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     127.0,
+  i_max_hot: 89.3,
+  r_ds_on:   0.027,
+  qg:        145,
+  t_d_on:    48,
+  t_rise:    21,
+  t_d_off:   60,
+  t_fall:    20,
+  r_th_jc:   0.33,
+  r_g_ext:   1.0,
+  r_g_int:   3.7,
+  v_g_on:    18.0,
+  v_g_off:   0.0,
+  c_iss:     4580.0,                       // pF
+  c_oss:     211.0,
+  c_rss:     30.0,
+  e_on:      900.0,                        // uJ
+  e_off:     170.0,
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'IMZA120R020M1H',
+  tech:      'SiC',
+  footprint: 'TO-247-4',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     98.0,
+  i_max_hot: 71.0,
+  r_ds_on:   0.036,
+  qg:        109,
+  t_d_on:    34.0,
+  t_rise:    15.5,
+  t_d_off:   46.0,
+  t_fall:    14.8,
+  r_th_jc:   0.40,
+  r_g_ext:   1.0,
+  r_g_int:   1.8,
+  v_g_on:    18.0,
+  v_g_off:   0.0,
+  c_iss:     3460.0,                       // pF
+  c_oss:     159.0,
+  c_rss:     23.0,
+  e_on:      722.0,                        // uJ
+  e_off:     145.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -371,6 +515,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'G3R40MT12D',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     63.0,
   i_max_hot: 44.0,
@@ -385,9 +530,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.2,
   v_g_on:    15.0,
   v_g_off:   -5.0,
-  c_iss:     2897.0,                       // in pF
+  c_iss:     2897.0,                       // pF
   c_oss:     88.0,
   c_rss:     7.1,
+  e_on:      505.0,                        // uJ
+  e_off:     97.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -395,6 +543,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'G3R75MT12D',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     36.0,
   i_max_hot: 26.0,
@@ -409,9 +558,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.3,
   v_g_on:    15.0,
   v_g_off:   -5.0,
-  c_iss:     1545.0,                       // in pF
+  c_iss:     1545.0,                       // pF
   c_oss:     47.0,
   c_rss:     3.8,
+  e_on:      217.0,                        // uJ
+  e_off:     52.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -419,6 +571,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'G3R160MT12D',
   tech:      'SiC',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     19.0,
   i_max_hot: 13.0,
@@ -433,9 +586,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.8,
   v_g_on:    15.0,
   v_g_off:   -5.0,
-  c_iss:     724.0,                       // in pF
+  c_iss:     724.0,                        // pF
   c_oss:     22.0,
   c_rss:     1.8,
+  e_on:      80.0,                         // uJ
+  e_off:     17.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -443,6 +599,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'G3R20MT12N',
   tech:      'SiC',
   footprint: 'SOT-227',
+  n_hb:      2,
   v_max:     1200.0,
   i_max:     90.0,
   i_max_hot: 64.0,
@@ -457,9 +614,12 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.3,
   v_g_on:    15.0,
   v_g_off:   -5.0,
-  c_iss:     5814.0,                       // in pF
+  c_iss:     5814.0,                       // pF
   c_oss:     176.0,
   c_rss:     14.2,
+  e_on:      492.0,                        // uJ
+  e_off:     201.0,
+  v_swe:     800,                          // e_on/off voltage
 },
 
 {
@@ -467,6 +627,7 @@ icosalogic.inv_design.fet_table = [
   pn:        'TP65H035G4WS',
   tech:      'GaN',
   footprint: 'TO-247-3',
+  n_hb:      2,
   v_max:     650.0,
   i_max:     46.5,
   i_max_hot: 29.5,
@@ -481,8 +642,11 @@ icosalogic.inv_design.fet_table = [
   r_g_int:   1.0,
   v_g_on:    12.0,
   v_g_off:   0.0,
-  c_iss:     1500.0,                       // in pF
+  c_iss:     1500.0,                       // pF
   c_oss:     147.0,
   c_rss:     5.0,
+  e_on:      1.23,                         // not given
+  e_off:     1.23,                         // not given
+  v_swe:     610,                          // e_on/off voltage
 },
 ];

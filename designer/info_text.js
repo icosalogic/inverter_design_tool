@@ -81,7 +81,8 @@ icosalogic.inv_design.info_text = [
                                   'Equal to SA * strands * 1.75e-8, where strand radius SR = strand_dia / 2, and strand area SA = SR<sup>2</sup> * π if SR <= d<sub>skin_out</sub>, or<br>' +
 				  'SA = (SR<sup>2</sup> - (SR - d<sub>skin_out</sub>)<sup>2</sup>) * π if SR > d<sub>skin_out</sub>. (Read only)'},
 {key: 'bb_cu_recommend',    itxt: '<b>d<sub>CU recommend</sub>:</b> Recommended CU layer thickness. Approximately 2 * d<sub>skin_sw</sub>. (Read only)'},
-{key: 'bb_cu_use_recommend',itxt: '<b>use_cu_recommend:</b> Check this box if you would like to use the recommended CU thickness.'},
+{key: 'bb_cu_use_recommend',itxt: '<b>use_cu_recommend:</b> Check this box if you would like to use the recommended CU thickness.<br>' +
+                                  'Otherwise, uncheck the box and enter a value in d<sub>CU actual</sub> below.'},
 {key: 'bb_cu_thickness',    itxt: '<b>d<sub>CU actual</sub>:</b> Enter the CU thickness of each layer used in the bus bar.<br>' +
                                   'This value is set to d<sub>CU recommend</sub> if use_cu_recommend is checked.<br>' +
 				  'If setting manually, choose a value greater than or equal to 2 * d<sub>skin_sw</sub>.'},
@@ -136,6 +137,8 @@ icosalogic.inv_design.info_text = [
 {key: 'fet_mfg',            itxt: '<b>fet_mfg:</b>                 From the datasheet. (Read only)'},
 {key: 'fet_tech',           itxt: '<b>fet_tech:</b>                From the datasheet. (Read only)'},
 {key: 'fet_pkg',            itxt: '<b>fet_pkg:</b>                 From the datasheet. (Read only)'},
+{key: 'fet_nhb',            itxt: '<b>fet_pkg:</b> The number of FETs required to form a half bridge circuit.<br>' +
+                                  'This should be 1 for half bridge modules like CAS300M, or 2 for packages containing a signle FET. (Read only)'},
 {key: 'fet_max_v',          itxt: '<b>V<sub>fet_max</sub>:</b>     From the datasheet. (Read only)'},
 {key: 'fet_max_i',          itxt: '<b>I<sub>fet_max</sub>:</b>     From the datasheet. (Read only)'},
 {key: 'fet_max_i_hot',      itxt: '<b>I<sub>fet_max_hot</sub>:</b> From the datasheet. (Read only)'},
@@ -153,15 +156,16 @@ icosalogic.inv_design.info_text = [
 {key: 'c_iss',              itxt: '<b>C<sub>iss</sub>:</b>         From the datasheet. (Read only)'},
 {key: 'c_oss',              itxt: '<b>C<sub>oss</sub>:</b>         From the datasheet. (Read only)'},
 {key: 'c_rss',              itxt: '<b>C<sub>rss</sub>:</b>         From the datasheet. (Read only)'},
+{key: 'e_on',               itxt: '<b>E<sub>on</sub>:</b>          The energy required to turn the FET on.  From the datasheet. (Read only)'},
+{key: 'e_off',              itxt: '<b>E<sub>off</sub>:</b>         The energy required to turn the FET off.  From the datasheet. (Read only)'},
+{key: 'v_swe',              itxt: '<b>V<sub>swe</sub>:</b>         The voltage at which E<sub>on</sub> and E<sub>off</sub> were measured.  From the datasheet. (Read only)'},
 {key: 't_dead',             itxt: '<b>t<sub>dead</sub>:</b> Minimum dead time.<br>' +
-                                  'Assume dead_on  = t<sub>d(off)</sub> + t<sub>fall</sub> - t<sub>d(on)</sub><br>' +
-				  'and dead_off = t<sub>d(on)</sub>  + t<sub>rise</sub> - t<sub>d(off)</sub>.<br>' +
-				  'Then t<sub>dead</sub> = max(dead_on, dead_off). (Read only)'},
+                                  'Equal to max(t<sub>d(off)</sub> + t<sub>fall</sub> - t<sub>d(on)</sub>, 0). (Read only)'},
 {key: 'fet_max_i_actual',   itxt: '<b>I<sub>fet_max_actual</sub>:</b> Maximum current per FET.<br>' +
                                   'Equal to I<sub>out</sub> * sqrt(2) / fet_count.  ' +
 				  'Status is green if this value is less than I<sub>fet_max_hot</sub>.<br>' +
 				  'This is a very ambitious rating, as FETs are typically limited by implementation-dependent thermal constraints. (Read only)'},
-{key: 'r_th_ca',            itxt: '<b>R<sub>θ_ca</sub>:</b> Heat sink thermal resistance from FET case to ambient air.'},
+{key: 'r_th_ca',            itxt: '<b>R<sub>θ_ca</sub>:</b> Thermal resistance from FET case to ambient air, heat sink, or cool plate.'},
 
 // Gate driver
 {key: 'gd_r_on',            itxt: '<b>R<sub>gd_on</sub>:</b> The internal on resistance of the gate driver.<br>' +
@@ -311,10 +315,12 @@ icosalogic.inv_design.info_text = [
 {key: 'th_prgint',          itxt: '<b>P<sub>rgint</sub>:</b> Power dissipated in the FET due to gate switching.<br>' +
                                   'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
                                   '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
-{key: 'th_pfi',             itxt: '<b>P<sub>pf</sub>:</b> The power dissipated in the FET due to current conduction.<br>' +
+{key: 'th_pfi',             itxt: '<b>P<sub>fi</sub>:</b> The power dissipated in the FET due to conduction losses.<br>' +
                                   'Equal to I<sub>fet_max_actual</sub><sup>2</sup> * R<sub>ds(on)</sub> * 0.5 (assuming 50% duty cycle). (Read only)'},
+{key: 'th_pfsw',            itxt: '<b>P<sub>fsw</sub>:</b> The power dissipated in the FET due to switching losses.<br>' +
+                                  'Equal to (E<sub>on</sub> + E<sub>off</sub>) * 1e-6 * (f<sub>sw</sub> / 2) * (V<sub>pack_max</sub> / V<sub>swe</sub>). (Read only)'},
 {key: 't_fet_junction',     itxt: '<b>t<sub>fet_junction</sub>:</b> The junction temperature of the FET.<br>' +
-                                  'Equal to t<sub>ambient</sub> + (P<sub>rgint</sub> + P<sub>pf</sub>.) * R<sub>θ_jc</sub>.<br>' +
+                                  'Equal to t<sub>ambient</sub> + (P<sub>rgint</sub> + P<sub>fi</sub> + P<sub>fsw</sub>) * R<sub>θ_jc</sub>.<br>' +
                                   'The limit on the junction temperature may be as high as 175°C. (Read only)'},
 {key: 'th_p_ind',           itxt: '<b>P<sub>ind</sub>:</b> The power dissipated by the inductor.<br>' +
                                   'Calculated using core loss Method 1 from the Magnetics Powder Core catalog version 2020, page 20. (Read only)'},

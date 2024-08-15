@@ -660,6 +660,13 @@
             <td id='info_fet_pkg'>ⓘ</td>
           </tr>
           <tr class='sh_fet sh_fet_pn'>
+            <td><label for='fet_nhb'  >FET Count per Half Bridge</label></td>
+            <td>fet_nhb</td>
+            <td><input id='fet_nhb' type='text' value='x' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_fet_nhb'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
             <td><label for='fet_max_v'  >Voltage</label></td>
             <td>V<sub>fet_max</sub></td>
             <td><input id='fet_max_v'   type='number' value='150' readonly='readonly'></td>
@@ -777,6 +784,27 @@
             <td><input id='c_rss'   type='number' value='20' readonly='readonly'></td>
             <td colspan='4'>pF</td>
             <td id='info_c_rss'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='e_on'  >Energy to Switch On</label></td>
+            <td>E<sub>on</sub></td>
+            <td><input id='e_on'   type='number' value='100' readonly='readonly'></td>
+            <td colspan='4'>uJ</td>
+            <td id='info_e_on'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='e_off'  >Energy to Switch Off</label></td>
+            <td>E<sub>off</sub></td>
+            <td><input id='e_off'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>uJ</td>
+            <td id='info_e_off'>ⓘ</td>
+          </tr>
+          <tr class='sh_fet sh_fet_pn'>
+            <td><label for='v_swe'  >Energy Measurement Voltage</label></td>
+            <td>V<sub>swe</sub></td>
+            <td><input id='v_swe'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>uJ</td>
+            <td id='info_v_swe'>ⓘ</td>
           </tr>
           <tr class='sh_fet'>
             <td><label for='t_dead'  >Dead time</label></td>
@@ -1404,6 +1432,7 @@
               <select id='ind2_type' name='ind2_type' >
                 <option id='ind2_type_ots' value='ots'>Off-the-shelf</option>
                 <option id='ind2_type_custom' value='custom'>Custom</option>
+                <option id='ind2_type_air' value='air'>Air Core</option>
               </select>
             </td>
             <td colspan='4'></td>
@@ -1701,10 +1730,17 @@
           </tr>
           <tr class='sh_thermal'>
             <td><label for='th_pfi'  >FET Current Power</label></td>
-            <td>P<sub>pf</sub></td>
+            <td>P<sub>fi</sub></td>
             <td><input id='th_pfi'   type='number' value='20' readonly='readonly'></td>
             <td colspan='4'>W</td>
             <td id='info_th_pfi'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_pfsw'  >FET Switching Power</label></td>
+            <td>P<sub>fsw</sub></td>
+            <td><input id='th_pfsw'   type='number' value='20' readonly='readonly'></td>
+            <td colspan='4'>W</td>
+            <td id='info_th_pfsw'>ⓘ</td>
           </tr>
           <tr class='sh_thermal'>
             <td><label for='th_t_fet_junction'  >FET Junction Temp</label></td>

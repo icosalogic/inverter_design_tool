@@ -123,7 +123,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
   pn:                  'IHXL1500VZEB3R3M51',
   core_pn:             '0077102A7',
   n:                   25,
-  r:                   2,
+  r:                   12.7,
   count:               1,
   
   setDefaultValues: function(inum) {
@@ -135,7 +135,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.pn                  = 'IHXL1500VZEB3R3M51';
     this.core_pn             = '0077102A7';
     this.n                   = 25;
-    this.r                   = 2;
+    this.r                   = 12.7;
     this.count               = 1;
   },
   
@@ -214,7 +214,7 @@ icosalogic.inv_design.Config.prototype = {
   wire_pn:             '4160900',
   j_cond:              5.0,
   bb_cu_use_recommend: true,
-  bb_cu_thickness:     0.0,
+  bb_cu_thickness:     0.2,
   bb_min_width:        12.7,
   bb_sub_thickness:    1.6256,
   bb_ild_thickness:    0.1016,
@@ -260,7 +260,7 @@ icosalogic.inv_design.Config.prototype = {
     this.wire_pn             = '4160900';
     this.j_cond              = 5.0;
     this.bb_cu_use_recommend = true;
-    this.bb_cu_thickness     = 0.0;
+    this.bb_cu_thickness     = 0.2;
     this.bb_min_width        = 12.7;
     this.bb_sub_thickness    = 1.6256;
     this.bb_ild_thickness    = 0.1016;
@@ -357,6 +357,7 @@ icosalogic.inv_design.Config.prototype = {
     var val = localStorage.getItem('i20.' + this.cfg_name + '.' + itemName);
     if (val != null) {
       this[itemName] = isNumber ? Number(val) : val;
+	    console.log("Config.loadItem: " + itemName + "=" + this[itemName]);
     } else {
       console.log('loadItem: not found, name=' + itemName);
     }
