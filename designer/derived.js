@@ -748,7 +748,7 @@ icosalogic.inv_design.Derived.prototype = {
     var ind2_power              = this.lcl.filter_type == 'LCL' ? this.ind2.power * cfg.ind2.count : 0.0;
     this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + 
                                   (this.th_pgsw + 
-                                  (this.th_prgext + fet_power) * cfg.fet_count * this.fet_entry.n_hb + 
+                                  (this.th_prgext + fet_power) * cfg.fet_count * 2 + 
                                   this.th_p_oc * cfg.oc_count +
                                   this.ind1.power * cfg.ind1.count + ind2_power) * cfg.out_lines;
     this.th_calc_eff            = 100.0 - this.th_total_loss * 100 / this.out_watts;

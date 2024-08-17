@@ -13,7 +13,7 @@
  * x  4. Better power dissipation calculation for FET, including heat sink
  * x  5. Auto switch from LCL to LC output filter
  *    6. Generate Spice file
- *    7. Estimate inverter efficiency
+ * x  7. Estimate inverter efficiency
  *    8. Auto select components (DCL, FET, OF)
  *    9. Separate tables for DC link caps and output filter caps
  *   10. Fix power dissipation calculation for inductors
