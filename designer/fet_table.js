@@ -36,6 +36,34 @@ icosalogic.inv_design.fet_table = [
 
 {
   mfg:       'Cree / Wolfspeed',
+  pn:        'CAS300M12BM2',
+  tech:      'SiC',
+  footprint: 'Module_61x106mm',
+  n_hb:      1,
+  v_max:     1200.0,
+  i_max:     498.0,
+  i_max_hot: 345.0,
+  r_ds_on:   0.0072,
+  qg:        1025,
+  t_d_on:    75,
+  t_rise:    25,
+  t_d_off:   197,
+  t_fall:    60,
+  r_th_jc:   0.075,                     // *C / W
+  r_g_ext:   2.0,
+  r_g_int:   3.0,
+  v_g_on:    20.0,
+  v_g_off:   -5.0,
+  c_iss:     19500.0,                   // pF
+  c_oss:     2540.0,
+  c_rss:     113.0,
+  e_on:      3400.0,                   // uJ
+  e_off:     3500.0,
+  v_swe:     600,                       // e_on/off voltage
+},
+
+{
+  mfg:       'Cree / Wolfspeed',
   pn:        'CAS120M12BM2',
   tech:      'SiC',
   footprint: 'Module_61x106mm',
