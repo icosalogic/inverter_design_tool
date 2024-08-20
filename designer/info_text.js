@@ -340,7 +340,9 @@ icosalogic.inv_design.info_text = [
                                   'Effective R<sub>oc_θ_cc</sub> above 10 kHz is R<sub>oc_θ_cc</sub> * (f<sub>sw</sub> / 1000 - 10) / 100.<br>' +
                                   'This value should be less than 70°C. (Read only)'},
 {key: 'th_total_loss',      itxt: '<b>P<sub>total_loss</sub>:</b> The total power dissipated by the various components listed above.<br>' +
-                                  'Each component loss is multiplied by the number of instances of that component. (Read only)'},
+                                  'The power loss for each component is multiplied by the number of instances of that component.<br>' +
+				  'Note that the FET count is doubled, since there are 2 FETs in a half bridge configuration.<br>' +
+				  'Note also that, except for the DC link cap, all component counts are multiplied by the number of output lines. (Read only)'},
 {key: 'th_calc_eff',        itxt: '<b>η<sub>calc</sub>:</b> The calculated efficiency of the inverter.<br>' +
-                                  'Equal to 100 - P<sub>total_loss</sub> * 100 / P<sub>out</sub>. (Read only)'},
+                                  'Equal to 100 - P<sub>out</sub> / (P<sub>out</sub> + P<sub>total_loss</sub>). (Read only)'},
 ];

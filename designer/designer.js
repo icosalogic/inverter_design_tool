@@ -757,6 +757,8 @@ icosalogic.inv_design.showHideInductor = function() {
       oa.setTableRowDisplay('sh_ind2_cust', 'none');
       oa.setTableRowDisplay('sh_ind2_air',  'table-row');
     }
+    
+    // show/hide the nav panel link for ind2
   }
 };
 
@@ -789,12 +791,18 @@ icosalogic.inv_design.showHideFilter = function() {
   
   console.log('icosalogic.inv_design.showHideFilter: enter of_type=' + derived.lcl.filter_type);
   
+  var el_nav = document.getElementById('xnav_ofl2');
+  
   if (derived.lcl.filter_type == 'LCL') {
     oa.setTableRowDisplay('sh_of_lcl', 'table-row');
     oa.setTableRowDisplay('sh_of_lc',  'none');
+    
+    el_nav.style.display = 'block';
   } else {
     oa.setTableRowDisplay('sh_of_lcl', 'none');
     oa.setTableRowDisplay('sh_of_lc',  'table-row');
+    
+    el_nav.style.display = 'none';
   }
   
   oa.showHideInductor();

@@ -22,6 +22,20 @@ pre {
   text-align: left;
 }
 
+.navpanel {
+  width: 150px;
+  position: fixed;
+  background: lightgrey;
+  border: thin solid;
+}
+
+.navpanel a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  font-size: larger;
+}
+
 .oa_text {
   font-size: large;
   margin: 0px 200px 50px 200px;
