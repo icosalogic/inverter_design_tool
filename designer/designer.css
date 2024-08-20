@@ -15,6 +15,10 @@ h3 {
 input  {
   width: 11em;
 }
+input:read-only {
+  background-color: lightgrey;
+  border: thin solid;
+}
 select {
   width: 11em;
 }
