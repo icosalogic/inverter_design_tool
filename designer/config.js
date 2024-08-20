@@ -139,6 +139,22 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.count               = 1;
   },
   
+  /*
+   * Copy values from the given config into the current config.
+   */
+  copy: function(cfg) {
+	  console.log("ConfigInd.copy: enter " + cfg.inum);
+    
+    this.inum                = cfg.inum;
+    this.ind_type            = cfg.ind_type;
+    this.target              = cfg.target;
+    this.pn                  = cfg.ph;
+    this.core_pn             = cfg.core_pn;
+    this.n                   = cfg.n;
+    this.r                   = cfg.r;
+    this.count               = cfg.count;
+  },
+  
   load: function(parent, inum) {
   	console.log("ConfigInd.load: enter " + inum);
   
@@ -292,6 +308,52 @@ icosalogic.inv_design.Config.prototype = {
   },
 
   /*
+   * Copy values from the given config into the current config.
+   */
+  copy: function(cfg) {
+	  console.log("Config.copy: enter: from=" + cfg.cfg_name + ' to=' + this.cfg_name);
+  
+    this.out_freq            = cfg.out_freq;
+    this.sw_freq             = cfg.sw_freq;
+    this.out_amps            = cfg.out_amps;
+    this.out_voltage         = cfg.out_voltage;
+    this.out_lines           = cfg.out_lines;
+    this.bus_type            = cfg.bus_type;
+    this.wire_pn             = cfg.wire_pn;
+    this.j_cond              = cfg.j_cond;
+    this.bb_cu_use_recommend = cfg.bb_cu_use_recommend;
+    this.bb_cu_thickness     = cfg.bb_cu_thickness;
+    this.bb_min_width        = cfg.bb_min_width;
+    this.bb_sub_thickness    = cfg.bb_sub_thickness;
+    this.bb_ild_thickness    = cfg.bb_ild_thickness;
+    this.dcl_cap_pn          = cfg.dcl_cap_pn;
+    this.dcl_dc_rms_factor   = cfg.dcl_dc_rms_factor;
+    this.dcl_v_ripple        = cfg.dcl_v_ripple;
+    this.dcl_count           = cfg.dcl_count;
+    this.fet_count           = cfg.fet_count;
+    this.fet_pn              = cfg.fet_pn;
+    this.fet_r_th_ca         = cfg.fet_r_th_ca;
+    this.oc_target           = cfg.oc_target;
+    this.oc_pn               = cfg.oc_pn;
+    this.oc_count            = cfg.oc_count;
+    this.est_eff             = cfg.est_eff;
+    this.v_cell_min          = cfg.v_cell_min;
+    this.v_cell_nom          = cfg.v_cell_nom;
+    this.v_cell_max          = cfg.v_cell_max;
+    this.bat_series          = cfg.bat_series;
+    this.gd_r_on             = cfg.gd_r_on;
+    this.gd_r_off            = cfg.gd_r_off;
+    this.gd_bs_vf            = cfg.gd_bs_vf;
+    this.gd_bs_cf            = cfg.gd_bs_cf;
+    this.t_ambient           = cfg.t_ambient;
+    this.pct_sat_hr          = cfg.pct_sat_hr;
+    this.l_grid_max          = cfg.l_grid_max;
+    
+    this.ind1.copy(cfg.ind1);
+    this.ind2.copy(cfg.ind2);
+  },
+
+  /*
    * Load the values for the current configuration.
    */
   load: function() {
@@ -357,7 +419,7 @@ icosalogic.inv_design.Config.prototype = {
     var val = localStorage.getItem('i20.' + this.cfg_name + '.' + itemName);
     if (val != null) {
       this[itemName] = isNumber ? Number(val) : val;
-	    console.log("Config.loadItem: " + itemName + "=" + this[itemName]);
+	    // console.log("loadItem: " + itemName + "=" + this[itemName]);
     } else {
       console.log('loadItem: not found, name=' + itemName);
     }
@@ -453,6 +515,8 @@ icosalogic.inv_design.Config.prototype = {
     localStorage.setItem('i20_configs', oa.configs_raw);
   
     var cfgNew = new oa.Config(newConfigName);
+    cfgNew.ind1 = new oa.ConfigInd(1);
+    cfgNew.ind2 = new oa.ConfigInd(2);
     cfgNew.setDefaultValues();
     cfgNew.save();
   

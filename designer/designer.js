@@ -560,6 +560,9 @@ icosalogic.inv_design.addHandlers = function() {
     } else if (button.id == 'cfg_create') {
       console.log('adding onclick handler to ' + button.id);
       button.onclick = icosalogic.inv_design.createConfig;
+    } else if (button.id == 'cfg_copy') {
+      console.log('adding onclick handler to ' + button.id);
+      button.onclick = icosalogic.inv_design.copyConfig;
     } else if (button.id == 'cfg_delete') {
       console.log('adding onclick handler to ' + button.id);
       button.onclick = icosalogic.inv_design.deleteConfig;
@@ -1021,6 +1024,51 @@ icosalogic.inv_design.createConfig = function() {
 
 
 /*
+ * Handle the click to create a new config by copying from an existing config.
+ * 
+ * Retrieve the name from the input element.
+ * Attempt to create the config with that name.
+ * If unsuccessful, return.
+ * Otherwise, clear the name from the new config text box.
+ * Copy the config values from the old config to the new config.
+ * Refresh the UI from local storage to add the name to the config select element.
+ * Set new config as currently selected config.
+ */
+icosalogic.inv_design.copyConfig = function() {
+	console.log("icosalogic.inv_design.copyConfig: enter");
+
+  var oa = icosalogic.inv_design;
+  var cfgOld = oa.config;
+
+  var el = document.getElementById('new_cfg_name');
+  var newConfigName = el.value;
+  
+  var cfgNew = oa.Config.prototype.create(newConfigName);
+  if (cfgNew == null) {
+    window.alert('Error: error creating the config=' + newConfigName);
+    return;
+  }
+  cfgNew.copy(cfgOld);
+  cfgNew.save();
+  
+  el.value = '';
+  
+  el = document.getElementById('configs');
+  var opt = document.createElement('option');
+  opt.id = 'cfg_' + newConfigName;
+  opt.name = opt.id;
+  opt.value = newConfigName;
+  opt.text  = newConfigName;
+  // el.appendChild(opt);
+  el.add(opt);
+  
+  oa.setConfigActive(cfgNew);
+
+  oa.showHideBus();
+};
+
+
+/*
  * Handle the click to delete a config.
  * 
  * Delete the current config.
@@ -1050,7 +1098,7 @@ icosalogic.inv_design.deleteConfig = function() {
   
   var nextCfgName = oa.configs[0];
   console.log('deleteConfig: next config is ' + nextCfgName);
-  var cfg = oa.Configs.find(nextCfgName);
+  var cfg = oa.Config.find(nextCfgName);
   
   oa.setConfigActive(cfg);
 };
