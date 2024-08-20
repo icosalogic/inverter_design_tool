@@ -751,7 +751,7 @@ icosalogic.inv_design.Derived.prototype = {
                                   (this.th_prgext + fet_power) * cfg.fet_count * 2 + 
                                   this.th_p_oc * cfg.oc_count +
                                   this.ind1.power * cfg.ind1.count + ind2_power) * cfg.out_lines;
-    this.th_calc_eff            = 100.0 - this.th_total_loss * 100 / this.out_watts;
+    this.th_calc_eff            = 100.0 * this.out_watts / (this.th_total_loss + this.out_watts);
     
     this.th_t_dcl_status          = this.th_t_dcl_core >  70.0 ? 'red' : 'green';
     this.th_t_fet_junction_status = this.th_t_fet_junction > 175.0 ? 'red' : 'green';
