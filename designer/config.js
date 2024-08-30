@@ -9,15 +9,16 @@
  * Configs are stored in the window.localStorage object.
  * 
  * To add a value to the config, update the following places:
- * 1. Define element in index.html
- * 2. The property definition in the prototype
- * 3. In setDefaultValues()
- * 4. In load()
- * 5. In save()
- * 6. In dump()
- * 7. In readAllInputs() [designer.js]
- * 8. In displayConfig() [designer.js]
- * 9. In printConfig()   [designer.js]
+ *  1. Define element in index.html
+ *  2. The property definition in the prototype
+ *  3. In setDefaultValues()
+ *  4. In copy()
+ *  5. In load()
+ *  6. In save()
+ *  7. In dump()
+ *  8. In readAllInputs() [designer.js]
+ *  9. In displayConfig() [designer.js]
+ * 10. In printConfig()   [designer.js]
  * 
  * After adding new values, you generally need to reset the app using the purge button in the UI.
  */
@@ -221,6 +222,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
 
 icosalogic.inv_design.Config.prototype = {
   cfg_name:            '',
+  ctrl_type:           'cbc',
   out_freq:            60,
   sw_freq:             12000,
   out_amps:            10.0,
@@ -267,6 +269,7 @@ icosalogic.inv_design.Config.prototype = {
   setDefaultValues: function() {
 	  console.log("Config.setDefaultValues: enter");
   
+    this.ctrl_type           = 'cbc';
     this.out_freq            = 60;
     this.sw_freq             = 12000;
     this.out_amps            = 10;
@@ -313,6 +316,7 @@ icosalogic.inv_design.Config.prototype = {
   copy: function(cfg) {
 	  console.log("Config.copy: enter: from=" + cfg.cfg_name + ' to=' + this.cfg_name);
   
+    this.ctrl_type           = cfg.ctrl_type;
     this.out_freq            = cfg.out_freq;
     this.sw_freq             = cfg.sw_freq;
     this.out_amps            = cfg.out_amps;
@@ -361,6 +365,7 @@ icosalogic.inv_design.Config.prototype = {
   
     var prefix = 'i20.' + this.cfg_name + '.';
   
+    this.loadItem('ctrl_type'          , false);
     this.loadItem('out_freq'           , true);
     this.loadItem('sw_freq'            , true);
     this.loadItem('out_amps'           , true);
@@ -400,6 +405,11 @@ icosalogic.inv_design.Config.prototype = {
     this.ind1.load(this, 1);
     this.ind2.load(this, 2);
     
+    // set default for new field
+    if (this.ctrl_type == null) {
+      this.ctrl_type = 'cbc';
+    }
+    
     var ur_before = this.bb_cu_use_recommend;
     this.bb_cu_use_recommend = ur_before == 'false' ? false : true;
     // console.log('load: before=' + ur_before + ' bb_cu_use_recommed=' + this.bb_cu_use_recommend);
@@ -434,6 +444,7 @@ icosalogic.inv_design.Config.prototype = {
   
     var prefix = 'i20.' + this.cfg_name + '.';
   
+    localStorage.setItem(prefix + 'ctrl_type', this.ctrl_type);
     localStorage.setItem(prefix + 'out_freq', this.out_freq);
     localStorage.setItem(prefix + 'sw_freq', this.sw_freq);
     localStorage.setItem(prefix + 'out_amps', this.out_amps);
@@ -580,6 +591,7 @@ icosalogic.inv_design.Config.prototype = {
     console.log('Config.dump: enter');
     
     console.log('  cfg_name='            + this.cfg_name);
+    console.log('  ctrl_type='           + this.ctrl_type);
     console.log('  out_freq='            + this.out_freq);
     console.log('  sw_freq='             + this.sw_freq);
     console.log('  out_amps='            + this.out_amps);

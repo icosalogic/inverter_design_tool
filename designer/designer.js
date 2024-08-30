@@ -1155,6 +1155,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('out_freq_omega').value        = derived.out_freq_omega.toFixed(2);
   document.getElementById('skin_depth_out').value        = derived.skin_depth_out.toFixed(4);
   document.getElementById('skin_depth_out_in').value     = derived.skin_depth_out_in.toFixed(4);
+  document.getElementById('sw_freq_eff').value           = Number(derived.sw_freq_eff).toFixed(0);
   document.getElementById('sw_omega').value              = derived.sw_freq_omega.toFixed(0);
   document.getElementById('sw_cycle_us').value           = Number(derived.sw_cycle_ns / 1000).toFixed(3);
   document.getElementById('out_voltage_pp').value        = derived.out_voltage_pp.toFixed(2);
@@ -1443,6 +1444,7 @@ icosalogic.inv_design.displayConfig = function()
   var oa = icosalogic.inv_design;
   var cfg = oa.config;
   
+  document.getElementById('ctrl_type').value             = cfg.ctrl_type;
   document.getElementById('out_freq').value              = cfg.out_freq;
   document.getElementById('sw_freq').value               = cfg.sw_freq;
   document.getElementById('out_amps').value              = cfg.out_amps;
@@ -1510,6 +1512,7 @@ icosalogic.inv_design.readAllInputs = function()
   var oa = icosalogic.inv_design;
   var cfg = oa.config;
   
+  cfg.ctrl_type           = document.getElementById('ctrl_type').value;
   cfg.out_freq            = document.getElementById('out_freq').value;
   cfg.sw_freq             = document.getElementById('sw_freq').value;
   cfg.out_amps            = parseFloat(document.getElementById('out_amps').value);
@@ -1801,40 +1804,44 @@ icosalogic.inv_design.printDerived = function() {
   
   // oa.displaySuggestion();
   
-  outStr += 'ind1_lii'              + '=' + Number(derived.ind1.lii).toFixed(3) + '\n';
-  outStr += 'ind1_target_ap'        + '=' + Number(derived.ind1.target_ap).toFixed(5) + '\n';
-  outStr += 'ind1_mfg'              + '=' + derived.ind1.cor_pn_entry.mfg + '\n';
-  outStr += 'ind1_mat'              + '=' + derived.ind1.cor_pn_entry.mat + '\n';
-  outStr += 'ind1_od'               + '=' + Number(derived.ind1.cor_size_entry.OD).toFixed(2) + '\n';
-  outStr += 'ind1_id'               + '=' + Number(derived.ind1.cor_size_entry.ID).toFixed(2) + '\n';
-  outStr += 'ind1_ht'               + '=' + Number(derived.ind1.cor_size_entry.HT).toFixed(2) + '\n';
-  outStr += 'ind1_turns_max'        + '=' + derived.ind1.turns_max.toFixed(0) + '\n';
-  outStr += 'ind1_turns_l1'         + '=' + derived.ind1.turns_l1.toFixed(0) + '\n';
-  outStr += 'ind1_turns'            + '=' + derived.ind1.turns.toFixed(0) + '\n';
-  outStr += 'ind1_winding_factor'   + '=' + derived.ind1.winding_factor.toFixed(2) + '\n';
-  outStr += 'ind1_wound_area'       + '=' + derived.ind1.wound_area.toFixed(2) + '\n';
-  outStr += 'ind1_len'              + '=' + derived.ind1.len.toFixed(2) + '\n';
-  outStr += 'ind1_al'               + '=' + derived.ind1.cor_pn_etry.Al.toFixed(2) + '\n';
-  outStr += 'ind1_alb'              + '=' + derived.ind1.al_biased.toFixed(2) + '\n';
+  if (derived.ind1.cor_pn_entry != null) {
+    outStr += 'ind1_lii'              + '=' + Number(derived.ind1.lii).toFixed(3) + '\n';
+    outStr += 'ind1_target_ap'        + '=' + Number(derived.ind1.target_ap).toFixed(5) + '\n';
+    outStr += 'ind1_mfg'              + '=' + derived.ind1.cor_pn_entry.mfg + '\n';
+    outStr += 'ind1_mat'              + '=' + derived.ind1.cor_pn_entry.mat + '\n';
+    outStr += 'ind1_od'               + '=' + Number(derived.ind1.cor_size_entry.OD).toFixed(2) + '\n';
+    outStr += 'ind1_id'               + '=' + Number(derived.ind1.cor_size_entry.ID).toFixed(2) + '\n';
+    outStr += 'ind1_ht'               + '=' + Number(derived.ind1.cor_size_entry.HT).toFixed(2) + '\n';
+    outStr += 'ind1_al'               + '=' + derived.ind1.cor_pn_etry.Al.toFixed(2) + '\n';
+    outStr += 'ind1_turns_max'        + '=' + derived.ind1.turns_max.toFixed(0) + '\n';
+    outStr += 'ind1_turns_l1'         + '=' + derived.ind1.turns_l1.toFixed(0) + '\n';
+    outStr += 'ind1_turns'            + '=' + derived.ind1.turns.toFixed(0) + '\n';
+    outStr += 'ind1_winding_factor'   + '=' + derived.ind1.winding_factor.toFixed(2) + '\n';
+    outStr += 'ind1_wound_area'       + '=' + derived.ind1.wound_area.toFixed(2) + '\n';
+    outStr += 'ind1_len'              + '=' + derived.ind1.len.toFixed(2) + '\n';
+    outStr += 'ind1_alb'              + '=' + derived.ind1.al_biased.toFixed(2) + '\n';
+  }
   outStr += 'ind1_h_eff'            + '=' + Number(derived.ind1.h_eff * 1000000).toFixed(3) + '\n';    // display uH
   outStr += 'ind1_h_effb'           + '=' + Number(derived.ind1.h_biased * 1000000).toFixed(3) + '\n'; // display uH
   outStr += 'ind1_h_total'          + '=' + Number(derived.ind1.h_total * 1000000).toFixed(3) + '\n';  // display uH
   
-  outStr += 'ind2_lii'              + '=' + Number(derived.ind2.lii).toFixed(3) + '\n';
-  outStr += 'ind2_target_ap'        + '=' + Number(derived.ind2.target_ap).toFixed(5) + '\n';
-  outStr += 'ind2_mfg'              + '=' + derived.ind2.cor_pn_entry.mfg + '\n';
-  outStr += 'ind2_mat'              + '=' + derived.ind2.cor_pn_entry.mat + '\n';
-  outStr += 'ind2_od'               + '=' + Number(derived.ind2.cor_size_entry.OD).toFixed(2) + '\n';
-  outStr += 'ind2_id'               + '=' + Number(derived.ind2.cor_size_entry.ID).toFixed(2) + '\n';
-  outStr += 'ind2_ht'               + '=' + Number(derived.ind2.cor_size_entry.HT).toFixed(2) + '\n';
-  outStr += 'ind2_turns_max'        + '=' + derived.ind2.turns_max.toFixed(0) + '\n';
-  outStr += 'ind2_turns_l1'         + '=' + derived.ind2.turns_l1.toFixed(0) + '\n';
-  outStr += 'ind2_turns'            + '=' + derived.ind2.turns.toFixed(0) + '\n';
-  outStr += 'ind2_winding_factor'   + '=' + derived.ind2.winding_factor.toFixed(2) + '\n';
-  outStr += 'ind2_wound_area'       + '=' + derived.ind2.wound_area.toFixed(2) + '\n';
-  outStr += 'ind2_len'              + '=' + derived.ind2.len.toFixed(2) + '\n';
-  outStr += 'ind2_al'               + '=' + derived.ind2.cor_pn_entry.Al.toFixed(2) + '\n';
-  outStr += 'ind2_alb'              + '=' + derived.ind2.al_biased.toFixed(2) + '\n';
+  if (derived.ind2.cor_pn_entry != null) {
+    outStr += 'ind2_lii'              + '=' + Number(derived.ind2.lii).toFixed(3) + '\n';
+    outStr += 'ind2_target_ap'        + '=' + Number(derived.ind2.target_ap).toFixed(5) + '\n';
+    outStr += 'ind2_mfg'              + '=' + derived.ind2.cor_pn_entry.mfg + '\n';
+    outStr += 'ind2_mat'              + '=' + derived.ind2.cor_pn_entry.mat + '\n';
+    outStr += 'ind2_od'               + '=' + Number(derived.ind2.cor_size_entry.OD).toFixed(2) + '\n';
+    outStr += 'ind2_id'               + '=' + Number(derived.ind2.cor_size_entry.ID).toFixed(2) + '\n';
+    outStr += 'ind2_ht'               + '=' + Number(derived.ind2.cor_size_entry.HT).toFixed(2) + '\n';
+    outStr += 'ind2_turns_max'        + '=' + derived.ind2.turns_max.toFixed(0) + '\n';
+    outStr += 'ind2_turns_l1'         + '=' + derived.ind2.turns_l1.toFixed(0) + '\n';
+    outStr += 'ind2_turns'            + '=' + derived.ind2.turns.toFixed(0) + '\n';
+    outStr += 'ind2_winding_factor'   + '=' + derived.ind2.winding_factor.toFixed(2) + '\n';
+    outStr += 'ind2_wound_area'       + '=' + derived.ind2.wound_area.toFixed(2) + '\n';
+    outStr += 'ind2_len'              + '=' + derived.ind2.len.toFixed(2) + '\n';
+    outStr += 'ind2_al'               + '=' + derived.ind2.cor_pn_entry.Al.toFixed(2) + '\n';
+    outStr += 'ind2_alb'              + '=' + derived.ind2.al_biased.toFixed(2) + '\n';
+  }
   outStr += 'ind2_h_eff'            + '=' + Number(derived.ind2.h_eff * 1000000).toFixed(3) + '\n';    // display uH
   outStr += 'ind2_h_effb'           + '=' + Number(derived.ind2.h_biased * 1000000).toFixed(3) + '\n'; // display uH
   outStr += 'ind2_h_total'          + '=' + Number(derived.ind2.h_total * 1000000).toFixed(3) + '\n';  // display uH
@@ -1877,6 +1884,7 @@ icosalogic.inv_design.printConfig = function() {
   
   var outStr = '';
   
+  outStr += 'ctrl_type'           + '=' + cfg.ctrl_type + '\n';
   outStr += 'out_freq'            + '=' + cfg.out_freq + '\n';
   outStr += 'sw_freq'             + '=' + cfg.sw_freq + '\n';
   outStr += 'out_amps'            + '=' + cfg.out_amps + '\n';
@@ -1899,15 +1907,15 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'pct_sat_hr'          + '=' + cfg.pct_sat_hr + '\n';
   outStr += 'l_grid_max'          + '=' + Number(cfg.l_grid_max * 1000).toFixed(3) + '\n';
   
-  outStr += 'ind1_ind_type'       + '=' + cfg.ind1.ind_type + '\n';
-  outStr += 'ind2_ind_type'       + '=' + cfg.ind2.ind_type + '\n';
-  outStr += 'ind1_target'         + '=' + Number(cfg.ind1.target * 1000000).toFixed(3) + '\n';
-  outStr += 'ind2_target'         + '=' + Number(cfg.ind2.target * 1000000).toFixed(3) + '\n';
   outStr += 'ind1_pn'             + '=' + cfg.ind1.pn + '\n';
-  outStr += 'ind2_pn'             + '=' + cfg.ind2.pn + '\n';
+  outStr += 'ind1_ind_type'       + '=' + cfg.ind1.ind_type + '\n';
+  outStr += 'ind1_target'         + '=' + Number(cfg.ind1.target * 1000000).toFixed(3) + '\n';
   outStr += 'ind1_core_pn'        + '=' + cfg.ind1.core_pn + '\n';
-  outStr += 'ind2_core_pn'        + '=' + cfg.ind2.core_pn + '\n';
   outStr += 'ind1_count'          + '=' + cfg.ind1.count + '\n';
+  outStr += 'ind2_pn'             + '=' + cfg.ind2.pn + '\n';
+  outStr += 'ind2_ind_type'       + '=' + cfg.ind2.ind_type + '\n';
+  outStr += 'ind2_target'         + '=' + Number(cfg.ind2.target * 1000000).toFixed(3) + '\n';
+  outStr += 'ind2_core_pn'        + '=' + cfg.ind2.core_pn + '\n';
   outStr += 'ind2_count'          + '=' + cfg.ind2.count + '\n';
   
   outStr += 'oc_target'           + '=' + Number(cfg.oc_target * 1000000).toFixed(3) + '\n';

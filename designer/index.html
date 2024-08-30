@@ -136,11 +136,30 @@
             <td id='info_skin_depth_out'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
+            <td><label for='ctrl_type'  >Control Type</label></td>
+            <td>ctrl_type</td>
+            <td>
+              <select id='ctrl_type'  name='ctrl_type' >
+                <option value='cbc' selected>Cycle-By-Cycle</option>
+                <option value='pwm'>PWM</option>
+              </select>
+            </td>
+            <td colspan='4'></td>
+            <td id='info_ctrl_type'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
             <td><label for='sw_freq'>Switching Frequency</label></td>
             <td>f<sub>sw</sub></td>
             <td><input id='sw_freq' type='number' value='12000' ></td>
             <td colspan='4'>Hz</td>
             <td id='info_sw_freq'>ⓘ</td>
+          </tr>
+          <tr class='sh_basics'>
+            <td><label for='sw_freq_eff'>Switching Frequency Effective</label></td>
+            <td>f<sub>sw_eff</sub></td>
+            <td><input id='sw_freq_eff'  value='0' readonly='readonly'></td>
+            <td colspan='4'></td>
+            <td id='info_sw_freq_eff'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
             <td><label for='sw_omega'>Switching Frequency Omega</label></td>

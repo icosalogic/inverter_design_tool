@@ -98,7 +98,7 @@ icosalogic.lcl.Derived.prototype = {
     
     // cfg.dump();
 
-    var sw_freq_eff             = cfg.sw_freq / 2;
+    var sw_freq_eff             = cfg.ctrl_type == 'cbc' ? cfg.sw_freq * 0.333 : cfg.sw_freq;
     
     this.filter_type            = 'LCL';
     this.omega_grid             = 2 * Math.PI * cfg.out_freq;

@@ -213,7 +213,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var b_ac_max               = this.get_b(h_ac_max);
       var b_ac_min               = 0 - b_ac_max;               // for 100% AC inputs to inductor, no DC bias
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
-      var f_kHz                  = cfg.sw_freq / 2000;         // /2 to get effective, /1000 to get khz
+      var f_kHz                  = this.sw_freq_eff / 1000;         // convert Hz to kHz
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;
@@ -512,8 +512,6 @@ icosalogic.inv_design.Derived.prototype = {
       console.log('could not find out cap entry for ' + cfg.oc_pn);
     }
     
-    this.sw_freq_eff           = cfg.sw_freq / 2;
-    
     this.v_pack_min = cfg.v_cell_min * cfg.bat_series;
     this.v_pack_nom = cfg.v_cell_nom * cfg.bat_series;
     this.v_pack_max = cfg.v_cell_max * cfg.bat_series;
@@ -529,6 +527,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on, 0);
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
+    this.sw_freq_eff           = cfg.ctrl_type == 'cbc' ? cfg.sw_freq * 0.333 : cfg.sw_freq;
     this.sw_freq_omega         = 2 * Math.PI * this.sw_freq_eff;
     this.sw_cycle_ns           = 1e9 / cfg.sw_freq;
     this.out_voltage_pp        = cfg.out_voltage * oa.sqrt_2 * 2;
@@ -732,12 +731,14 @@ icosalogic.inv_design.Derived.prototype = {
     var oc_cap_power_factor     = 0.1;                                  // 10% generous, 5% target
     var i_rms_per_cap_oc        = cfg.out_amps * oc_cap_power_factor / cfg.oc_count;
     
+    var fet_i_rms               = cfg.out_amps / cfg.fet_count;
     
     this.th_pgsw                = v_gd_total * v_gd_total * fe.qg * this.sw_freq_eff / 1e9;
     this.th_prgext              = fe.r_g_ext * (on_factor + off_factor) / 2;
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
-    this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle
-    this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff / 1e6 *
+//  this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle
+    this.th_pfi                 = fet_i_rms * fet_i_rms * fe.r_ds_on * 0.5;            // assume 50% duty cycle
+    this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff * 1e-6 *
                                   (this.v_pack_max / this.fet_entry.v_swe);
     this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
     this.th_t_dcl_core          = cfg.t_ambient + this.th_p_dcl * (eff_th_cc_dcl + this.dcl_cap_entry.th_ca);

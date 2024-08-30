@@ -12,22 +12,28 @@ icosalogic.inv_design.info_text = [
                                   'The status circle is red if any component in the config is<br>' +
                                   'in error, or green if the config is OK.'},
 {key: 'new_cfg',            itxt: '<b>new_cfg:</b> To create a new config, enter a name in the box, and click Create.<br>' +
+                                  'To copy the current config to a new config, enter a name and click Copy.<br>' +
                                   'Data for a config is stored in the local browser storage, and is not shared across ' +
 				  'different computers or users.<br>' +
                                   'A config persists until you delete it, purge it, or clear the browser storage.'},
 {key: 'cfg_purge',          itxt: '<b>cfg_purge:</b> Purge deletes all configs, and reloads the app from scratch with the default config.'},
 
 // Basics
+{key: 'ctrl_type',          itxt: '<b>ctrl_type:</b> The control strategy for switching the FETs. The choices are:<br>' +
+				  'Cycle-by-Cycle: Do at most one FET switch per cycle<br>' +
+				  'PWM: Classic PWM control, which does 2 FET switches per cycle.<br>' +
+				  'This determines the effective switching frequency below.'},
 {key: 'out_freq',           itxt: '<b>f<sub>out</sub>:</b> The 2 commonly used AC frequencies are 50 and 60 Hz.'},
 {key: 'out_freq_omega',     itxt: '<b>ω<sub>out</sub>:</b> Omega value for the output frequency.  Equal to 2 * π * f<sub>out</sub>.  (Read only)'},
 {key: 'skin_depth_out',     itxt: '<b>d<sub>skin_out</sub>:</b> Skin depth at f<sub>out</sub>.<br>' +
                                   'Skin depth at f<sub>out</sub> will be greater than at f<sub>sw</sub>, see below.<br>' +
                                   'Equal to 503000 * sqrt(1.678e-8 / f<sub>out</sub>) mm. (Read only)'},
-{key: 'sw_freq',            itxt: '<b>f<sub>sw</sub>:</b> This is the output transistor switching frequency.<br>' +
-                                  'More precisely, this is the frequency at which we decide to turn the FET on/off.<br>' +
-				  'Calculations involving both on and off phases should consider f<sub>sw</sub> / 2 as<br>' +
-				  'the effective maximum frequency.'},
-{key: 'sw_omega',           itxt: '<b>ω<sub>sw</sub>:</b> Omega value for the effective sw frequency.<br>Equal to 2 * π * (f<sub>sw</sub> / 2). (Read only)'},
+{key: 'sw_freq',            itxt: '<b>f<sub>sw</sub>:</b> The clock frequency driving the control logic.<br>' +
+                                  'Along with the control type, this determines f<sub>sw_eff</sub> below.'},
+{key: 'sw_freq_eff',        itxt: '<b>f<sub>sw_eff</sub>:</b> This is the output transistor switching frequency for a complete on/off cycle.<br>' +
+                                  'For cycle-by-cycle control type, this varies by load, but is approximately equal to f<sub>sw</sub> / 3.<br>' +
+				  'For PWM control type, this is equal to f<sub>sw</sub>.'},
+{key: 'sw_omega',           itxt: '<b>ω<sub>sw</sub>:</b> Omega value for the effective sw frequency.<br>Equal to 2 * π * (f<sub>sw_eff</sub> / 2). (Read only)'},
 {key: 'sw_cycle_us',        itxt: '<b>t<sub>sw</sub>:</b> Cycle time for the sw frequency in microseconds.<br>' +
                                   'Equal to 1e6 / f<sub>sw</sub>. (Read only)'},
 {key: 'skin_depth_sw',      itxt: '<b>d<sub>skin_sw</sub>:</b> Skin depth at f<sub>sw</sub>.<br>' +
@@ -318,7 +324,7 @@ icosalogic.inv_design.info_text = [
 {key: 'th_pfi',             itxt: '<b>P<sub>fi</sub>:</b> The power dissipated in the FET due to conduction losses.<br>' +
                                   'Equal to I<sub>fet_max_actual</sub><sup>2</sup> * R<sub>ds(on)</sub> * 0.5 (assuming 50% duty cycle). (Read only)'},
 {key: 'th_pfsw',            itxt: '<b>P<sub>fsw</sub>:</b> The power dissipated in the FET due to switching losses.<br>' +
-                                  'Equal to (E<sub>on</sub> + E<sub>off</sub>) * 1e-6 * (f<sub>sw</sub> / 2) * (V<sub>pack_max</sub> / V<sub>swe</sub>). (Read only)'},
+                                  'Equal to (E<sub>on</sub> + E<sub>off</sub>) * 1e-6 * f<sub>sw_eff</sub> * (V<sub>pack_max</sub> / V<sub>swe</sub>). (Read only)'},
 {key: 't_fet_junction',     itxt: '<b>t<sub>fet_junction</sub>:</b> The junction temperature of the FET.<br>' +
                                   'Equal to t<sub>ambient</sub> + (P<sub>rgint</sub> + P<sub>fi</sub> + P<sub>fsw</sub>) * R<sub>θ_jc</sub>.<br>' +
                                   'The limit on the junction temperature may be as high as 175°C. (Read only)'},
