@@ -174,14 +174,26 @@ icosalogic.inv_design.info_text = [
 {key: 'r_th_ca',            itxt: '<b>R<sub>θ_ca</sub>:</b> Thermal resistance from FET case to ambient air, heat sink, or cool plate.'},
 
 // Gate driver
+{key: 'r_g_ext_on',         itxt: '<b>R<sub>g_ext_on</sub>:</b> The external on resistance of the gate driver circuit.<br>' +
+                                  'The on and off resistances are often different to tailor the FET switching characteristics.<br>' +
+				  'A good starting value is R<sub>g_ext</sub> from the FET values above.'},
+{key: 'r_g_ext_off',        itxt: '<b>R<sub>g_ext_off</sub>:</b> The external off resistance of the gate driver circuit.<br>' +
+                                  'The on and off resistances are often different to tailor the FET switching characteristics.<br>' +
+				  'A good starting value is R<sub>g_ext</sub> from the FET values above.'},
+{key: 'gd_sw_hard',         itxt: '<b>gd_sw_hard:</b> The "hardness" of the FET switching implementation.<br>' +
+                                  'This value must be between 0 and 1 (default).<br>' +
+				  'The value 1 indicates hard switching, with maximum switching losses.<br>' +
+				  'The value 0 would indicate perfect soft switching with absolutely no switching losses.<br>' +
+				  'Values between 0 and 1 indicate how much of the switching losses have been mitigated<br>' +
+				  'by soft switching, and are reflected in the FET power calculations in the thermal section below.'},
 {key: 'gd_r_on',            itxt: '<b>R<sub>gd_on</sub>:</b> The internal on resistance of the gate driver.<br>' +
                                   'The default value is for the UCC5390E device.'},
 {key: 'gd_r_off',           itxt: '<b>R<sub>gd_off</sub>:</b> The internal off resistance of the gate driver.<br>' +
                                   'The default value is for the UCC5390E device.'},
 {key: 'gd_i_on',            itxt: '<b>I<sub>gd_on</sub>:</b> The estimated current through the gate driver to turn on the FET.<br>' +
-                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_on</sub> + R<sub>g_ext</sub> + R<sub>g_int</sub>). (Read only)'},
+                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_on</sub> + R<sub>g_ext_on</sub> + R<sub>g_int</sub>). (Read only)'},
 {key: 'gd_i_off',           itxt: '<b>I<sub>gd_off</sub>:</b> The estimated current through the gate driver to turn off the FET.<br>' +
-                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_off</sub> + R<sub>g_ext</sub> + R<sub>g_int</sub>). (Read only)'},
+                                  'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_off</sub> + R<sub>g_ext_off</sub> + R<sub>g_int</sub>). (Read only)'},
 {key: 'gd_dc_on',           itxt: '<b>gd_dc_on:</b> The FET turn on duty cycle for one switching cycle.<br>' +
                                   'Equal to (t<sub>d(on)</sub> + t<sub>rise</sub>) / t<sub>sw</sub>. (Read only)'},
 {key: 'gd_dc_off',          itxt: '<b>gd_dc_off:</b> The FET turn off duty cycle for one switching cycle.<br>' +
@@ -316,15 +328,15 @@ icosalogic.inv_design.info_text = [
 {key: 'th_pgsw',            itxt: '<b>P<sub>gsd</sub>:</b> The power dissipated inside the gate driver.<br>' +
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>)<sup>2</sup> * Q<sub>g</sub> * f<sub>sw</sub> / 2. (Read only)'},
 {key: 'th_prgext',          itxt: '<b>P<sub>rgext</sub>:</b> Power dissipated by the external gate resistor.<br>' +
-                                  'Equal to R<sub>g_ext</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
-                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
+                                  'Equal to R<sub>g_ext_on</sub> * (I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
+                                  'R<sub>g_ext_off</sub> * (I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>). (Read only)'},
 {key: 'th_prgint',          itxt: '<b>P<sub>rgint</sub>:</b> Power dissipated in the FET due to gate switching.<br>' +
                                   'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
                                   '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
 {key: 'th_pfi',             itxt: '<b>P<sub>fi</sub>:</b> The power dissipated in the FET due to conduction losses.<br>' +
                                   'Equal to I<sub>fet_max_actual</sub><sup>2</sup> * R<sub>ds(on)</sub> * 0.5 (assuming 50% duty cycle). (Read only)'},
-{key: 'th_pfsw',            itxt: '<b>P<sub>fsw</sub>:</b> The power dissipated in the FET due to switching losses.<br>' +
-                                  'Equal to (E<sub>on</sub> + E<sub>off</sub>) * 1e-6 * f<sub>sw_eff</sub> * (V<sub>pack_max</sub> / V<sub>swe</sub>). (Read only)'},
+{key: 'th_pfsw',            itxt: '<b>P<sub>fsw</sub>:</b> The power dissipated in a single FET due to switching losses.<br>' +
+                                  'Equal to (E<sub>on</sub> + E<sub>off</sub>) * 1e-6 * f<sub>sw_eff</sub> * (V<sub>pack_max</sub> / V<sub>swe</sub>) * gd_sw_hard. (Read only)'},
 {key: 't_fet_junction',     itxt: '<b>t<sub>fet_junction</sub>:</b> The junction temperature of the FET.<br>' +
                                   'Equal to t<sub>ambient</sub> + (P<sub>rgint</sub> + P<sub>fi</sub> + P<sub>fsw</sub>) * R<sub>θ_jc</sub>.<br>' +
                                   'The limit on the junction temperature may be as high as 175°C. (Read only)'},

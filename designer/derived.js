@@ -634,13 +634,14 @@ icosalogic.inv_design.Derived.prototype = {
     this.fet_status            = this.fet_i_actual_status;
     
     var v_gd_total             = this.fet_entry.v_g_on - this.fet_entry.v_g_off;
-    var r_fet                  = this.fet_entry.r_g_ext + this.fet_entry.r_g_int;
+    var r_fet_on               = cfg.r_g_ext_on  + this.fet_entry.r_g_int;
+    var r_fet_off              = cfg.r_g_ext_off + this.fet_entry.r_g_int;
     var c_gate                 = this.fet_entry.qg / (v_gd_total - cfg.gd_bs_vf);
     this.gd_c_bs               = c_gate * cfg.fet_count * cfg.gd_bs_cf;
     this.gd_r_bs               = 1e9 / (this.sw_freq_omega * c_gate /*this.gd_c_bs */ );
     this.gd_c_vdd              = this.gd_c_bs * cfg.gd_bs_cf;
-    this.gd_i_on               = v_gd_total / (r_fet / cfg.fet_count + cfg.gd_r_on );
-    this.gd_i_off              = v_gd_total / (r_fet / cfg.fet_count + cfg.gd_r_off);
+    this.gd_i_on               = v_gd_total / (r_fet_on  / cfg.fet_count + cfg.gd_r_on );
+    this.gd_i_off              = v_gd_total / (r_fet_off / cfg.fet_count + cfg.gd_r_off);
     
     
     this.lcl.derive(cfg);                              // Derive the LCL filter parameters.
@@ -715,10 +716,10 @@ icosalogic.inv_design.Derived.prototype = {
     this.gd_dc_off              = (fe.t_d_off + fe.t_fall) / this.sw_cycle_ns;
     this.gd_i_avg               = this.gd_i_on * this.gd_dc_on + this.gd_i_off * this.gd_dc_off;
     this.gd_p_avg               = this.gd_i_avg * v_gd_total;
-    var fet_r_i                 = v_gd_total / r_fet;
-    var on_factor               = fet_r_i * fet_r_i * this.gd_dc_on;
-    var off_factor              = fet_r_i * fet_r_i * this.gd_dc_off;
-    console.log( 'fet r i=' + fet_r_i + ' gd_i_on=' + this.gd_i_on + ' gd_i_off=' + this.gd_i_off);
+    var fet_r_i_on              = v_gd_total / r_fet_on;
+    var fet_r_i_off             = v_gd_total / r_fet_off;
+    var on_factor               = fet_r_i_on  * fet_r_i_on  * this.gd_dc_on;
+    var off_factor              = fet_r_i_off * fet_r_i_off * this.gd_dc_off;
     console.log( 'fet r duty cycle on=' + this.gd_dc_on + ' off=' + this.gd_dc_off + 
                 ' fet r factor on=' + on_factor + ' off=' + off_factor);
     var eff_th_cc_dcl           = this.dcl_cap_entry.th_cc;
@@ -739,7 +740,7 @@ icosalogic.inv_design.Derived.prototype = {
 //  this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle
     this.th_pfi                 = fet_i_rms * fet_i_rms * fe.r_ds_on * 0.5;            // assume 50% duty cycle
     this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff * 1e-6 *
-                                  (this.v_pack_max / this.fet_entry.v_swe);
+                                  (this.v_pack_max / this.fet_entry.v_swe) * cfg.gd_sw_hard;
     this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
     this.th_t_dcl_core          = cfg.t_ambient + this.th_p_dcl * (eff_th_cc_dcl + this.dcl_cap_entry.th_ca);
     var fet_power               = this.th_prgint + this.th_pfi + this.th_pfsw;

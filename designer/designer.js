@@ -1494,6 +1494,9 @@ icosalogic.inv_design.displayConfig = function()
   document.getElementById('v_cell_nom').value            = cfg.v_cell_nom;
   document.getElementById('v_cell_max').value            = cfg.v_cell_max;
   document.getElementById('bat_series').value            = cfg.bat_series;
+  document.getElementById('r_g_ext_on').value            = cfg.r_g_ext_on;
+  document.getElementById('r_g_ext_off').value           = cfg.r_g_ext_off;
+  document.getElementById('gd_sw_hard').value            = cfg.gd_sw_hard;
   document.getElementById('gd_r_on').value               = cfg.gd_r_on;
   document.getElementById('gd_r_off').value              = cfg.gd_r_off;
   document.getElementById('gd_bs_vf').value              = cfg.gd_bs_vf;
@@ -1560,6 +1563,9 @@ icosalogic.inv_design.readAllInputs = function()
   cfg.v_cell_nom          = parseFloat(document.getElementById('v_cell_nom').value);
   cfg.v_cell_max          = parseFloat(document.getElementById('v_cell_max').value);
   cfg.bat_series          = parseFloat(document.getElementById('bat_series').value);
+  cfg.r_g_ext_on          = parseFloat(document.getElementById('r_g_ext_on').value);
+  cfg.r_g_ext_off         = parseFloat(document.getElementById('r_g_ext_off').value);
+  cfg.gd_sw_hard          = parseFloat(document.getElementById('gd_sw_hard').value);
   cfg.gd_r_on             = parseFloat(document.getElementById('gd_r_on').value);
   cfg.gd_r_off            = parseFloat(document.getElementById('gd_r_off').value);
   cfg.gd_bs_vf            = parseFloat(document.getElementById('gd_bs_vf').value);
@@ -1889,10 +1895,10 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'sw_freq'             + '=' + cfg.sw_freq + '\n';
   outStr += 'out_amps'            + '=' + cfg.out_amps + '\n';
   outStr += 'out_voltage'         + '=' + cfg.out_voltage + '\n';
+  outStr += 'out_lines'           + '=' + cfg.out_lines + '\n';
   outStr += 'bus_type'            + '=' + cfg.bus_type + '\n';
   outStr += 'j_cond'              + '=' + cfg.j_cond + '\n';
   outStr += 'wire_pn'             + '=' + cfg.wire_pn + '\n';
-  outStr += 'out_lines'           + '=' + cfg.out_lines + '\n';
   outStr += 'bb_cu_use_recommend' + '=' + cfg.bb_cu_use_recommend + '\n';
   outStr += 'bb_cu_thickness'     + '=' + cfg.bb_cu_thickness + '\n';
   outStr += 'bb_min_width'        + '=' + cfg.bb_min_width + '\n';
@@ -1902,7 +1908,9 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'dcl_dc_rms_factor'   + '=' + cfg.dcl_dc_rms_factor + '\n';
   outStr += 'dcl_v_ripple'        + '=' + cfg.dcl_v_ripple + '\n';
   outStr += 'dcl_count'           + '=' + cfg.dcl_count + '\n';
+  outStr += 'fet_count'           + '=' + cfg.fet_count + '\n';
   outStr += 'fet_pn'              + '=' + cfg.fet_pn + '\n';
+  outStr += 'fet_r_th_ca'         + '=' + cfg.fet_r_th_ca + '\n';
   
   outStr += 'pct_sat_hr'          + '=' + cfg.pct_sat_hr + '\n';
   outStr += 'l_grid_max'          + '=' + Number(cfg.l_grid_max * 1000).toFixed(3) + '\n';
@@ -1911,11 +1919,15 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'ind1_ind_type'       + '=' + cfg.ind1.ind_type + '\n';
   outStr += 'ind1_target'         + '=' + Number(cfg.ind1.target * 1000000).toFixed(3) + '\n';
   outStr += 'ind1_core_pn'        + '=' + cfg.ind1.core_pn + '\n';
+  outStr += 'ind1_n'              + '=' + cfg.ind1.n + '\n';
+  outStr += 'ind1_r'              + '=' + cfg.ind1.r + '\n';
   outStr += 'ind1_count'          + '=' + cfg.ind1.count + '\n';
   outStr += 'ind2_pn'             + '=' + cfg.ind2.pn + '\n';
   outStr += 'ind2_ind_type'       + '=' + cfg.ind2.ind_type + '\n';
   outStr += 'ind2_target'         + '=' + Number(cfg.ind2.target * 1000000).toFixed(3) + '\n';
   outStr += 'ind2_core_pn'        + '=' + cfg.ind2.core_pn + '\n';
+  outStr += 'ind2_n'              + '=' + cfg.ind2.n + '\n';
+  outStr += 'ind2_r'              + '=' + cfg.ind2.r + '\n';
   outStr += 'ind2_count'          + '=' + cfg.ind2.count + '\n';
   
   outStr += 'oc_target'           + '=' + Number(cfg.oc_target * 1000000).toFixed(3) + '\n';
@@ -1927,8 +1939,13 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'v_cell_nom'          + '=' + cfg.v_cell_nom + '\n';
   outStr += 'v_cell_max'          + '=' + cfg.v_cell_max + '\n';
   outStr += 'bat_series'          + '=' + cfg.bat_series + '\n';
+  outStr += 'r_g_ext_on'          + '=' + cfg.r_g_ext_on + '\n';
+  outStr += 'r_g_ext_off'         + '=' + cfg.r_g_ext_off + '\n';
+  outStr += 'gd_sw_hard'          + '=' + cfg.gd_sw_hard + '\n';
   outStr += 'gd_r_on'             + '=' + cfg.gd_r_on + '\n';
   outStr += 'gd_r_off'            + '=' + cfg.gd_r_off + '\n';
+  outStr += 'gd_bs_vf'            + '=' + cfg.gd_bs_vf + '\n';
+  outStr += 'gd_bs_cf'            + '=' + cfg.gd_bs_cf + '\n';
   outStr += 't_ambient'           + '=' + cfg.t_ambient + '\n';
   
   return outStr;

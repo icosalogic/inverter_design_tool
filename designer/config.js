@@ -253,6 +253,9 @@ icosalogic.inv_design.Config.prototype = {
   v_cell_nom:          3.3,
   v_cell_max:          3.6,
   bat_series:          144,
+  r_g_ext_on:          1.23,
+  r_g_ext_off:         1.23,
+  gd_sw_hard:          1.0,
   gd_r_on:             0.71,
   gd_r_off:            0.13,
   gd_bs_vf:            1.5,
@@ -298,6 +301,9 @@ icosalogic.inv_design.Config.prototype = {
     this.v_cell_nom          = 3.3;
     this.v_cell_max          = 3.6;
     this.bat_series          = 144;
+    this.r_g_ext_on          = 1.23;
+    this.r_g_ext_off         = 1.23;
+    this.gd_sw_hard          = 1.0;
     this.gd_r_on             = 0.71;
     this.gd_r_off            = 0.13;
     this.gd_bs_vf            = 1.5;
@@ -345,6 +351,9 @@ icosalogic.inv_design.Config.prototype = {
     this.v_cell_nom          = cfg.v_cell_nom;
     this.v_cell_max          = cfg.v_cell_max;
     this.bat_series          = cfg.bat_series;
+    this.r_g_ext_on          = cfg.r_g_ext_on;
+    this.r_g_ext_off         = cfg.r_g_ext_off;
+    this.gd_sw_hard          = cfg.gd_sw_hard;
     this.gd_r_on             = cfg.gd_r_on;
     this.gd_r_off            = cfg.gd_r_off;
     this.gd_bs_vf            = cfg.gd_bs_vf;
@@ -394,6 +403,9 @@ icosalogic.inv_design.Config.prototype = {
     this.loadItem('oc_target'          , true);
     this.loadItem('oc_pn'              , false);
     this.loadItem('oc_count'           , true);
+    this.loadItem('r_g_ext_on'         , true);
+    this.loadItem('r_g_ext_off'        , true);
+    this.loadItem('gd_sw_hard'         , true);
     this.loadItem('gd_r_on'            , true);
     this.loadItem('gd_r_off'           , true);
     this.loadItem('gd_bs_vf'           , true);
@@ -473,6 +485,9 @@ icosalogic.inv_design.Config.prototype = {
     localStorage.setItem(prefix + 'oc_target', this.oc_target);
     localStorage.setItem(prefix + 'oc_pn', this.oc_pn);
     localStorage.setItem(prefix + 'oc_count', this.oc_count);
+    localStorage.setItem(prefix + 'r_g_ext_on', this.r_g_ext_on);
+    localStorage.setItem(prefix + 'r_g_ext_off', this.r_g_ext_off);
+    localStorage.setItem(prefix + 'gd_sw_hard', this.gd_sw_hard);
     localStorage.setItem(prefix + 'gd_r_on', this.gd_r_on);
     localStorage.setItem(prefix + 'gd_r_off', this.gd_r_off);
     localStorage.setItem(prefix + 'gd_bs_vf', this.gd_bs_vf);
@@ -615,6 +630,9 @@ icosalogic.inv_design.Config.prototype = {
     console.log('  oc_target='           + this.oc_target);
     console.log('  oc_pn='               + this.oc_pn);
     console.log('  oc_count='            + this.oc_count);
+    console.log('  r_g_ext_on='          + this.r_g_ext_on);
+    console.log('  r_g_ext_off='         + this.r_g_ext_off);
+    console.log('  gd_sw_hard='          + this.gd_sw_hard);
     console.log('  gd_r_on='             + this.gd_r_on);
     console.log('  gd_r_off='            + this.gd_r_off);
     console.log('  gd_bs_vf='            + this.gd_bs_vf);
