@@ -4,27 +4,27 @@ This tool can be used by designers to set basic parameters and select components
 Here are the primary design assumptions for inverters configured with this tool:
 
 1. The primary target market addressed with this tool is battery-powered residential split-phase inverters
-with output in the range of 50-200 amps.  Parts of this tool may be useful in designing 3-phase traction
+with output currents up to hundreds of amps.  Parts of this tool may be useful in designing 3-phase traction
 inverters for the mobility market, but that was not an objective.
-2. The inverter will operate at a fast switching rate, and make a cycle-by-cycle decision on whether to turn the FETs
-on or off.  It does not use PWM.  Fast switching rate in this case means up to 1 MHz, which actually has slower FET
-transitions than a 5 kHz 8-bit PWM implementation with a duty cycle of 1 or 254.
-The feedback logic paths do require more attention in this case.
-3. The battery at minimum state of charge is assumed to have a voltage greater than the peak-to-peak AC output voltage,
+2. The battery at minimum state of charge is assumed to have a voltage greater than the peak-to-peak AC output voltage,
 thus no output transformer is required.
 
 # Features
 
-- Set basic attributes of the inverter, such as FET switching frequency, output AC frequency, maximum output current, etc.
+- Set the FET switching algorithm to either PWM or cycle-by-cycle.
+- Set basic attributes of the inverter, such as FET switching frequency, number of output lines, output AC frequency, maximum output current, etc.
 - Set the number of cells in the battery, and the maximum and minimum voltage of each cell.
 - Set the bus configuration to either laminated bus bar or point-to-point wiring with a specific gauge wire.
 - Size the DC-Link capacitor(s), and select from a list of hundreds of choices.
 - Select the size and number of FETs to use.
+- Specify soft switching effects on switching losses.
 - Evaluate gate driver requirements, and size bootstrap circuit components.
 - Choose between LCL and LC output filters, and evaluate component values.
-- Select output filter inductor cores, and evaluate winding options.
-- Select output filter capacitor from a list of choices.
+- Select inductor types from off-the-shelf parts, custom wound toroid cores, or custom wound air cores.
+- Evaluate winding options for custom inductors.
+- Select output filter capacitors from a list of choices.
 - Evaluate thermal constraints of the crucial components in the inverter.
+- Calculate total losses, and estimate inverter efficiency.
 
 # Usage
 
@@ -40,8 +40,9 @@ A version of this app is available online at [beta.icosalogic.com/inv_design/](h
 
 This application allows you save different configurations and switch between them.
 Each configuration has a name; the default configuration is named "default".
+You can make a copy of a configuration so one can explore design alternatives without perturbing known good configurations.
 Configurations are stored in the user-specific local browser storage, and persist across reboots and login sessions.
-Deleting browser files will also remove this application's configurations.
+Deleting browser files will also remove this application's configurations from browser local storage.
 
 Because configurations are user-specific and local, they are not shared.
 You can use the print option to create a text version of a configuration, which you can cut and paste
@@ -60,3 +61,8 @@ The status of all the sections roll up to the status of the currently selected c
 
 Every line has an information icon ⓘ that a user can click to display helpful information about
 the current setting.
+
+# Component Files
+
+Attributes of capacitors, FETs, off-the-shelf inductors, and inductor cores are stored in data files.
+Users can add entries for additional components as desired.
