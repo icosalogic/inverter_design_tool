@@ -362,5 +362,5 @@ icosalogic.inv_design.info_text = [
 				  'Note that the FET count is doubled, since there are 2 FETs in a half bridge configuration.<br>' +
 				  'Note also that, except for the DC link cap, all component counts are multiplied by the number of output lines. (Read only)'},
 {key: 'th_calc_eff',        itxt: '<b>η<sub>calc</sub>:</b> The calculated efficiency of the inverter.<br>' +
-                                  'Equal to 100 - P<sub>out</sub> / (P<sub>out</sub> + P<sub>total_loss</sub>). (Read only)'},
+                                  'Equal to 100 * P<sub>out</sub> / (P<sub>out</sub> + P<sub>total_loss</sub>). (Read only)'},
 ];
