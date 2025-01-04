@@ -10,7 +10,7 @@
    ⊕  2295
    ⥉ 2949
    ⊚ 229a
-   Ⓘ 24be  (upper i)
+  Ⓘ 24be  (upper i)
    
 -->
 <html>
@@ -158,7 +158,7 @@
             <td><label for='sw_freq_eff'>Switching Frequency Effective</label></td>
             <td>f<sub>sw_eff</sub></td>
             <td><input id='sw_freq_eff'  value='0' readonly='readonly'></td>
-            <td colspan='4'></td>
+            <td colspan='4'>Hz</td>
             <td id='info_sw_freq_eff'>ⓘ</td>
           </tr>
           <tr class='sh_basics'>
@@ -976,6 +976,20 @@
             <td id='info_gd_r_bs'>ⓘ</td>
           </tr>
           <tr class='sh_gate_driver'>
+            <td><label for='gd_t_bs'  >Bootstrap RC Time Constant</label></td>
+            <td>τ<sub>bs</sub></td>
+            <td><input id='gd_t_bs'    value='1' readonly='readonly'></td>
+            <td colspan='4'>us</td>
+            <td id='info_gd_t_bs'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
+            <td><label for='gd_e_bs'  >Bootstrap Energy</label></td>
+            <td>E<sub>bs</sub></td>
+            <td><input id='gd_e_bs'    value='1' readonly='readonly'></td>
+            <td colspan='4'>uJ</td>
+            <td id='info_gd_e_bs'>ⓘ</td>
+          </tr>
+          <tr class='sh_gate_driver'>
             <td><label for='gd_c_vdd'  >VDD Capacitor</label></td>
             <td>C<sub>vdd</sub></td>
             <td><input id='gd_c_vdd'    value='1' readonly='readonly'></td>
@@ -1343,7 +1357,21 @@
             <td colspan='4'>mm</td>
             <td id='info_ind_len'>ⓘ</td>
           </tr>
-          
+          <tr class='sh_out_ind1 sh_ind1_air'>
+            <td><label for='ind1_winding_len'  >Winding length</label></td>
+            <td>ind1_winding_len</td>
+            <td><input id='ind1_winding_len'   value='1' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_winding_len'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_air'>
+            <td><label for='ind1_vol'  >Volume</label></td>
+            <td>ind1_vol</td>
+            <td><input id='ind1_vol'   value='1' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>3</sup></td>
+            <td id='info_ind_vol'>ⓘ</td>
+          </tr>
+
           <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
             <td><label for='ind1_wound_area'  >Wound area</label></td>
             <td>ind1_wound_area</td>
@@ -1709,6 +1737,20 @@
             <td><input id='ind2_len'   value='1' readonly='readonly'></td>
             <td colspan='4'>mm</td>
             <td id='info_ind_len'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_air'>
+            <td><label for='ind2_winding_len'  >Winding length</label></td>
+            <td>ind2_winding_len</td>
+            <td><input id='ind2_winding_len'   value='1' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_winding_len'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind2 sh_ind2_air'>
+            <td><label for='ind2_vol'  >Volume</label></td>
+            <td>ind2_vol</td>
+            <td><input id='ind2_vol'   value='1' readonly='readonly'></td>
+            <td colspan='4'>cm<sup>3</sup></td>
+            <td id='info_ind_vol'>ⓘ</td>
           </tr>
           
           <tr class='sh_out_ind2 sh_ind2_cust sh_ind2_air sh_of_lcl'>

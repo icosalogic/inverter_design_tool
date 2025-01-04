@@ -207,9 +207,13 @@ icosalogic.inv_design.info_text = [
                                   'Recommended values are between 10 and 20.<br>' +
 				  'Values too large will cause startup issues charging the bootstrap capacitor.'},
 {key: 'gd_c_bs',            itxt: '<b>C<sub>bs</sub>:</b> The calculated value of the bootstrap capacitor.<br>' +
-                                  'Equal to Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub>) * fet_count * gd_bs_cf. (Read only)'},
+                                  'Equal to Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub> - V<sub>f_bs</sub>) * fet_count * gd_bs_cf. (Read only)'},
 {key: 'gd_r_bs',            itxt: '<b>R<sub>bs</sub>:</b> The calculated value of the bootstrap resistor.<br>' +
                                   'Equal to 1e9 / (ω<sub>sw</sub> * Q<sub>g</sub> / (V<sub>g_on</sub> - V<sub>g_off</sub>)). (Read only)'},
+{key: 'gd_t_bs',            itxt: '<b>τ<sub>bs</sub>:</b> The RC time constant for the bootstrap circuit.<br>' +
+                                  'Equal to C<sub>bs</sub> * R<sub>bs</sub>. (Read only)'},
+{key: 'gd_e_bs',            itxt: '<b>E<sub>bs</sub>:</b> The energy stored in the boostrap capacitor.<br>' +
+                                  'Equal to ((V<sub>g-on</sub> - V<sub>g_off</sub>)<sup>2</sup> * C<sub>bs</sub>) / 2. (Read only)'},
 {key: 'gd_c_vdd',           itxt: '<b>C<sub>vdd</sub>:</b> The calculated value of the power supply capacitor feeding the bootstrap diode.<br>' +
                                   'Equal to C<sub>bs</sub> * gd_bs_cf. (Read only)'},
 
@@ -276,12 +280,16 @@ icosalogic.inv_design.info_text = [
                                   'This number cannot exceed 100%. (Read only)'},
 {key: 'ind_r_core',         itxt: '<b>r<sub>ind_core</sub>:</b> Select the radius of the air core inductor.<br>' +
                                   'A larger radius gives more inductance per turn.'},
-{key: 'ind_len',            itxt: '<b>ind_len:</b> The length of the inductor winding.<br>' +
+{key: 'ind_len',            itxt: '<b>ind_len:</b> The length of the wound inductor core.<br>' +
                                   'Equal to ind_turns * wire_dia.<br>' +
 				  'If you use a laminated bus bar, you can temporarily change the bus bar type<br>' +
 				  'to point-to-point, select a wire option, then change back to laminated bus bar.<br>' +
 				  'The selected wire option will be used in the inductor calculations,<br>' +
 				  'even after switching back to laminated bus bar. (Read only)'},
+{key: 'ind_winding_len',    itxt: '<b>ind_winding_len:</b> The length of an air core inductor winding.<br>' +
+                                  'Equal to ind_turns * (ind_r_core  * 2 + wire_dia) * π. (Read only)'},
+{key: 'ind_vol',            itxt: '<b>ind_vol:</b> The volume of a wound air core inductor.<br>' +
+                                  'Equal to π * (ind_r_core + wire_dia)<sup>2</sup> * ind_len. (Read only)'},
 {key: 'ind_wound_area',     itxt: '<b>ind_wound_area:</b> An estimate of the surface area of the wound inductor.<br>' +
 				  'This is used to estimate temperature rise under load. (Read only)'},
 {key: 'ind_h_eff',          itxt: '<b>L<sub>ind</sub>:</b> The computed inductance for this configuration.<br>' +

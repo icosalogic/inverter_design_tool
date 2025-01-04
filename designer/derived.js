@@ -81,6 +81,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
   winding_factor:           1.0,
   wound_area:               1.0,
   len:                      3.0,
+  winding_len:              1.0,
+  volume:                   1.0,
   h_eff:                    1.0,
   h_biased:                 1.0,
   h_total:                  1.0,
@@ -247,6 +249,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
        *     https://shadyelectronics.com/how-to-make-single-layer-air-core-inductor-coil/
        */
       console.log('ind [air]: r=' + cfgInd.r + ' target=' + Number(cfgInd.target * 1e6).toFixed(3) + ' uH');
+      var rActual = cfgInd.r + wire_dia / 2.0;            // assume radius is for bobbin
+      var rTotal  = cfgInd.r + wire_dia;
       var core_len = 1;
       var last = 0.001;
       var L = 0.1;
@@ -254,7 +258,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       for ( ; n < 10000; n++) {
         core_len = n * wire_dia;
         last = L;
-        L = (n * n * cfgInd.r * cfgInd.r) / (9 * cfgInd.r + 10 * core_len);  // in uH
+        L = (n * n * rActual * rActual) / (9 * rActual + 10 * core_len);     // in uH
         L = L * 1e-6;                                                        // convert to H
         if (L >= cfgInd.target) {
           break;
@@ -275,6 +279,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.h_eff        = L;
       this.h_biased     = L;
       this.len          = core_len;
+      this.winding_len  = Math.PI * rActual * 2.0 * n;
+      this.volume       = Math.PI * rTotal * rTotal * core_len;
       this.h_total      = this.h_eff / cfgInd.count;
       this.h_totalb     = this.h_total;
       
@@ -284,13 +290,13 @@ icosalogic.inv_design.DerivedInd.prototype = {
       
       // Calculate DC resistance and power dissipation
       var len_leads_mm  = 25;
-      var wire_len_mm   = cfgInd.r * 2 * Math.PI * this.turns + len_leads_mm * 2;
+      var wire_len_mm   = this.winding_len + len_leads_mm * 2;
       this.r_eff        = (wire_len_mm / 1000) * parent.wire_r_sw;
       this.power        = amps_per_ind * amps_per_ind * this.r_eff;
       
       // Calculate surface area, temperature rise and inductor temp
       // TODO: Calculate wound area differently for P2P wiring vs busbar/flat wound inductor
-      var outer_radius  = cfgInd.r + wire_dia / 2;
+      var outer_radius  = rTotal;
       var outer_circum  = outer_radius * 2 * Math.PI;
       var outer_area    = outer_circum * this.len;
       var inner_radius  = 0;
@@ -306,8 +312,13 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.t_core       = cfg.t_ambient; // + Math.pow(this.power * 1000 / this.wound_area, 0.833);
       this.t_status     = this.t_core > 155.0 ? 'red' : 'green';
       
-      console.log('ind [air]: n=' + n + ' len=' + core_len + ' L=' + Number(L * 1e6).toFixed(3) + ' uH');
-      console.log('outer_area=' + outer_area + ' inner_area=' + inner_area + ' end_area=' + end_area + ' wound_area=' + this.wound_area);
+      console.log('ind [air]: n=' + n + ' L=' + Number(L * 1e6).toFixed(3) +
+                  ' uH' + ' len=' + core_len + ' winding_len=' + Number(this.winding_len).toFixed(3) +
+                  ' volume=' + Number(this.volume).toFixed(2));
+      console.log('           outer_area=' + Number(outer_area).toFixed(2) +
+                             ' inner_area=' + Number(inner_area).toFixed(2) +
+                             ' end_area=' + Number(end_area).toFixed(2) +
+                             ' wound_area=' + Number(this.wound_area).toFixed(2));
     }
   },
   
@@ -456,6 +467,7 @@ icosalogic.inv_design.Derived.prototype = {
   gd_p_avg:                 0.1,
   gd_c_bs:                  1.0,
   gd_r_bs:                  1.0,
+  gd_t_bs:                  1.0,
   gd_c_vdd:                 1.0,
   th_pgsw:                  1.0,
   th_prgext:                1.0,
@@ -527,7 +539,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on, 0);
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
-    this.sw_freq_eff           = cfg.ctrl_type == 'cbc' ? cfg.sw_freq * 0.333 : cfg.sw_freq;
+    this.sw_freq_eff           = cfg.ctrl_type == 'cbc' ? cfg.sw_freq / 3 : cfg.sw_freq;
     this.sw_freq_omega         = 2 * Math.PI * this.sw_freq_eff;
     this.sw_cycle_ns           = 1e9 / cfg.sw_freq;
     this.out_voltage_pp        = cfg.out_voltage * oa.sqrt_2 * 2;
@@ -588,7 +600,7 @@ icosalogic.inv_design.Derived.prototype = {
     var usable_thickness_out   = max_thickness_out < cfg.bb_cu_thickness ? max_thickness_out : cfg.bb_cu_thickness;
     var bb_num_layers_sw       = Math.floor(this.i_in_max / (cfg.j_cond * cfg.bb_min_width * usable_thickness_sw) + 0.75);
     var bb_num_layers_out      = Math.floor(cfg.out_amps / (cfg.j_cond * cfg.bb_min_width * usable_thickness_out) + 0.75);
-    this.bb_num_layers         = Math.max(bb_num_layers_sw, bb_num_layers_out);
+    this.bb_num_layers         = Math.max(bb_num_layers_sw, bb_num_layers_out, 1);
     console.log( 'sw: max/usable/layers=' + max_thickness_sw + '/' + usable_thickness_sw + '/' + bb_num_layers_sw +
                 ' out: max/usable/layers=' + max_thickness_out + '/' + usable_thickness_out + '/' + bb_num_layers_out);
     
@@ -638,7 +650,9 @@ icosalogic.inv_design.Derived.prototype = {
     var r_fet_off              = cfg.r_g_ext_off + this.fet_entry.r_g_int;
     var c_gate                 = this.fet_entry.qg / (v_gd_total - cfg.gd_bs_vf);
     this.gd_c_bs               = c_gate * cfg.fet_count * cfg.gd_bs_cf;
-    this.gd_r_bs               = 1e9 / (this.sw_freq_omega * c_gate /*this.gd_c_bs */ );
+    this.gd_r_bs               = 1e9 / (this.sw_freq_omega * this.gd_c_bs /* c_gate */ );
+    this.gd_t_bs               = this.gd_c_bs * 1e-9 * this.gd_r_bs;
+    this.gd_e_bs               = v_gd_total * v_gd_total * this.gd_c_bs * 1e-9 / 2;
     this.gd_c_vdd              = this.gd_c_bs * cfg.gd_bs_cf;
     this.gd_i_on               = v_gd_total / (r_fet_on  / cfg.fet_count + cfg.gd_r_on );
     this.gd_i_off              = v_gd_total / (r_fet_off / cfg.fet_count + cfg.gd_r_off);
