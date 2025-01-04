@@ -1,14 +1,14 @@
 #!/bin/bash
 #
-# Update the build, date, and time fields in the version file,
-# then create a new tar file.
-
 # First, update the capacitor table, if needed
 
 if [[ caps/cap_table.js -nt designer/cap_table.js ]] ; then
   echo "updating cap_table..."
   cp caps/cap_table.js designer/cap_table.js
 fi
+
+# Update the build, date, and time fields in the version file,
+# then create a new tar file.
 
 in_file=designer/version.js
 tmp_file=/tmp/inv_design_version
