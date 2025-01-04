@@ -7,8 +7,7 @@ if [[ caps/cap_table.js -nt designer/cap_table.js ]] ; then
   cp caps/cap_table.js designer/cap_table.js
 fi
 
-# Update the build, date, and time fields in the version file,
-# then create a new tar file.
+# Update the build, date, and time fields in the version file
 
 in_file=designer/version.js
 tmp_file=/tmp/inv_design_version
