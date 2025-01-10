@@ -1300,14 +1300,18 @@ icosalogic.inv_design.displayDerived = function()
   }
   if (cfg.ind1.ind_type == 'air') {
     document.getElementById('ind1_winding_len').value      = Number(derived.ind1.winding_len).toFixed(2);
+    document.getElementById('ind1_winding_len_in').value   = Number(derived.ind1.winding_len / 25.4).toFixed(3);
     document.getElementById('ind1_vol').value              = Number(derived.ind1.volume / 1000).toFixed(3);
+    document.getElementById('ind1_vol_in').value           = Number(derived.ind1.volume / (25.4*25.4*25.4)).toFixed(3);
   }
-  document.getElementById('ind1_turns').value            = derived.ind1.turns.toFixed(0);
+  document.getElementById('ind1_turns').value            = derived.ind1.turns.toFixed(2);
   document.getElementById('ind1_len').value              = derived.ind1.len.toFixed(2);
+  document.getElementById('ind1_len_in').value           = Number(derived.ind1.len / 25.4).toFixed(3);
   document.getElementById('ind1_h_total').value          = Number(derived.ind1.h_total * 1000000).toFixed(3);  // display uH
   document.getElementById('ind1_h_eff').value            = Number(derived.ind1.h_eff * 1000000).toFixed(3);    // display uH
   document.getElementById('ind1_h_effb').value           = Number(derived.ind1.h_biased * 1000000).toFixed(3); // display uH
   document.getElementById('ind1_wound_area').value       = derived.ind1.wound_area.toFixed(2);
+  document.getElementById('ind1_wound_area_in').value    = Number(derived.ind1.wound_area / (2.54*2.54)).toFixed(3);
   
   if (derived.ind2.cor_pn_entry != null) {
     document.getElementById('ind2_lii').value              = Number(derived.ind2.lii * 1e6).toFixed(2);
@@ -1339,14 +1343,18 @@ icosalogic.inv_design.displayDerived = function()
   }
   if (cfg.ind2.ind_type == 'air') {
     document.getElementById('ind2_winding_len').value      = Number(derived.ind2.winding_len).toFixed(2);
+    document.getElementById('ind2_winding_len_in').value   = Number(derived.ind2.winding_len / 25.4).toFixed(3);
     document.getElementById('ind2_vol').value              = Number(derived.ind2.volume / 1000).toFixed(3);
+    document.getElementById('ind2_vol_in').value           = Number(derived.ind2.volume / (25.4*25.4*25.4)).toFixed(3);
   }
-  document.getElementById('ind2_turns').value            = derived.ind2.turns.toFixed(0);
+  document.getElementById('ind2_turns').value            = derived.ind2.turns.toFixed(2);
   document.getElementById('ind2_len').value              = derived.ind2.len.toFixed(2);
+  document.getElementById('ind2_len_in').value           = Number(derived.ind2.len / 25.4).toFixed(3);
   document.getElementById('ind2_h_total').value          = Number(derived.ind2.h_total * 1000000).toFixed(3);  // display uH
   document.getElementById('ind2_h_eff').value            = Number(derived.ind2.h_eff * 1000000).toFixed(3);    // display uH
   document.getElementById('ind2_h_effb').value           = Number(derived.ind2.h_biased * 1000000).toFixed(3); // display uH
   document.getElementById('ind2_wound_area').value       = derived.ind2.wound_area.toFixed(2);
+  document.getElementById('ind2_wound_area_in').value    = Number(derived.ind2.wound_area / (2.54*2.54)).toFixed(3);
   
   document.getElementById('oc_mfg').value                = derived.out_cap_entry.mfg;
   document.getElementById('oc_tech').value               = derived.out_cap_entry.tech;
@@ -1492,8 +1500,12 @@ icosalogic.inv_design.displayConfig = function()
   document.getElementById('ind2_core_pn').value          = cfg.ind2.core_pn;
   document.getElementById('ind1_r_core').value           = cfg.ind1.r;
   document.getElementById('ind2_r_core').value           = cfg.ind2.r;
+  document.getElementById('ind1_r_core_in').value        = Number(cfg.ind1.r / 25.4).toFixed(3);
+  document.getElementById('ind2_r_core_in').value        = Number(cfg.ind2.r / 25.4).toFixed(3);
   document.getElementById('ind1_count').value            = cfg.ind1.count;
   document.getElementById('ind2_count').value            = cfg.ind2.count;
+  document.getElementById('ind1_radius_sel').value       = cfg.ind1.radius_sel;
+  document.getElementById('ind2_radius_sel').value       = cfg.ind2.radius_sel;
     
   document.getElementById('oc_target').value             = Number(cfg.oc_target * 1000000).toFixed(3);
   document.getElementById('oc_pn').value                 = cfg.oc_pn;
@@ -1563,6 +1575,8 @@ icosalogic.inv_design.readAllInputs = function()
   cfg.ind2.r              = parseFloat(document.getElementById('ind2_r_core').value);
   cfg.ind1.count          = parseFloat(document.getElementById('ind1_count').value);
   cfg.ind2.count          = parseFloat(document.getElementById('ind2_count').value);
+  cfg.ind1.radius_sel     = document.getElementById('ind1_radius_sel').value;
+  cfg.ind2.radius_sel     = document.getElementById('ind2_radius_sel').value;
 
   cfg.oc_target           = parseFloat(document.getElementById('oc_target').value) / 1000000;
   cfg.oc_pn               = document.getElementById('oc_pn').value;
@@ -1931,6 +1945,7 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'ind1_n'              + '=' + cfg.ind1.n + '\n';
   outStr += 'ind1_r'              + '=' + cfg.ind1.r + '\n';
   outStr += 'ind1_count'          + '=' + cfg.ind1.count + '\n';
+  outStr += 'ind1_radius_sel'     + '=' + cfg.ind1.radius_sel + '\n';
   outStr += 'ind2_pn'             + '=' + cfg.ind2.pn + '\n';
   outStr += 'ind2_ind_type'       + '=' + cfg.ind2.ind_type + '\n';
   outStr += 'ind2_target'         + '=' + Number(cfg.ind2.target * 1000000).toFixed(3) + '\n';
@@ -1938,6 +1953,7 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'ind2_n'              + '=' + cfg.ind2.n + '\n';
   outStr += 'ind2_r'              + '=' + cfg.ind2.r + '\n';
   outStr += 'ind2_count'          + '=' + cfg.ind2.count + '\n';
+  outStr += 'ind2_radius_sel'     + '=' + cfg.ind2.radius_sel + '\n';
   
   outStr += 'oc_target'           + '=' + Number(cfg.oc_target * 1000000).toFixed(3) + '\n';
   outStr += 'oc_pn'               + '=' + cfg.oc_pn + '\n';

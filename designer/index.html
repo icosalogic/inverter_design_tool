@@ -1225,6 +1225,18 @@
             <td colspan='4'>µH</td>
             <td id='info_ind1_target'>ⓘ</td>
           </tr>
+          <tr class='sh_out_ind1 sh_ind1_air'>
+            <td><label for='ind1_radius_sel'  >Radius selection</label></td>
+            <td>ind1_radius_sel</td>
+            <td>
+              <select id='ind1_radius_sel'  name='ind1_radius_sel' >
+                <option value='man' selected>Manual</option>
+                <option value='len'>Minimize winding length</option>
+                <option value='vol'>Minimize volume</option>
+              </select>
+            <td colspan='4'></td>
+            <td id='info_ind_radius_sel'>ⓘ</td>
+          </tr>
           <tr class='sh_out_ind1 sh_ind1_cust'>
             <td><label for='ind1_lii'  >Energy Stored</label></td>
             <td>LI<sup>2</sup></td>
@@ -1347,28 +1359,36 @@
             <td><label for='ind1_r_core'>Core Radius</label></td>
             <td>r<sub>ind1_core</sub></td>
             <td><input id='ind1_r_core'  type='number' value='2'</td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind1_r_core_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_r_core'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_air'>
             <td><label for='ind1_len'  >Length</label></td>
             <td>ind1_len</td>
             <td><input id='ind1_len'   value='1' readonly='readonly'></td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind1_len_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_len'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_air'>
             <td><label for='ind1_winding_len'  >Winding length</label></td>
             <td>ind1_winding_len</td>
             <td><input id='ind1_winding_len'   value='1' readonly='readonly'></td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind1_winding_len_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_winding_len'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_air'>
             <td><label for='ind1_vol'  >Volume</label></td>
             <td>ind1_vol</td>
             <td><input id='ind1_vol'   value='1' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>3</sup></td>
+            <td>cm<sup>3</sup></td>
+            <td><input id='ind1_vol_in'  readonly='readonly'></td>
+            <td colspan='2'>in<sup>3</sup></td>
             <td id='info_ind_vol'>ⓘ</td>
           </tr>
 
@@ -1376,7 +1396,9 @@
             <td><label for='ind1_wound_area'  >Wound area</label></td>
             <td>ind1_wound_area</td>
             <td><input id='ind1_wound_area'    value='20' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>2</sup></td>
+            <td>cm<sup>2</sup></td>
+            <td><input id='ind1_wound_area_in'  readonly='readonly'></td>
+            <td colspan='2'>in<sup>2</sup></td>
             <td id='info_ind_wound_area'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_cust sh_ind1_air'>
@@ -1598,6 +1620,18 @@
             <td colspan='4'>µH</td>
             <td id='info_ind2_target'>ⓘ</td>
           </tr>
+          <tr class='sh_out_ind2 sh_ind2_air sh_of_lcl'>
+            <td><label for='ind2_radius_sel'  >Radius selection</label></td>
+            <td>ind2_radius_sel</td>
+            <td>
+              <select id='ind2_radius_sel'  name='ind2_radius_sel' >
+                <option value='man' selected>Manual</option>
+                <option value='len'>Minimize winding length</option>
+                <option value='vol'>Minimize volume</option>
+              </select>
+            <td colspan='4'></td>
+            <td id='info_ind_radius_sel'>ⓘ</td>
+          </tr>
           <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
             <td><label for='ind2_lii'  >Energy Stored</label></td>
             <td>LI<sup>2</sup></td>
@@ -1724,32 +1758,40 @@
             <td id='info_ind_h_eff'>ⓘ</td>
           </tr>
           
-          <tr class='sh_out_ind2 sh_of_lcl sh_ind2_air'>
+          <tr class='sh_out_ind2 sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_r_core'>Core Radius</label></td>
             <td>r<sub>ind2_core</sub></td>
             <td><input id='ind2_r_core'  type='number' value='2'</td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind2_r_core_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_r_core'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind2 sh_of_lcl sh_ind2_air'>
+          <tr class='sh_out_ind2 sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_len'  >Length</label></td>
             <td>ind2_len</td>
             <td><input id='ind2_len'   value='1' readonly='readonly'></td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind2_len_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_len'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind2 sh_ind2_air'>
+          <tr class='sh_out_ind2 sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_winding_len'  >Winding length</label></td>
             <td>ind2_winding_len</td>
             <td><input id='ind2_winding_len'   value='1' readonly='readonly'></td>
-            <td colspan='4'>mm</td>
+            <td>mm</td>
+            <td><input id='ind2_winding_len_in'  readonly='readonly'></td>
+            <td colspan='2'>in</td>
             <td id='info_ind_winding_len'>ⓘ</td>
           </tr>
-          <tr class='sh_out_ind2 sh_ind2_air'>
+          <tr class='sh_out_ind2 sh_ind2_air sh_of_lcl'>
             <td><label for='ind2_vol'  >Volume</label></td>
             <td>ind2_vol</td>
             <td><input id='ind2_vol'   value='1' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>3</sup></td>
+            <td>cm<sup>3</sup></td>
+            <td><input id='ind2_vol_in'  readonly='readonly'></td>
+            <td colspan='2'>in<sup>3</sup></td>
             <td id='info_ind_vol'>ⓘ</td>
           </tr>
           
@@ -1757,7 +1799,9 @@
             <td><label for='ind2_wound_area'  >Wound area</label></td>
             <td>ind2_wound_area</td>
             <td><input id='ind2_wound_area'    value='20' readonly='readonly'></td>
-            <td colspan='4'>cm<sup>2</sup></td>
+            <td>cm<sup>2</sup></td>
+            <td><input id='ind2_wound_area_in'  readonly='readonly'></td>
+            <td colspan='2'>in<sup>2</sup></td>
             <td id='info_ind_wound_area'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind2 sh_of_lcl'>

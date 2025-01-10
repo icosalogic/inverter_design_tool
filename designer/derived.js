@@ -215,7 +215,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var b_ac_max               = this.get_b(h_ac_max);
       var b_ac_min               = 0 - b_ac_max;               // for 100% AC inputs to inductor, no DC bias
       var b_pk                   = (b_ac_max - b_ac_min) / 2;
-      var f_kHz                  = this.sw_freq_eff / 1000;         // convert Hz to kHz
+      var f_kHz                  = parent.sw_freq_eff / 1000;         // convert Hz to kHz
       var cle                    = oa.ind_loss_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       var pld                    = cle.a * Math.pow(b_pk, cle.b) * Math.pow(f_kHz,cle.c);
       this.power                 = pld * this.cor_size_entry.Le * this.cor_size_entry.Ae * 1e-6;
@@ -248,42 +248,54 @@ icosalogic.inv_design.DerivedInd.prototype = {
        *     https://www.circuits.dk/calculator_multi_layer_aircore.htm
        *     https://shadyelectronics.com/how-to-make-single-layer-air-core-inductor-coil/
        */
-      console.log('ind [air]: r=' + cfgInd.r + ' target=' + Number(cfgInd.target * 1e6).toFixed(3) + ' uH');
-      var rActual = cfgInd.r + wire_dia / 2.0;            // assume radius is for bobbin
-      var rTotal  = cfgInd.r + wire_dia;
-      var core_len = 1;
-      var last = 0.001;
-      var L = 0.1;
-      var n = 1;
-      for ( ; n < 10000; n++) {
-        core_len = n * wire_dia;
-        last = L;
-        L = (n * n * rActual * rActual) / (9 * rActual + 10 * core_len);     // in uH
-        L = L * 1e-6;                                                        // convert to H
-        if (L >= cfgInd.target) {
-          break;
+      console.log('ind [air]: sel=' + cfgInd.radius_sel + ' r=' + cfgInd.r + ' target=' + Number(cfgInd.target * 1e6).toFixed(3) + ' uH');
+      
+      if (cfgInd.radius_sel == 'man') {
+        // manual radius selection, just calculate number of turns
+        this.aci_turns(cfgInd, wire_dia);
+      } else if (cfgInd.radius_sel == 'len') {
+        // select radius to minimize winding len, units are mm
+        var wLen = 1e9;
+        var min_radius = wire_dia * 4;
+        var max_radius = 600;                  // somewhat arbitrary
+        var radius_incr = 10;
+        var rMin = min_radius;
+        var rTest = min_radius;
+        for ( ; rTest <= max_radius; rTest += radius_incr) {
+          cfgInd.r = rTest;
+          this.aci_turns(cfgInd, wire_dia);
+          if (wLen > this.winding_len) {
+            wLen = this.winding_len;
+            rMin = rTest;
+          }
         }
+        // Recompute with the radius for the minimum winding length
+        cfgInd.r = rMin;
+        this.aci_turns(cfgInd, wire_dia);
+        console.log('ind [air]: r=' + cfgInd.r + ' has min winding len' + Number(this.winding_len).toFixed(3));
+
+      } else if (cfgInd.radius_sel == 'vol') {
+        // select radius to minimize volume of wound inductor
+        var vol = 1e9;
+        var min_radius = wire_dia * 4;
+        var max_radius = 600;                  // somewhat arbitrary
+        var radius_incr = 10;
+        var rMin = min_radius;
+        var rTest = min_radius;
+        for ( ; rTest <= max_radius; rTest += radius_incr) {
+          cfgInd.r = rTest;
+          this.aci_turns(cfgInd, wire_dia);
+          if (vol > this.volume) {
+            vol = this.volume;
+            rMin = rTest;
+          }
+        }
+        // Recompute with the radius for the minimum winding length
+        cfgInd.r = rMin;
+        this.aci_turns(cfgInd, wire_dia);
+        console.log('ind [air]: r=' + cfgInd.r + ' has min volume=' + Number(this.volume).toFixed(3));
       }
-      
-      // pick closest solution between current and previous options
-      if (cfgInd.target - last < L - cfgInd.target) {
-        // previous solution was closer to target
-        L = last;
-        n = n - 1;
-        core_len = (n + 0.5) * wire_dia;
-      }
-      
-      this.turns        = n;
-      this.turns_l1     = n
-      this.turns_status = 'green';
-      this.h_eff        = L;
-      this.h_biased     = L;
-      this.len          = core_len;
-      this.winding_len  = Math.PI * rActual * 2.0 * n;
-      this.volume       = Math.PI * rTotal * rTotal * core_len;
-      this.h_total      = this.h_eff / cfgInd.count;
-      this.h_totalb     = this.h_total;
-      
+            
       // TODO: Calculate DC resistance appropriately for wire or bus bar.
       // TODO: Use Dowell's equation to calculate Rac/Rdc, then determine
       //       power dissipation from AC losses
@@ -296,7 +308,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       
       // Calculate surface area, temperature rise and inductor temp
       // TODO: Calculate wound area differently for P2P wiring vs busbar/flat wound inductor
-      var outer_radius  = rTotal;
+      var outer_radius  = cfgInd.r + wire_dia;
       var outer_circum  = outer_radius * 2 * Math.PI;
       var outer_area    = outer_circum * this.len;
       var inner_radius  = 0;
@@ -312,14 +324,56 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.t_core       = cfg.t_ambient; // + Math.pow(this.power * 1000 / this.wound_area, 0.833);
       this.t_status     = this.t_core > 155.0 ? 'red' : 'green';
       
-      console.log('ind [air]: n=' + n + ' L=' + Number(L * 1e6).toFixed(3) +
-                  ' uH' + ' len=' + core_len + ' winding_len=' + Number(this.winding_len).toFixed(3) +
+      console.log('ind [air]: n=' + this.turns + ' L=' + Number(this.h_eff * 1e6).toFixed(3) +
+                  ' uH' + ' len=' + this.len + ' winding_len=' + Number(this.winding_len).toFixed(3) +
                   ' volume=' + Number(this.volume).toFixed(2));
       console.log('           outer_area=' + Number(outer_area).toFixed(2) +
                              ' inner_area=' + Number(inner_area).toFixed(2) +
                              ' end_area=' + Number(end_area).toFixed(2) +
                              ' wound_area=' + Number(this.wound_area).toFixed(2));
     }
+  },
+  
+  /*
+   * Calculate the number of turns for an air core inductor.
+   */
+  aci_turns: function(cfgInd, wire_dia) {
+    var rActual = cfgInd.r + wire_dia / 2.0;            // assume radius is for bobbin
+    var core_len = 1;
+    var last = 0.001;
+    var L = 0.1;
+    var n = 1;
+    var nIncr = 0.05;
+    for ( ; n < 1000; n += nIncr) {
+      core_len = n * wire_dia;
+      last = L;
+      L = (n * n * rActual * rActual) / (9 * rActual + 10 * core_len);     // in uH
+      L = L * 1e-6;                                                        // convert to H
+      if (L >= cfgInd.target) {
+        break;
+      }
+      // console.log('r=' + cfgInd.r + ' wire_dia=' + wire_dia + ' n=' + n + ' L=' + Number(L * 1e6).toFixed(3) + 'uH');
+    }
+    
+    // pick closest solution between current and previous options
+    if (cfgInd.target - last < L - cfgInd.target) {
+      // previous solution was closer to target
+      L = last;
+      n -= nIncr;
+      core_len = (n + 0.5) * wire_dia;
+    }
+     
+    var rTotal        = cfgInd.r + wire_dia;
+    this.turns        = n;
+    this.turns_l1     = n
+    this.turns_status = 'green';
+    this.h_eff        = L;
+    this.h_biased     = L;
+    this.len          = core_len;
+    this.winding_len  = Math.PI * rActual * 2.0 * this.turns;
+    this.volume       = Math.PI * rTotal * rTotal * this.len;
+    this.h_total      = this.h_eff / cfgInd.count;
+    this.h_totalb     = this.h_total;
   },
   
   /*

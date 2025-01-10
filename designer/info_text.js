@@ -255,6 +255,10 @@ icosalogic.inv_design.info_text = [
 {key: 'ind_type',           itxt: '<b>ind_type:</b> Select either off-the-shelf, custom, or air-core inductor.)'},
 {key: 'ind1_target',        itxt: '<b>L<sub>1_target</sub>:</b> Enter the desired inductance value for L1.'},
 {key: 'ind2_target',        itxt: '<b>L<sub>2_target</sub>:</b> Enter the desired inductance value for L2.'},
+{key: 'ind_radius_sel',     itxt: '<b>radius_sel:</b> Enter how the radius is selected.<br>' +
+                                  'Manual -- user manually selects the radius (default)<br>' +
+				  'Minimize winding length -- app finds the radius with the minimum winding length<br>' +
+				  'Minimize volume -- app finds the radius with the minimum inductor volume.'},
 {key: 'ind_lii',            itxt: '<b>LI<sup>2</sup>:</b> The inductance times the current squared.  This value is used to select<br>' +
                                   'an appropriately sized inductor core. (Read only)'},
 {key: 'ind_target_ap',      itxt: '<b>A<sub>p_target</sub>:</b> The target area product.<br>' +

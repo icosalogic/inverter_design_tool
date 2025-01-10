@@ -126,6 +126,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
   n:                   25,
   r:                   12.7,
   count:               1,
+  radius_sel:          'man',
   
   setDefaultValues: function(inum) {
 	  console.log("ConfigInd.setDefaultValues: enter");
@@ -138,6 +139,8 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.n                   = 25;
     this.r                   = 12.7;
     this.count               = 1;
+    this.radius_sel          = 'man';
+    
   },
   
   /*
@@ -154,6 +157,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.n                   = cfg.n;
     this.r                   = cfg.r;
     this.count               = cfg.count;
+    this.radius_sel          = cfg.radius_sel;
   },
   
   load: function(parent, inum) {
@@ -168,6 +172,12 @@ icosalogic.inv_design.ConfigInd.prototype = {
     this.loadItem(parent, 'n'                  , true);
     this.loadItem(parent, 'r'                  , true);
     this.loadItem(parent, 'count'              , true);
+    this.loadItem(parent, 'radius_sel'         , false);
+    
+    // initialize recently added field
+    if (this.radius_sel == null) {
+      this.radius_sel = 'man';
+    }
   },
  
   /*
@@ -203,6 +213,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     localStorage.setItem(prefix2 + 'n', this.n);
     localStorage.setItem(prefix2 + 'r', this.r);
     localStorage.setItem(prefix2 + 'count', this.count);
+    localStorage.setItem(prefix2 + 'radius_sel', this.radius_sel);
   },
   
   dump: function() {
@@ -216,6 +227,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
     console.log('  n='             + this.n);
     console.log('  r='             + this.r);
     console.log('  count='         + this.count);
+    console.log('  radius_sel='    + this.radius_sel);
   },
   
 };
