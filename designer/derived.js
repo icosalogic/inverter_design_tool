@@ -250,17 +250,17 @@ icosalogic.inv_design.DerivedInd.prototype = {
        */
       console.log('ind [air]: sel=' + cfgInd.radius_sel + ' r=' + cfgInd.r + ' target=' + Number(cfgInd.target * 1e6).toFixed(3) + ' uH');
       
+      var max_radius = 800;                  // somewhat arbitrary
+      var min_radius = wire_dia * 4;
+      var radius_incr = 10;
+      var rMin = min_radius;
+      var rTest = min_radius;
       if (cfgInd.radius_sel == 'man') {
         // manual radius selection, just calculate number of turns
         this.aci_turns(cfgInd, wire_dia);
       } else if (cfgInd.radius_sel == 'len') {
         // select radius to minimize winding len, units are mm
         var wLen = 1e9;
-        var min_radius = wire_dia * 4;
-        var max_radius = 600;                  // somewhat arbitrary
-        var radius_incr = 10;
-        var rMin = min_radius;
-        var rTest = min_radius;
         for ( ; rTest <= max_radius; rTest += radius_incr) {
           cfgInd.r = rTest;
           this.aci_turns(cfgInd, wire_dia);
@@ -277,11 +277,6 @@ icosalogic.inv_design.DerivedInd.prototype = {
       } else if (cfgInd.radius_sel == 'vol') {
         // select radius to minimize volume of wound inductor
         var vol = 1e9;
-        var min_radius = wire_dia * 4;
-        var max_radius = 600;                  // somewhat arbitrary
-        var radius_incr = 10;
-        var rMin = min_radius;
-        var rTest = min_radius;
         for ( ; rTest <= max_radius; rTest += radius_incr) {
           cfgInd.r = rTest;
           this.aci_turns(cfgInd, wire_dia);
@@ -336,9 +331,16 @@ icosalogic.inv_design.DerivedInd.prototype = {
   
   /*
    * Calculate the number of turns for an air core inductor.
+   * Formula for inductance of an air core inductor:
+   * L = µ₀ * n² * A / l
+   * µ₀ = 4π x 10^-7 H/m
+   * A is cross section area of the core pi*r*r (meters^2)
+   * l is length of coil (meters)
    */
   aci_turns: function(cfgInd, wire_dia) {
+    var mu0 = 4 * Math.PI *1e-7;
     var rActual = cfgInd.r + wire_dia / 2.0;            // assume radius is for bobbin
+    var aActual = rActual * rActual * Math.PI * 1e-6;   // convert from mm to m
     var core_len = 1;
     var last = 0.001;
     var L = 0.1;
@@ -347,8 +349,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
     for ( ; n < 1000; n += nIncr) {
       core_len = n * wire_dia;
       last = L;
-      L = (n * n * rActual * rActual) / (9 * rActual + 10 * core_len);     // in uH
-      L = L * 1e-6;                                                        // convert to H
+      L = mu0 * n * n * aActual / (core_len * 1e-3);
       if (L >= cfgInd.target) {
         break;
       }
