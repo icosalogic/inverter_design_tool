@@ -1312,6 +1312,9 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('ind1_h_effb').value           = Number(derived.ind1.h_biased * 1000000).toFixed(3); // display uH
   document.getElementById('ind1_wound_area').value       = derived.ind1.wound_area.toFixed(2);
   document.getElementById('ind1_wound_area_in').value    = Number(derived.ind1.wound_area / (2.54*2.54)).toFixed(3);
+  document.getElementById('di_dt_min').value             = Number(derived.di_dt_min / 1000000).toFixed(2);     // V/us
+  document.getElementById('di_dt_nom').value             = Number(derived.di_dt_nom / 1000000).toFixed(2);
+  document.getElementById('di_dt_max').value             = Number(derived.di_dt_max / 1000000).toFixed(2);
   
   if (derived.ind2.cor_pn_entry != null) {
     document.getElementById('ind2_lii').value              = Number(derived.ind2.lii * 1e6).toFixed(2);
@@ -1853,6 +1856,9 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'ind1_h_eff'            + '=' + Number(derived.ind1.h_eff * 1000000).toFixed(3) + '\n';    // display uH
   outStr += 'ind1_h_effb'           + '=' + Number(derived.ind1.h_biased * 1000000).toFixed(3) + '\n'; // display uH
   outStr += 'ind1_h_total'          + '=' + Number(derived.ind1.h_total * 1000000).toFixed(3) + '\n';  // display uH
+  outStr += 'di_dt_min'             + '=' + Number(derived.di_dt_min / 1000000).toFixed(2) + '\n';
+  outStr += 'di_dt_nom'             + '=' + Number(derived.di_dt_nom / 1000000).toFixed(2) + '\n';
+  outStr += 'di_dt_max'             + '=' + Number(derived.di_dt_max / 1000000).toFixed(2) + '\n';
   
   if (derived.ind2.cor_pn_entry != null) {
     outStr += 'ind2_lii'              + '=' + Number(derived.ind2.lii).toFixed(3) + '\n';

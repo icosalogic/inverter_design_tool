@@ -524,6 +524,9 @@ icosalogic.inv_design.Derived.prototype = {
   gd_r_bs:                  1.0,
   gd_t_bs:                  1.0,
   gd_c_vdd:                 1.0,
+  di_dt_min:                1.0,
+  di_dt_nom:                1.0,
+  di_dt_max:                1.0,
   th_pgsw:                  1.0,
   th_prgext:                1.0,
   th_prgint:                1.0,
@@ -736,6 +739,9 @@ icosalogic.inv_design.Derived.prototype = {
       this.of_f_res_actual       = 1 / (2 * Math.PI * Math.sqrt(this.ind1.h_total  * this.oc_c_total));
       this.of_f_res_actualb      = 1 / (2 * Math.PI * Math.sqrt(this.ind1.h_totalb * this.oc_c_total));
     }
+    this.di_dt_min = this.v_pack_min / this.ind1.h_totalb;  // estimate using biased h_totalb
+    this.di_dt_nom = this.v_pack_nom / this.ind1.h_totalb;
+    this.di_dt_max = this.v_pack_max / this.ind1.h_totalb;
     
     var of_actual_status       = 'red';
     var of_actualb_status      = 'red';

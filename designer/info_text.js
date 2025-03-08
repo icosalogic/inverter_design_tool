@@ -187,9 +187,11 @@ icosalogic.inv_design.info_text = [
 				  'Values between 0 and 1 indicate how much of the switching losses have been mitigated<br>' +
 				  'by soft switching, and are reflected in the FET power calculations in the thermal section below.'},
 {key: 'gd_r_on',            itxt: '<b>R<sub>gd_on</sub>:</b> The internal on resistance of the gate driver.<br>' +
-                                  'The default value is for the UCC5390E device.'},
+                                  'The value for the UCC5390E device is 0.71. (default)<br>' +
+				  'The value for the UCC21520 device is 1.14.'},
 {key: 'gd_r_off',           itxt: '<b>R<sub>gd_off</sub>:</b> The internal off resistance of the gate driver.<br>' +
-                                  'The default value is for the UCC5390E device.'},
+                                  'The value for the UCC5390E device is 0.13. (default)' +
+				  'The value for the UCC21520 device is 0.55.'},
 {key: 'gd_i_on',            itxt: '<b>I<sub>gd_on</sub>:</b> The estimated current through the gate driver to turn on the FET.<br>' +
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_on</sub> + R<sub>g_ext_on</sub> + R<sub>g_int</sub>). (Read only)'},
 {key: 'gd_i_off',           itxt: '<b>I<sub>gd_off</sub>:</b> The estimated current through the gate driver to turn off the FET.<br>' +
@@ -314,6 +316,8 @@ icosalogic.inv_design.info_text = [
                                   'Equal to L<sub>ind</sub> / ind_count. (Read only)'},
 {key: 'ind_r_total',        itxt: '<b>R<sub>ind_total</sub>:</b>  The total resistance.<br>' +
                                   'Equal to R<sub>ind_dc_max</sub> / ind_count. (Read only)'},
+{key: 'di_dt',              itxt: '<b>di_dt:</b> Estimated di/dt through inductor 1.<br>' +
+                                  'Equal to V<sub>pack</sub> / (L<sub>total</sub> * 1000000). (Read only)'},
 
 // Output Capacitor
 {key: 'oc_target',          itxt: '<b>C<sub>target</sub>:</b> The capacitance value from the currently selected output filter suggestion. (Read only)'},
