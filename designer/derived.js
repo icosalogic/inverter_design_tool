@@ -272,7 +272,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
         // Recompute with the radius for the minimum winding length
         cfgInd.r = rMin;
         this.aci_turns(cfgInd, wire_dia);
-        console.log('ind [air]: r=' + cfgInd.r + ' has min winding len' + Number(this.winding_len).toFixed(3));
+        console.log('ind [air]: r=' + cfgInd.r + ' has min winding len=' + Number(this.winding_len).toFixed(3));
 
       } else if (cfgInd.radius_sel == 'vol') {
         // select radius to minimize volume of wound inductor
