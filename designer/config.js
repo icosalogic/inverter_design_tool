@@ -248,7 +248,7 @@ icosalogic.inv_design.Config.prototype = {
   bb_min_width:        12.7,
   bb_sub_thickness:    1.6256,
   bb_ild_thickness:    0.1016,
-  dcl_cap_pn:          'C4AQ0BW5250M3LJ',
+  dcl_cap_pn:          'C4AQOBW5250M3LJ',
   dcl_dc_rms_factor:   1.0,
   dcl_v_ripple:        1.0,
   dcl_count:           1,
@@ -258,7 +258,7 @@ icosalogic.inv_design.Config.prototype = {
   ind1:                new icosalogic.inv_design.ConfigInd(),
   ind2:                new icosalogic.inv_design.ConfigInd(),
   oc_target:           0.00003,
-  oc_pn:               'C4AQ0BW5250M3LJ',
+  oc_pn:               'C4AQOBW5250M3LJ',
   oc_count:            1,
   est_eff:             95,
   v_cell_min:          3.0,
@@ -298,7 +298,7 @@ icosalogic.inv_design.Config.prototype = {
     this.bb_min_width        = 12.7;
     this.bb_sub_thickness    = 1.6256;
     this.bb_ild_thickness    = 0.1016;
-    this.dcl_cap_pn          = 'C4AQ0BW5250M3LJ';
+    this.dcl_cap_pn          = 'C4AQOBW5250M3LJ';
     this.dcl_dc_rms_factor   = 1.0;
     this.dcl_v_ripple        = 1.0;
     this.dcl_count           = 1;
@@ -306,7 +306,7 @@ icosalogic.inv_design.Config.prototype = {
     this.fet_pn              = 'MSC025SMA120B';
     this.fet_r_th_ca         = 5;
     this.oc_target           = 0.00003;
-    this.oc_pn               = 'C4AQ0BW5250M3LJ';
+    this.oc_pn               = 'C4AQOBW5250M3LJ';
     this.oc_count            = 1;
     this.est_eff             = 95;
     this.v_cell_min          = 3.0;
