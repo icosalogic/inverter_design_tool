@@ -1275,7 +1275,14 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind1_target_ap').value        = Number(derived.ind1.target_ap).toFixed(2);
     document.getElementById('ind1_core_mfg').value         = derived.ind1.cor_pn_entry.mfg;
     document.getElementById('ind1_mat').value              = derived.ind1.cor_pn_entry.mat;
-    document.getElementById('ind1_mu').value               = derived.ind1.cor_pn_entry.mu;
+
+    if (cfg.ind1.ind_type != 'air') {
+      var el = document.getElementById('ind1_mu');
+      el.value = derived.ind1.cor_pn_entry.mu;
+      el.readOnly = true;
+      el.onblur = null;
+
+    }
     document.getElementById('ind1_ap').value               = Number(derived.ind1.cor_size_entry.Ap).toFixed(2);
     document.getElementById('ind1_od').value               = Number(derived.ind1.cor_size_entry.OD).toFixed(2);
     document.getElementById('ind1_id').value               = Number(derived.ind1.cor_size_entry.ID).toFixed(2);
@@ -1321,7 +1328,13 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind2_target_ap').value        = Number(derived.ind2.target_ap).toFixed(2);
     document.getElementById('ind2_core_mfg').value         = derived.ind2.cor_pn_entry.mfg;
     document.getElementById('ind2_mat').value              = derived.ind2.cor_pn_entry.mat;
-    document.getElementById('ind2_mu').value               = derived.ind2.cor_pn_entry.mu;
+
+    if (cfg.ind2.ind_type != 'air') {
+      var el = document.getElementById('ind2_mu');
+      el.value = derived.ind2.cor_pn_entry.mu;
+      el.readOnly = true;
+      el.onblur = null;
+    }
     document.getElementById('ind2_ap').value               = Number(derived.ind2.cor_size_entry.Ap).toFixed(2);
     document.getElementById('ind2_od').value               = Number(derived.ind2.cor_size_entry.OD).toFixed(2);
     document.getElementById('ind2_id').value               = Number(derived.ind2.cor_size_entry.ID).toFixed(2);
@@ -1477,7 +1490,7 @@ icosalogic.inv_design.displayConfig = function()
   var ur_before = document.getElementById('bb_cu_use_recommend').checked;
   document.getElementById('bb_cu_use_recommend').checked = cfg.bb_cu_use_recommend;
   var ur_after = document.getElementById('bb_cu_use_recommend').checked;
-  console.log('displayConfig: before=' + ur_before + ' bb_cu_use_recommend=' + cfg.bb_cu_use_recommend + ' after=' + ur_after);
+  // console.log('displayConfig: before=' + ur_before + ' bb_cu_use_recommend=' + cfg.bb_cu_use_recommend + ' after=' + ur_after);
   document.getElementById('bb_cu_thickness').value       = cfg.bb_cu_thickness;
   document.getElementById('bb_min_width').value          = cfg.bb_min_width;
   document.getElementById('bb_sub_thickness').value      = cfg.bb_sub_thickness;
@@ -1509,6 +1522,19 @@ icosalogic.inv_design.displayConfig = function()
   document.getElementById('ind2_count').value            = cfg.ind2.count;
   document.getElementById('ind1_radius_sel').value       = cfg.ind1.radius_sel;
   document.getElementById('ind2_radius_sel').value       = cfg.ind2.radius_sel;
+  console.log('displayConfig: ind1_type=' + cfg.ind1.ind_type + ' ind2_type=' + cfg.ind2.ind_type);
+  if (cfg.ind1.ind_type == 'air') {
+    var el = document.getElementById('ind1_mu');
+    el.value = cfg.ind1.mu;
+    el.readOnly = false;
+    el.onblur = icosalogic.inv_design.updateHandler;
+  }
+  if (cfg.ind2.ind_type == 'air') {
+    var el = document.getElementById('ind2_mu');
+    el.value = cfg.ind2.mu;
+    el.readOnly = false;
+    el.onblur = icosalogic.inv_design.updateHandler;
+  }
     
   document.getElementById('oc_target').value             = Number(cfg.oc_target * 1000000).toFixed(3);
   document.getElementById('oc_pn').value                 = cfg.oc_pn;
@@ -1580,6 +1606,12 @@ icosalogic.inv_design.readAllInputs = function()
   cfg.ind2.count          = parseFloat(document.getElementById('ind2_count').value);
   cfg.ind1.radius_sel     = document.getElementById('ind1_radius_sel').value;
   cfg.ind2.radius_sel     = document.getElementById('ind2_radius_sel').value;
+  if (cfg.ind1.ind_type == 'air') {
+    cfg.ind1.mu           = parseFloat(document.getElementById('ind1_mu').value);
+  }
+  if (cfg.ind2.ind_type == 'air') {
+    cfg.ind2.mu           = parseFloat(document.getElementById('ind2_mu').value);
+  }
 
   cfg.oc_target           = parseFloat(document.getElementById('oc_target').value) / 1000000;
   cfg.oc_pn               = document.getElementById('oc_pn').value;
@@ -1952,6 +1984,7 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'ind1_r'              + '=' + cfg.ind1.r + '\n';
   outStr += 'ind1_count'          + '=' + cfg.ind1.count + '\n';
   outStr += 'ind1_radius_sel'     + '=' + cfg.ind1.radius_sel + '\n';
+  outStr += 'ind1_mu'             + '=' + cfg.ind1.mu + '\n';
   outStr += 'ind2_pn'             + '=' + cfg.ind2.pn + '\n';
   outStr += 'ind2_ind_type'       + '=' + cfg.ind2.ind_type + '\n';
   outStr += 'ind2_target'         + '=' + Number(cfg.ind2.target * 1000000).toFixed(3) + '\n';
@@ -1960,6 +1993,7 @@ icosalogic.inv_design.printConfig = function() {
   outStr += 'ind2_r'              + '=' + cfg.ind2.r + '\n';
   outStr += 'ind2_count'          + '=' + cfg.ind2.count + '\n';
   outStr += 'ind2_radius_sel'     + '=' + cfg.ind2.radius_sel + '\n';
+  outStr += 'ind2_mu'             + '=' + cfg.ind2.mu + '\n';
   
   outStr += 'oc_target'           + '=' + Number(cfg.oc_target * 1000000).toFixed(3) + '\n';
   outStr += 'oc_pn'               + '=' + cfg.oc_pn + '\n';

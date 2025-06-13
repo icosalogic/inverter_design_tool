@@ -272,7 +272,10 @@ icosalogic.inv_design.info_text = [
 {key: 'ind_od',             itxt: '<b>ind_od:</b> The outside diameter of the inductor core. (Read only)'},
 {key: 'ind_id',             itxt: '<b>ind_id:</b> The inside diamter of the inductor core. (Read only)'},
 {key: 'ind_ht',             itxt: '<b>ind_ht:</b> The height of the inductor core. (Read only)'},
-{key: 'ind_mu',             itxt: '<b>mu:</b> The relative permeability of the selected core. (Read only)'},
+{key: 'ind_mu',             itxt: '<b>mu:</b> The relative permeability of the core.<br>' +
+				  'For Coil cores, this field is read/write.<br' +
+				  'For air core, the value should be 1, for other cores, enter a value > 1.<br>' +
+                                  'For OTS and Custom cores, this field is read only.'},
 {key: 'ind_ap',             itxt: '<b>A<sub>p</sub>:</b> The area product is proportional to the power handling capacity of the inductor core. (Read only)'},
 {key: 'ind_al',             itxt: '<b>A<sub>l</sub>:</b> This attribute specifies the inductance resulting from a given number<br>' +
                                   ' of wiring turns around the inductor core. (Read only)'},
@@ -317,7 +320,7 @@ icosalogic.inv_design.info_text = [
 {key: 'ind_r_total',        itxt: '<b>R<sub>ind_total</sub>:</b>  The total resistance.<br>' +
                                   'Equal to R<sub>ind_dc_max</sub> / ind_count. (Read only)'},
 {key: 'di_dt',              itxt: '<b>di_dt:</b> Estimated di/dt through inductor 1.<br>' +
-                                  'Equal to V<sub>pack</sub> / (L<sub>total</sub> * 1000000). (Read only)'},
+                                  'Equal to V<sub>pack</sub> / (L<sub>total_biased</sub> * 1000000). (Read only)'},
 
 // Output Capacitor
 {key: 'oc_target',          itxt: '<b>C<sub>target</sub>:</b> The capacitance value from the currently selected output filter suggestion. (Read only)'},

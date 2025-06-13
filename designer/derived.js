@@ -332,7 +332,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
   /*
    * Calculate the number of turns for an air core inductor.
    * Formula for inductance of an air core inductor:
-   * L = µ₀ * n² * A / l
+   * L = µ * µ₀ * n² * A / l
    * µ₀ = 4π x 10^-7 H/m
    * A is cross section area of the core pi*r*r (meters^2)
    * l is length of coil (meters)
@@ -341,15 +341,16 @@ icosalogic.inv_design.DerivedInd.prototype = {
     var mu0 = 4 * Math.PI *1e-7;
     var rActual = cfgInd.r + wire_dia / 2.0;            // assume radius is for bobbin
     var aActual = rActual * rActual * Math.PI * 1e-6;   // convert from mm to m
+    var mu_area = cfgInd.mu * mu0 * aActual;
     var core_len = 1;
     var last = 0.001;
     var L = 0.1;
-    var n = 1;
+    var n = 0.05;
     var nIncr = 0.05;
     for ( ; n < 1000; n += nIncr) {
       core_len = n * wire_dia;
       last = L;
-      L = mu0 * n * n * aActual / (core_len * 1e-3);
+      L = mu_area * n * n / (core_len * 1e-3);
       if (L >= cfgInd.target) {
         break;
       }
@@ -742,7 +743,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.di_dt_min = this.v_pack_min / this.ind1.h_totalb;  // estimate using biased h_totalb
     this.di_dt_nom = this.v_pack_nom / this.ind1.h_totalb;
     this.di_dt_max = this.v_pack_max / this.ind1.h_totalb;
-    
+
     var of_actual_status       = 'red';
     var of_actualb_status      = 'red';
     
