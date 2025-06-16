@@ -243,7 +243,7 @@ icosalogic.inv_design.ConfigInd.prototype = {
 
 icosalogic.inv_design.Config.prototype = {
   cfg_name:            '',
-  ctrl_type:           'cbc',
+  ctrl_type:           'pwm',
   out_freq:            60,
   sw_freq:             12000,
   out_amps:            10.0,
@@ -293,7 +293,7 @@ icosalogic.inv_design.Config.prototype = {
   setDefaultValues: function() {
 	  console.log("Config.setDefaultValues: enter");
   
-    this.ctrl_type           = 'cbc';
+    this.ctrl_type           = 'pwm';
     this.out_freq            = 60;
     this.sw_freq             = 12000;
     this.out_amps            = 10;
@@ -440,7 +440,7 @@ icosalogic.inv_design.Config.prototype = {
     
     // set default for new field
     if (this.ctrl_type == null) {
-      this.ctrl_type = 'cbc';
+      this.ctrl_type = 'pwm';
     }
     
     var ur_before = this.bb_cu_use_recommend;
