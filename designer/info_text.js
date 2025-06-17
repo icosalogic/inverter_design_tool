@@ -280,7 +280,7 @@ icosalogic.inv_design.info_text = [
 				  'More specifically, A<sub>p</sub> ~= LI<sup>2</sup>.<br>' +
                                   'A<sub>e</sub> is the cross section area of the inductor core.<br>' +
 				  'A<sub>w</sub> is the window area, the open area of the inside of the toroid.<br>' +
-				  'A<sub>p</sub> = A<sub>e</sub> * A<sub>w</sub>.(Read only)'},
+				  'A<sub>p</sub> = A<sub>e</sub> * A<sub>w</sub>. (Read only)'},
 {key: 'ind_al',             itxt: '<b>A<sub>l</sub>:</b> This attribute specifies the inductance resulting from a given number<br>' +
                                   ' of wiring turns around the inductor core. (Read only)'},
 {key: 'ind_turns_max',      itxt: '<b>ind_turns_max:</b> The maximum number of turns of the currently selected wire that will fit<br>' +

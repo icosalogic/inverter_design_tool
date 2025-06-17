@@ -530,7 +530,7 @@ icosalogic.inv_design.addIndCorOptions = function(inum) {
     var opt_el = document.createElement('option');
     opt_el.id = prefix + ice.pn;
     opt_el.value = ice.pn;
-    opt_el.text = ice.pn + ' ' + ice.mat + ' ' + ice.mu + 'μ ' + sze.OD + 'x' + sze.ID + 'x' + sze.HT + ' mm';
+    opt_el.text = ice.pn + ' ' + ice.mat + ' ' + ice.mu + 'μ  OD:' + sze.OD + ' Ap:' + sze.Ap / 2e4;
     if ((oldValue == null && el.length < 1) || oldValue == ice.pn) {
       opt_el.selected = true;
     }
@@ -1271,8 +1271,8 @@ icosalogic.inv_design.displayDerived = function()
   oa.displaySuggestion();
   
   if (derived.ind1.cor_pn_entry != null) {
-    document.getElementById('ind1_lii').value              = Number(derived.ind1.lii * 1e6).toFixed(2);
-    document.getElementById('ind1_target_ap').value        = Number(derived.ind1.target_ap).toFixed(2);
+    document.getElementById('ind1_lii').value              = Number(derived.ind1.lii * 1e3).toFixed(2);
+    document.getElementById('ind1_target_ap').value        = Number(derived.ind1.target_ap / 1e3).toFixed(2);
     document.getElementById('ind1_core_mfg').value         = derived.ind1.cor_pn_entry.mfg;
     document.getElementById('ind1_mat').value              = derived.ind1.cor_pn_entry.mat;
 
@@ -1283,7 +1283,7 @@ icosalogic.inv_design.displayDerived = function()
       el.onblur = null;
 
     }
-    document.getElementById('ind1_ap').value               = Number(derived.ind1.cor_size_entry.Ap).toFixed(2);
+    document.getElementById('ind1_ap').value               = Number(derived.ind1.cor_size_entry.Ap / 2e4).toFixed(2);
     document.getElementById('ind1_od').value               = Number(derived.ind1.cor_size_entry.OD).toFixed(2);
     document.getElementById('ind1_id').value               = Number(derived.ind1.cor_size_entry.ID).toFixed(2);
     document.getElementById('ind1_ht').value               = Number(derived.ind1.cor_size_entry.HT).toFixed(2);
@@ -1324,8 +1324,8 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('di_dt_max').value             = Number(derived.di_dt_max / 1000000).toFixed(2);
   
   if (derived.ind2.cor_pn_entry != null) {
-    document.getElementById('ind2_lii').value              = Number(derived.ind2.lii * 1e6).toFixed(2);
-    document.getElementById('ind2_target_ap').value        = Number(derived.ind2.target_ap).toFixed(2);
+    document.getElementById('ind2_lii').value              = Number(derived.ind2.lii * 1e3).toFixed(2);
+    document.getElementById('ind2_target_ap').value        = Number(derived.ind2.target_ap / 1e3).toFixed(2);
     document.getElementById('ind2_core_mfg').value         = derived.ind2.cor_pn_entry.mfg;
     document.getElementById('ind2_mat').value              = derived.ind2.cor_pn_entry.mat;
 
@@ -1335,7 +1335,7 @@ icosalogic.inv_design.displayDerived = function()
       el.readOnly = true;
       el.onblur = null;
     }
-    document.getElementById('ind2_ap').value               = Number(derived.ind2.cor_size_entry.Ap).toFixed(2);
+    document.getElementById('ind2_ap').value               = Number(derived.ind2.cor_size_entry.Ap / 2e4).toFixed(2);
     document.getElementById('ind2_od').value               = Number(derived.ind2.cor_size_entry.OD).toFixed(2);
     document.getElementById('ind2_id').value               = Number(derived.ind2.cor_size_entry.ID).toFixed(2);
     document.getElementById('ind2_ht').value               = Number(derived.ind2.cor_size_entry.HT).toFixed(2);

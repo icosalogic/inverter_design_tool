@@ -140,8 +140,21 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.cor_mat_entry    = oa.ind_cor_mat_table.find(entry => entry.mat == this.cor_pn_entry.mat);
       this.cor_dc_mag_entry = oa.ind_dc_mag_table.find(entry => entry.mat == this.cor_pn_entry.mat && entry.mu == this.cor_pn_entry.mu);
       
-      if (this.cor_pn_entry == null || this.cor_size_entry == null || this.cor_mat_entry == null) {
-        console.log('ind.derive: ERROR: one or more of cor_pn_entry, cor_size_entry, cor_mat_entry is null');
+      if (this.cor_pn_entry == null) {
+        console.log('ind.derive: ERROR: cor_pn_entry is null * * * * * * * * * *');
+        console.log('entry.pn=' + cfgInd.core_pn);
+      }
+      if (this.cor_size_entry == null) {
+        console.log('ind.derive: ERROR: cor_size_entry is null * * * * * * * * * *');
+        console.log('cor_pn_entry.size=' + this.cor_pn_entry.size);
+      }
+      if (this.cor_mat_entry == null) {
+        console.log('ind.derive: ERROR: cor_mat_entry is null * * * * * * * * * *');
+        console.log('cor_pn_entry.mat=' + this.cor_pn_entry.mat);
+      }
+      if (this.cor_dc_mag_entry == null) {
+        console.log('ind.derive: ERROR: cor_dc_mag_entry is null * * * * * * * * * *');
+        console.log('cor_pn_entry.mat=' + this.cor_pn_entry.mat + ' cor_pn_entry.mu=' + this.cor_pn_entry.mu);
       }
     
       // calculate a conservative limit on the max number of turns for this core
@@ -166,7 +179,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       // console.log('cor_size_entry: shape=' + this.cor_size_entry.shape + ' mat=' + this.cor_pn_entry.mat);
     
       this.lii                   = cfgInd.target * amps_per_ind * amps_per_ind;
-      var est_k                  = 0.7; // what is a good estimate? 0.5?
+      var est_k                  = 0.5; // what is a good estimate? 0.5?
       this.target_ap             = this.lii * oa.sqrt_2  * 1e6 / (this.cor_mat_entry.B_max * this.cor_mat_entry.max_j * est_k);
     
       var Al_min = this.cor_pn_entry.Al * 0.92;                    // take min of nominal +/- 8% variance
