@@ -236,17 +236,26 @@ icosalogic.inv_design.DerivedInd.prototype = {
       console.log('h_ac_max=' + h_ac_max + ' h_ac_min=' + h_ac_min + ' b_ac_max=' + b_ac_max + ' b_ac_min=' + b_ac_min);
       console.log('f=' + f_kHz + ' b_pk=' + b_pk + ' pld=' + pld + ' power=' + this.power);
       
-      // calculate the number of layers used in the windings
-      var layers_used = 0;
-      var turns_left = this.turns;
-      for (layers_used = 0; turns_left > 0; layers_used++) {
-        turns_left -= turns_layer[layers_used];
-      }
-      
-      // area of a torus is 4 * pi**2 * r1 * r2
+      // calculate the number of layers used in the windings and the total winding length
       var xd = (this.cor_size_entry.OD - this.cor_size_entry.ID) / 2;
       var r1 = (this.cor_size_entry.OD + this.cor_size_entry.ID) / 4;
       var r2 = Math.sqrt(xd * xd + this.cor_size_entry.HT * this.cor_size_entry.HT) / 2;
+      var tight_winding_len = 0;
+      var loose_winding_len = 0;
+      var layers_used = 0;
+      var turns_left = this.turns;
+      for (layers_used = 0; turns_left > 0; layers_used++) {
+        var tight_1winding_len = 2 * (xd + this.cor_size_entry.HT + (2 + layers_used) * wire_dia);
+        var loose_1winding_len = 2 * (r2 + (0.5 + layers_used) * wire_dia) * Math.PI;
+        var turns_this_layer = turns_left > turns_layer[layers_used] ? turns_layer[layers_used] : turns_left;
+        tight_winding_len += tight_1winding_len * turns_this_layer;
+        loose_winding_len += loose_1winding_len * turns_this_layer;
+        turns_left -= turns_this_layer;
+      }
+      console.log('tight_winding_len=' + tight_winding_len + ' loose_winding_len=' + loose_winding_len);
+      this.winding_len = loose_winding_len;
+      
+      // area of a torus is 4 * pi**2 * r1 * r2
       this.wound_area = 4 * Math.PI * Math.PI * r1 * r2 / 100;
       console.log('r1=' + r1 + ' r2=' + r2 + ' area=' + this.wound_area);
       
@@ -255,7 +264,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
     
       console.log('power=' + this.power + ' wound_area=' + this.wound_area + ' t_core=' + this.t_core);
       
-    } else if (cfgInd.ind_type == 'air') {  // custom wound air core inductor
+    } else if (cfgInd.ind_type == 'air') {  // custom wound coil inductor
       /*
        * References:
        *     https://www.circuits.dk/calculator_multi_layer_aircore.htm
@@ -343,8 +352,8 @@ icosalogic.inv_design.DerivedInd.prototype = {
   },
   
   /*
-   * Calculate the number of turns for an air core inductor.
-   * Formula for inductance of an air core inductor:
+   * Calculate the number of turns for an coil inductor.
+   * Formula for inductance of a coil inductor:
    * L = µ * µ₀ * n² * A / l
    * µ₀ = 4π x 10^-7 H/m
    * A is cross section area of the core pi*r*r (meters^2)

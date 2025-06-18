@@ -10,7 +10,7 @@
 icosalogic.inv_design.version = {
   major: 2,
   minor: 0,
-  build: 77,
-  date: '2025/06/17',
-  time: '15:49:57',
+  build: 78,
+  date: '2025/06/18',
+  time: '15:56:22',
 };

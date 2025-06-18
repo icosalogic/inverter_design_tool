@@ -299,7 +299,7 @@ icosalogic.inv_design.info_text = [
 				  'to point-to-point, select a wire option, then change back to laminated bus bar.<br>' +
 				  'The selected wire option will be used in the inductor calculations,<br>' +
 				  'even after switching back to laminated bus bar. (Read only)'},
-{key: 'ind_winding_len',    itxt: '<b>ind_winding_len:</b> The length of an air core inductor winding.<br>' +
+{key: 'ind_winding_len',    itxt: '<b>ind_winding_len:</b> The length of an inductor winding.<br>' +
                                   'Equal to ind_turns * (ind_r_core  * 2 + wire_dia) * π. (Read only)'},
 {key: 'ind_vol',            itxt: '<b>ind_vol:</b> The volume of a wound air core inductor.<br>' +
                                   'Equal to π * (ind_r_core + wire_dia)<sup>2</sup> * ind_len. (Read only)'},

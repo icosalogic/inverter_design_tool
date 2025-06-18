@@ -1305,9 +1305,11 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind1_i_sat20').value          = derived.ind1.ind_entry.i_sat20;
     document.getElementById('ind1_i_sat30').value          = derived.ind1.ind_entry.i_sat30;
   }
-  if (cfg.ind1.ind_type == 'air') {
+  if (cfg.ind1.ind_type == 'air' || cfg.ind1.ind_type == 'custom') {
     document.getElementById('ind1_winding_len').value      = Number(derived.ind1.winding_len).toFixed(2);
     document.getElementById('ind1_winding_len_in').value   = Number(derived.ind1.winding_len / 25.4).toFixed(3);
+  }
+  if (cfg.ind1.ind_type == 'air') {
     document.getElementById('ind1_vol').value              = Number(derived.ind1.volume / 1000).toFixed(3);
     document.getElementById('ind1_vol_in').value           = Number(derived.ind1.volume / (25.4*25.4*25.4)).toFixed(3);
   }
@@ -1357,9 +1359,11 @@ icosalogic.inv_design.displayDerived = function()
     document.getElementById('ind2_i_sat20').value          = derived.ind2.ind_entry.i_sat20;
     document.getElementById('ind2_i_sat30').value          = derived.ind2.ind_entry.i_sat30;
   }
-  if (cfg.ind2.ind_type == 'air') {
+  if (cfg.ind2.ind_type == 'air' || cfg.ind2.ind_type == 'custom') {
     document.getElementById('ind2_winding_len').value      = Number(derived.ind2.winding_len).toFixed(2);
     document.getElementById('ind2_winding_len_in').value   = Number(derived.ind2.winding_len / 25.4).toFixed(3);
+  }
+  if (cfg.ind2.ind_type == 'air') {
     document.getElementById('ind2_vol').value              = Number(derived.ind2.volume / 1000).toFixed(3);
     document.getElementById('ind2_vol_in').value           = Number(derived.ind2.volume / (25.4*25.4*25.4)).toFixed(3);
   }
