@@ -1482,6 +1482,7 @@ icosalogic.inv_design.displayConfig = function()
   var oa = icosalogic.inv_design;
   var cfg = oa.config;
   
+  document.getElementById('cur_cfg_name').innerText      = cfg.cfg_name;
   document.getElementById('ctrl_type').value             = cfg.ctrl_type;
   document.getElementById('out_freq').value              = cfg.out_freq;
   document.getElementById('sw_freq').value               = cfg.sw_freq;
