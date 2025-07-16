@@ -273,8 +273,8 @@ icosalogic.inv_design.info_text = [
 {key: 'ind_id',             itxt: '<b>ind_id:</b> The inside diamter of the inductor core. (Read only)'},
 {key: 'ind_ht',             itxt: '<b>ind_ht:</b> The height of the inductor core. (Read only)'},
 {key: 'ind_mu',             itxt: '<b>mu:</b> The relative permeability of the core.<br>' +
-				  'For Coil cores, this field is read/write.<br' +
-				  'For air core, the value should be 1, for other cores, enter a value > 1.<br>' +
+				  'For Coil cores, this field is read/write.<br>' +
+				  'For air core, the value should be 1, for other cores, enter a value &gt; 1.<br>' +
                                   'For OTS and Custom cores, this field is read only.'},
 {key: 'ind_ap',             itxt: '<b>A<sub>p</sub>:</b> The area product is proportional to the power handling capacity of the inductor core.<br>' +
 				  'More specifically, A<sub>p</sub> ~= LI<sup>2</sup>.<br>' +
