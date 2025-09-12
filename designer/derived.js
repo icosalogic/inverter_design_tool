@@ -218,7 +218,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
       this.r_total               = this.r_eff / cfgInd.count;
       
       // Calculate core loss: Method 1 from Magnetics Powder Core catalog (dated 2020) page 20
-      var i_dc                   = 0;
+      var i_dc                   = 0;  // this is not true, DC current is present, AC ripple limited by di/dt of inductor
       var i_ac_pk                = amps_per_ind * oa.sqrt_2;
       var h_ac_com               = 4 * Math.PI * (this.turns / this.cor_size_entry.Le);
       var h_ac_max               = h_ac_com * (i_dc + i_ac_pk / 2);
@@ -455,7 +455,7 @@ icosalogic.inv_design.DerivedInd.prototype = {
 	  // console.log('DerivedInd.get_b: enter: h=' + h);
     
     var dcm = this.cor_dc_mag_entry;
-    var b = Math.pow((dcm.a + dcm.b * h + dcm.c * h * h) / (1 + dcm.d * h + dcm.e * h *  h), dcm.x);
+    var b = Math.pow((dcm.a + dcm.b * h + dcm.c * h * h) / (1 + dcm.d * h + dcm.e * h * h), dcm.x);
     // console.log('get_b: b=' + b);
     
     return b;
@@ -502,6 +502,7 @@ icosalogic.inv_design.Derived.prototype = {
   bb_i_out_status:          'red',
   bb_status:                'red',
   fet_i_max_actual:         10,
+  fet_r_ds_on_eff:          1.0,            // effective r_ds_on as a function of junction temp
   fet_i_actual_status:      'red',
   fet_status:               'red',
   dcl_i_rms_max:            1.0,
@@ -618,6 +619,10 @@ icosalogic.inv_design.Derived.prototype = {
     this.i_in_max = this.i_in_line_max * cfg.out_lines;
     
     this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on, 0);
+    if (this.fet_r_ds_on_eff == 1.0) {
+      // start with the max and iterate down
+      this.fet_r_ds_on_eff = this.fet_entry.r_ds_on;
+    }
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
     this.sw_freq_eff           = cfg.ctrl_type == 'cbc' ? cfg.sw_freq / 3 : cfg.sw_freq;
@@ -835,8 +840,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_pgsw                = v_gd_total * v_gd_total * fe.qg * this.sw_freq_eff / 1e9;
     this.th_prgext              = fe.r_g_ext * (on_factor + off_factor) / 2;
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
-//  this.th_pfi                 = this.fet_i_max_actual * this.fet_i_max_actual * fe.r_ds_on * 0.5;            // assume 50% duty cycle
-    this.th_pfi                 = fet_i_rms * fet_i_rms * fe.r_ds_on * 0.5;            // assume 50% duty cycle
+    this.th_pfi                 = fet_i_rms * fet_i_rms * this.fet_r_ds_on_eff * 0.5;            // assume 50% duty cycle
     this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff * 1e-6 *
                                   (this.v_pack_max / this.fet_entry.v_swe) * cfg.gd_sw_hard;
     this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
@@ -864,6 +868,73 @@ icosalogic.inv_design.Derived.prototype = {
     this.deriveCfgStatus();
   },
   
+  /*
+   * Call derive() iteratively, adjusting the effective r_ds_on based on the calculated
+   * junction temp, stopping when it converges.  This method only iterates if the configured
+   * FET entry has defined the tr_ds_on array, which has an even number of entries.  For every
+   * pair of numbers in the array, the first is a temperature in *C, and the second is the
+   * r_ds_on value at that junction temperature.  We call the deriveRDSOn() method to calculate
+   * the r_ds_on value after calculating the FET junction temperature, then iterate until the
+   * r_ds_on value converges.
+   */
+  deriveFJT: function(cfg) {
+	  console.log('Derived.deriveFJT: enter: cfg=' + cfg.cfg_name);
+
+    this.fet_r_ds_on_eff = 1.0;
+    this.derive(cfg);
+
+    if (this.fet_entry.hasOwnProperty('tr_ds_on') && this.fet_entry.tr_ds_on.length > 2) {
+      // We can calculate temperature dependent r_ds_on, instead of using worst-case
+
+      var r_ds_on_limit = 0.0001;
+      var prev_r_ds_on_t = this.fet_r_ds_on_eff;
+      this.deriveRDSOn();
+
+      var maxIters = 8;
+      var iter = 0;
+      while (Math.abs(this.fet_r_ds_on_eff - prev_r_ds_on_t) > r_ds_on_limit && iter < maxIters) {
+        this.derive(cfg);
+        prev_r_ds_on_t = this.fet_r_ds_on_eff;
+        this.deriveRDSOn();
+        iter += 1;
+      }
+
+      console.log('    iter=' + iter + '  fet_jt=' + this.th_t_fet_junction + '  r_ds_on=' + this.fet_r_ds_on_eff);
+    }
+  },
+
+  /*
+   * Interpolate r_ds_on as a function of the computed FET junction temperature.
+   */
+  deriveRDSOn: function() {
+	  console.log('deriveRDSOn: enter: fet_jt=' + this.th_t_fet_junction);
+    // Check for the unlikely event that the junction temperature is less than the minimum
+    if (this.th_t_fet_junction <= this.fet_entry.tr_ds_on[0]) {
+      this.fet_r_ds_on_eff = this.fet_entry.tr_ds_on[1];
+      return;
+    }
+    // Interpolate r_ds_on as a function of the computed FET junction temperature.
+    var inRange = false;
+    var tPrev = this.fet_entry.tr_ds_on[0];
+    var rPrev = this.fet_entry.tr_ds_on[1];
+    for (let i = 2; i < this.fet_entry.tr_ds_on.length; i += 2) {
+      var tCur = this.fet_entry.tr_ds_on[i];
+      var rCur = this.fet_entry.tr_ds_on[i + 1];
+      if (tCur >= this.th_t_fet_junction) {
+        var prev_r_ds_on_t = this.fet_r_ds_on_eff;
+        this.fet_r_ds_on_eff = rPrev + (rCur - rPrev) * (this.th_t_fet_junction - tPrev) / (tCur - tPrev);
+        console.log('deriveRDSOn: old r_ds_on_t=' + prev_r_ds_on_t + '  new_r_ds_on_t=' + this.fet_r_ds_on_eff);
+        inRange = true;
+        break;
+      }
+      tPrev = tCur;
+      rPrev = rCur;
+    }
+    if (! inRange) {
+      this.fet_r_ds_on_eff = rPrev;
+    }
+  },
+
   /*
    * Synthesize the status of the configuration by examining all the other section status values.
    * Does not examine incremental status values within a section.

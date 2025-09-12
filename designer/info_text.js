@@ -116,7 +116,7 @@ icosalogic.inv_design.info_text = [
                                   'Equal to I<sub>in_max</sub> * dcl_dc_rms_factor. (Read only)'},
 {key: 'dcl_v_ripple',       itxt: '<b>dcl_v_ripple:</b> The maximum desired voltage ripple on the input.'},
 {key: 'dcl_z_ripple',       itxt: '<b>dcl_z_ripple:</b> Equal to dcl_v_ripple / dcl_i_rms_max. (Read only)'},
-{key: 'dcl_c_req',          itxt: '<b>C<sub>required</sub>:</b> Equal to 1000000 / (ω<sub>sw</sub> * dcl_z_ripple). (Read only)'},
+{key: 'dcl_c_req',          itxt: '<b>C<sub>required</sub>:</b> Equal to (1000000 * dcl_i_rms_max) / (ω<sub>sw</sub> * dcl_v_ripple). (Read only)'},
 {key: 'dcl_fom',            itxt: '<b>FoM:</b> A dimensionless value used to size the capacitor.<br>' +
                                   'Equal to dcl_v_ripple / ω<sub>sw</sub>. (Read only)'},
 {key: 'dcl_cap_pn',         itxt: '<b>dcl_cap_pn:</b> Select a capacitor to satisfy the requirements.'},
@@ -149,6 +149,10 @@ icosalogic.inv_design.info_text = [
 {key: 'fet_max_i',          itxt: '<b>I<sub>fet_max</sub>:</b>     From the datasheet. (Read only)'},
 {key: 'fet_max_i_hot',      itxt: '<b>I<sub>fet_max_hot</sub>:</b> From the datasheet. (Read only)'},
 {key: 'fet_r_ds_on',        itxt: '<b>R<sub>ds_on</sub>:</b>       From the datasheet. (Read only)'},
+{key: 'fet_r_ds_on_eff',    itxt: '<b>R<sub>ds_on_eff</sub>:</b> The effective on resistance as a function of FET junction temperature.<br>' +
+                                  'Normally the worst-case on resistance is used, as specified in the FET entry.<br>' +
+                                  'If the tr_ds_on array is defined in the FET entry, we use the temperature/on_resistance pairs to compute<br>' +
+                                  'the effective on resistance based on the calculated FET junction temperature. (Read only)'},
 {key: 'qg',                 itxt: '<b>Q<sub>g</sub>:</b>           From the datasheet. (Read only)'},
 {key: 't_d_on',             itxt: '<b>t<sub>d(on)</sub>:</b>       From the datasheet. (Read only)'},
 {key: 't_rise',             itxt: '<b>t<sub>rise</sub>:</b>        From the datasheet. (Read only)'},

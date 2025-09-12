@@ -3,6 +3,14 @@
  * 
  * This is the main javascript file, and serves as the controller for the app, in the MVC paradigm.
  * 
+ * The model is comprised of the configuration (config.js) and the values derived from the
+ * configuration (derived.js).  The configuration is the set of fields the user can edit, and
+ * derived are the read-only fields that are calculated by the app using the values in the
+ * configuration.  The dichotomy between config and derived should be strictly maintained to keep
+ * any sanity in the code.
+ *
+ * The view is implemented in HTML (index.html).
+ *
  * Please see leading comments in config.js and derived.js for instructions on how to add new
  * fields to this application.
  * 
@@ -16,10 +24,11 @@
  * x  7. Estimate inverter efficiency
  *    8. Auto select components (DCL, FET, OF)
  *    9. Separate tables for DC link caps and output filter caps
- *   10. Fix power dissipation calculation for inductors
+ * x 10. Fix power dissipation calculation for inductors
  *   11. Define gate driver IC table to set gate driver params.
  *   12. Fix nested show/hide issues, e.g. inductors
  *   13. Fix printDerived() RE inductors
+ * x 14. Use more standard approach for selecting DC-link caps.
  */
 
 icosalogic = {};
@@ -72,7 +81,7 @@ icosalogic.inv_design.onLoadHandler = function() {
   }
   
   oa.derived = new oa.Derived();
-  oa.derived.derive(oa.config);
+  oa.derived.deriveFJT(oa.config);
   
   oa.setConfigActive(oa.config);
 
@@ -1130,7 +1139,7 @@ icosalogic.inv_design.setConfigActive = function(cfg) {
   
   cfg.setActive();
   oa.config = cfg;
-  oa.derived.derive(cfg);
+  oa.derived.deriveFJT(cfg);
   oa.resetCapFilters();
   oa.displayConfig();
   oa.displayDerived();
@@ -1223,6 +1232,7 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('fet_max_i').value             = derived.fet_entry.i_max;
   document.getElementById('fet_max_i_hot').value         = derived.fet_entry.i_max_hot;
   document.getElementById('fet_r_ds_on').value           = derived.fet_entry.r_ds_on;
+  document.getElementById('fet_r_ds_on_eff').value       = Number(derived.fet_r_ds_on_eff).toFixed(4);
   document.getElementById('qg').value                    = derived.fet_entry.qg;
   document.getElementById('t_d_on').value                = derived.fet_entry.t_d_on;
   document.getElementById('t_rise').value                = derived.fet_entry.t_rise;
@@ -1667,7 +1677,7 @@ icosalogic.inv_design.updateHandler = function(e) {
   oa.readAllInputs();
   oa.config.save();
   
-  oa.derived.derive(oa.config);
+  oa.derived.deriveFJT(oa.config);
   oa.displayConfig();
   oa.displayDerived();
   
@@ -1700,7 +1710,7 @@ icosalogic.inv_design.changeConfig = function(cfgName) {
   
   cfg.setActive();
   oa.config = cfg;
-  oa.derived.derive(cfg);
+  oa.derived.deriveFJT(cfg);
   oa.displayConfig();
   oa.displayDerived();
 
@@ -1837,6 +1847,7 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'fet_max_i'             + '=' + derived.fet_entry.i_max + '\n';
   outStr += 'fet_max_i_hot'         + '=' + derived.fet_entry.i_max_hot + '\n';
   outStr += 'fet_r_ds_on'           + '=' + derived.fet_entry.r_ds_on + '\n';
+  outStr += 'fet_r_ds_on_eff'       + '=' + derived.fet_r_ds_on_eff + '\n';
   outStr += 'qg'                    + '=' + derived.fet_entry.qg + '\n';
   outStr += 't_d_on'                + '=' + derived.fet_entry.t_d_on + '\n';
   outStr += 't_rise'                + '=' + derived.fet_entry.t_rise + '\n';

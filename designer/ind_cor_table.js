@@ -37,6 +37,7 @@ icosalogic.inv_design.ind_cor_size_table = [
 {mfg: 'Magnetics', shape: 'Toroid', size: '33z', Le: 324.00, Ae: 1356.00, Ve: 440000.0, Aw:  4710, Ap:  6380000, OD: 133.96, ID:  77.19, HT: 53.60 },
 {mfg: 'Magnetics', shape: 'Toroid', size: '16x', Le: 412.00, Ae:  987.00, Ve: 407000.0, Aw:  8030, Ap:  7920000, OD: 166.50, ID: 101.02, HT: 33.15 },
 {mfg: 'Magnetics', shape: 'Toroid', size: '16z', Le: 412.00, Ae: 1974.00, Ve: 814000.0, Aw:  8030, Ap: 15840000, OD: 166.50, ID: 101.02, HT: 66.30 },
+{mfg: 'Magnetics', shape: 'Toroid', size: '16w', Le: 412.00, Ae: 2961.00, Ve:1221000.0, Aw:  8030, Ap: 23760000, OD: 166.50, ID: 101.02, HT: 99.45 },
 {mfg: 'Magnetics', shape: 'Toroid', size: '17x', Le: 386.50, Ae:  948.00, Ve: 366700.0, Aw:  5930, Ap:  5620000, OD: 167.21, ID:  86.89, HT: 27.31 },
 ];
 
@@ -90,6 +91,7 @@ icosalogic.inv_design.ind_cor_pn_table = [
 {mfg: 'Magnetics', pn: '0077163A7',   mat: 'KoolMu',      size: '16x', mu: 19, Al:  57 },
 {mfg: 'Magnetics', pn: '0077165A7',   mat: 'KoolMu',      size: '16x', mu: 26, Al:  78 },
 {mfg: 'Magnetics', pn: '0077164A7*2', mat: 'KoolMu',      size: '16z', mu: 14, Al:  84 },
+{mfg: 'Magnetics', pn: '0077164A7*3', mat: 'KoolMu',      size: '16w', mu: 14, Al: 126 },
 {mfg: 'Magnetics', pn: '0079535A7',   mat: 'KoolMuMax',   size: '53x', mu: 26, Al:  45 },
 {mfg: 'Magnetics', pn: '0079536A7',   mat: 'KoolMuMax',   size: '53x', mu: 40, Al:  69 },
 {mfg: 'Magnetics', pn: '0079537A7',   mat: 'KoolMuMax',   size: '53x', mu: 60, Al: 104 },
@@ -135,6 +137,7 @@ icosalogic.inv_design.ind_cor_pn_table = [
 {mfg: 'Magnetics', pn: '0079337A7',   mat: 'KoolMuMax',   size: '33x', mu: 26, Al:  68 },
 {mfg: 'Magnetics', pn: '0079164A7',   mat: 'KoolMuMax',   size: '16x', mu: 14, Al:  42 },
 {mfg: 'Magnetics', pn: '0079164A7*2', mat: 'KoolMuMax',   size: '16z', mu: 14, Al:  84 },
+{mfg: 'Magnetics', pn: '0079164A7*3', mat: 'KoolMuMax',   size: '16w', mu: 14, Al: 126 },
 {mfg: 'Magnetics', pn: '0079169A7',   mat: 'KoolMuMax',   size: '17x', mu: 14, Al:  42 },
 {mfg: 'Magnetics', pn: '0076337A7',   mat: 'KoolMuHf',    size: '33x', mu: 26, Al:  68 },
 {mfg: 'Magnetics', pn: '0070337A7',   mat: 'KoolMuUltra', size: '33x', mu: 26, Al:  68 },
