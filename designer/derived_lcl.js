@@ -1,16 +1,27 @@
 /*
- * Code to compute values derived from a configuration (see config.js).
+ * Code to compute LCL filter value options for a given configuration (see config.js).
  * 
- * In the MVC UI app paradigm, this is part of the model.
- * There should be no UI code in this file.
- * 
- * To add a new value, update the following places:
- * 1. Define UI element. [index.html]  All UI elements for derived values should be read-only.
- * 2. The property definition in the prototype below (except for part attributes)
- * 3. In derive() compute the derived value
- * 4. In displayDerived() [designer.js]
- * 
- * After adding new values, you generally need to reset the app using the purge button in the UI.
+ * The algorithm is based on this document:
+ *     An Improved LCL Filter Design in Order to Ensure Stability without
+ *     Damping and Despite Large Grid Impedance Variations
+ *     https://www.mdpi.com/1996-1073/10/3/336
+ *
+ * Designers of very high end mixing consoles have a rule of thumb that a filter with a
+ * cut-off frequency of X is either completely invisible or completely opaque for frequencies
+ * 5 octaves away from X.
+ *
+ * Surprisingly, this behavior shows up in the equations given in the above reference.
+ *
+ * Assume that the grid frequency is fg and the switching frequency is fsw, we are choosing
+ * filter values that result in a cut-off frequency somewhere between fg and fsw.
+ * Assume you pick a cut-off frequency fc such that fg * 32 < fc and fc * 32 < fsw.
+ * In other words, fc is at least 5 octaves above fg, fsw is at least 5 octaves above fc, and
+ * therefore fsw is at least 10 octaves greater than fg.
+ * As you increase fsw above this point, there is soon a frequency where the equations from
+ * the above reference will yeild a negative L2 value.
+ *
+ * We use this event as an heuristic to indicate that an LCL filter is no longer preferable,
+ * and a simpler LC filter is adequate.
  */
 
 icosalogic.lcl.sqrt_2 = 1.41421356237;
