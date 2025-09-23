@@ -559,7 +559,8 @@ icosalogic.inv_design.Derived.prototype = {
   th_p_dcl:                 1.0,
   th_p_oc:                  1.0,
   th_t_dcl_core:            25.0,
-  th_t_fet_junction:        25.0,
+  th_t_fet_junction12:      25.0,
+  th_t_fet_junction34:      25.0,
   th_t_oc_core:             25.0,
   th_total_loss:            1.0,
   th_calc_eff:              50.0,
@@ -834,31 +835,35 @@ icosalogic.inv_design.Derived.prototype = {
     var i_rms_per_cap_dcl       = this.dcl_i_rms_max / cfg.dcl_count;
     var oc_cap_power_factor     = 0.1;                                  // 10% generous, 5% target
     var i_rms_per_cap_oc        = cfg.out_amps * oc_cap_power_factor / cfg.oc_count;
-    
+    this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
+    this.th_t_dcl_core          = cfg.t_ambient + this.th_p_dcl * (eff_th_cc_dcl + this.dcl_cap_entry.th_ca);
+
     var fet_i_rms               = cfg.out_amps / cfg.fet_count;
-    
     this.th_pgsw                = v_gd_total * v_gd_total * fe.qg * this.sw_freq_eff / 1e9;
     this.th_prgext              = fe.r_g_ext * (on_factor + off_factor) / 2;
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
-    this.th_pfi                 = fet_i_rms * fet_i_rms * this.fet_r_ds_on_eff * 0.5;            // assume 50% duty cycle
-    this.th_pfsw                = (this.fet_entry.e_on + this.fet_entry.e_off) * this.sw_freq_eff * 1e-6 *
-                                  (this.v_pack_max / this.fet_entry.v_swe) * cfg.gd_sw_hard;
-    this.th_p_dcl               = i_rms_per_cap_dcl * i_rms_per_cap_dcl * this.dcl_cap_entry.esr;
-    this.th_t_dcl_core          = cfg.t_ambient + this.th_p_dcl * (eff_th_cc_dcl + this.dcl_cap_entry.th_ca);
-    var fet_power               = this.th_prgint + this.th_pfi + this.th_pfsw;
-    this.th_t_fet_junction      = cfg.t_ambient + fet_power * (fe.r_th_jc + cfg.fet_r_th_ca);
+    var fet_dc                  = 0.5 ;                                                          // assume 50% duty cycle
+    this.th_pfi                 = fet_i_rms * fet_i_rms * this.fet_r_ds_on_eff * fet_dc;         // power loss from current
+    this.th_pfsw                = (fe.e_on + fe.e_off) * this.sw_freq_eff * 1e-6 *               // power loss from switching
+                                  (this.v_pack_max * 0.5 / fe.v_swe) * cfg.gd_sw_hard;
+    var fet_power12             = (this.th_pfi + this.th_prgint + this.th_pfsw) / 2;             // current + switching half the time
+    var fet_power34             = this.th_pfi + (this.th_prgint + this.th_pfsw) / 2;             // current all the time, switching half the time
+    this.th_t_fet_junction12    = cfg.t_ambient + fet_power12 * (fe.r_th_jc + cfg.fet_r_th_ca);
+    this.th_t_fet_junction34    = cfg.t_ambient + fet_power34 * (fe.r_th_jc + cfg.fet_r_th_ca);
+
     this.th_p_oc                = i_rms_per_cap_oc * i_rms_per_cap_oc * this.out_cap_entry.esr;
     this.th_t_oc_core           = cfg.t_ambient + this.th_p_oc * (eff_th_cc_oc + this.out_cap_entry.th_ca);
     var ind2_power              = this.lcl.filter_type == 'LCL' ? this.ind2.power * cfg.ind2.count : 0.0;
+
     this.th_total_loss          = this.th_p_dcl * cfg.dcl_count + 
                                   (this.th_pgsw + 
-                                  (this.th_prgext + fet_power) * cfg.fet_count * 2 + 
+                                  (this.th_prgext + fet_power12 + fet_power34) * cfg.fet_count * 2 +
                                   this.th_p_oc * cfg.oc_count +
                                   this.ind1.power * cfg.ind1.count + ind2_power) * cfg.out_lines;
     this.th_calc_eff            = 100.0 * this.out_watts / (this.th_total_loss + this.out_watts);
     
     this.th_t_dcl_status          = this.th_t_dcl_core >  70.0 ? 'red' : 'green';
-    this.th_t_fet_junction_status = this.th_t_fet_junction > 175.0 ? 'red' : 'green';
+    this.th_t_fet_junction_status = (this.th_t_fet_junction12 > 175.0 || this.th_t_fet_junction34 > 175.0) ? 'red' : 'green';
     this.th_t_oc_status           = this.th_t_oc_core > 70.0 ? 'red' : 'green';
     this.thermal_status           = this.th_t_dcl_status == 'red' || this.th_t_fet_junction_status == 'red' ||
                                     this.ind1.t_status == 'red' || 
@@ -899,7 +904,8 @@ icosalogic.inv_design.Derived.prototype = {
         iter += 1;
       }
 
-      console.log('    iter=' + iter + '  fet_jt=' + this.th_t_fet_junction + '  r_ds_on=' + this.fet_r_ds_on_eff);
+      var t_fet_junction = this.th_t_fet_junction12 > this.th_t_fet_junction34 ? this.th_t_fet_junction12 : this.th_t_fet_junction34;
+      console.log('    iter=' + iter + '  fet_jt=' + t_fet_junction + '  r_ds_on=' + this.fet_r_ds_on_eff);
     }
   },
 
@@ -907,12 +913,15 @@ icosalogic.inv_design.Derived.prototype = {
    * Interpolate r_ds_on as a function of the computed FET junction temperature.
    */
   deriveRDSOn: function() {
-	  console.log('deriveRDSOn: enter: fet_jt=' + this.th_t_fet_junction);
+    var t_fet_junction = this.th_t_fet_junction12 > this.th_t_fet_junction34 ? this.th_t_fet_junction12 : this.th_t_fet_junction34;
+	  console.log('deriveRDSOn: enter: fet_jt=' + t_fet_junction);
+
     // Check for the unlikely event that the junction temperature is less than the minimum
-    if (this.th_t_fet_junction <= this.fet_entry.tr_ds_on[0]) {
+    if (t_fet_junction <= this.fet_entry.tr_ds_on[0]) {
       this.fet_r_ds_on_eff = this.fet_entry.tr_ds_on[1];
       return;
     }
+
     // Interpolate r_ds_on as a function of the computed FET junction temperature.
     var inRange = false;
     var tPrev = this.fet_entry.tr_ds_on[0];
@@ -920,9 +929,9 @@ icosalogic.inv_design.Derived.prototype = {
     for (let i = 2; i < this.fet_entry.tr_ds_on.length; i += 2) {
       var tCur = this.fet_entry.tr_ds_on[i];
       var rCur = this.fet_entry.tr_ds_on[i + 1];
-      if (tCur >= this.th_t_fet_junction) {
+      if (tCur >= t_fet_junction) {
         var prev_r_ds_on_t = this.fet_r_ds_on_eff;
-        this.fet_r_ds_on_eff = rPrev + (rCur - rPrev) * (this.th_t_fet_junction - tPrev) / (tCur - tPrev);
+        this.fet_r_ds_on_eff = rPrev + (rCur - rPrev) * (t_fet_junction - tPrev) / (tCur - tPrev);
         console.log('deriveRDSOn: old r_ds_on_t=' + prev_r_ds_on_t + '  new_r_ds_on_t=' + this.fet_r_ds_on_eff);
         inRange = true;
         break;
