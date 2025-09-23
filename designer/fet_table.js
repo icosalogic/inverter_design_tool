@@ -384,6 +384,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     38.0,
   i_max_hot: 27.0,
   r_ds_on:   0.120,
+  tr_ds_on:  [-40, 0.048, 25, 0.060, 100, 0.084, 175, 0.120],
   qg:        32,
   t_d_on:    9.0,
   t_rise:    8.0,
@@ -795,6 +796,64 @@ icosalogic.inv_design.fet_table = [
 },
 
 {
+  mfg:       'Renesas',
+  pn:        'TP65H015G5WS',
+  tech:      'GaN',
+  footprint: 'TO-247-3',
+  n_hb:      2,
+  v_max:     650.0,
+  i_max:     99,
+  i_max_hot: 62,
+  r_ds_on:   0.027,
+  tr_ds_on:  [25, 0.015, 150, 0.027],
+  qg:        74,
+  t_d_on:    87,
+  t_rise:    18,
+  t_d_off:   123,
+  t_fall:    9.4,
+  r_th_jc:   0.65,
+  r_g_ext:   15.0,
+  r_g_int:   1.0,                          // not given
+  v_g_on:    12.0,
+  v_g_off:   0.0,
+  c_iss:     1500.0,                       // pF
+  c_oss:     127.0,
+  c_rss:     4.6,
+  e_on:      200,                          // uJ
+  e_off:     663,
+  v_swe:     400,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Renesas',
+  pn:        'TP65H030G4PWS',
+  tech:      'GaN',
+  footprint: 'TO-247-3',
+  n_hb:      2,
+  v_max:     650.0,
+  i_max:     55.7,
+  i_max_hot: 35,
+  r_ds_on:   0.041,
+  tr_ds_on:  [25, 0.030, 150, 0.062],
+  qg:        24.5,
+  t_d_on:    40.8,
+  t_rise:    6.8,
+  t_d_off:   89.2,
+  t_fall:    8,
+  r_th_jc:   0.65,
+  r_g_ext:   30.0,                         // r_g_ext_on: 10, r_g_ext_off: 30,
+  r_g_int:   1.0,                          // not given
+  v_g_on:    12.0,
+  v_g_off:   0.0,
+  c_iss:     1500.0,                       // pF
+  c_oss:     127.0,
+  c_rss:     4.6,
+  e_on:      100,                          // not given
+  e_off:     480,                          // not given
+  v_swe:     400,                          // e_on/off voltage
+},
+
+{
   mfg:       'Transphorm',
   pn:        'TP65H035G4WS',
   tech:      'GaN',
@@ -804,6 +863,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     46.5,
   i_max_hot: 29.5,
   r_ds_on:   0.041,
+  tr_ds_on:  [25, 0.035, 150, 0.072],
   qg:        22,
   t_d_on:    50,
   t_rise:    10,
@@ -817,8 +877,8 @@ icosalogic.inv_design.fet_table = [
   c_iss:     1500.0,                       // pF
   c_oss:     147.0,
   c_rss:     5.0,
-  e_on:      1.23,                         // not given
-  e_off:     1.23,                         // not given
-  v_swe:     610,                          // e_on/off voltage
+  e_on:      100,                          // not given
+  e_off:     480,                          // not given
+  v_swe:     400,                          // e_on/off voltage
 },
 ];
