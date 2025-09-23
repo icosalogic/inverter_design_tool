@@ -33,6 +33,7 @@
   <script type='text/javascript' src='ind_cor_table.js'></script>
   <script type='text/javascript' src='ind_dc_bias_table.js'></script>
   <script type='text/javascript' src='info_text.js'></script>
+  <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
 </head>
 
 
@@ -60,6 +61,7 @@
     <a href='#nav_ofcap'>Output Cap</a>
     <a id='xnav_ofl2' href='#nav_ofl2'>Inductor 2</a>
     <a href='#nav_thermal'>Thermal</a>
+    <a href='#nav_graphs'>Graphs</a>
   </div>
 
   <div class='oa_text'>
@@ -1911,9 +1913,18 @@
             <td id='info_th_pfsw'>ⓘ</td>
           </tr>
           <tr class='sh_thermal'>
-            <td><label for='th_t_fet_junction'  >FET Junction Temp</label></td>
+            <td><label for='th_t_fet_junction12'  >FET Junction Temp Q1/Q2</label></td>
             <td>t<sub>fet_j</sub></td>
-            <td><input id='th_t_fet_junction'    value='20' readonly='readonly'></td>
+            <td><input id='th_t_fet_junction12'    value='20' readonly='readonly'></td>
+            <td>°C</td>
+            <td colspan='2'></td>
+            <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_fet_junction_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
+            <td id='info_t_fet_junction'>ⓘ</td>
+          </tr>
+          <tr class='sh_thermal'>
+            <td><label for='th_t_fet_junction34'  >FET Junction Temp Q3/Q4</label></td>
+            <td>t<sub>fet_j</sub></td>
+            <td><input id='th_t_fet_junction34'    value='20' readonly='readonly'></td>
             <td>°C</td>
             <td colspan='2'></td>
             <td> <svg width="0.2in" height="0.2in" viewBox="0 0 8 8"><circle id='th_t_fet_junction_status' r='4' cx='4' cy='4' stroke='none' fill='green' /></svg></td>
@@ -1982,8 +1993,41 @@
             <td id='info_th_calc_eff'>ⓘ</td>
           </tr>
 
+
+          <tr id='nav_graphs'>
+            <td colspan='2'> <h3>Graphs</h3> </td>
+            <td> <button type='button' name='sh_graphs' value='h'>Hide</button> </td>
+            <td colspan='4'></td>
+          </tr>
+          <tr class='sh_graphs'>
+            <td><label for='graph_type'  >Graph Type</label></td>
+            <td>graph_type</td>
+            <td>
+              <select id='graph_type'  name='graph_type' >
+                <option value='none'>Select a Graph Type</option>
+                <option value='eff_fet'>MOSFET Efficiency Comparison</option>
+                <option value='eff_cfg'>Configuration Efficiency Comparison</option>
+                <option value='pl_cfg'>Configuration Power Loss Comparison</option>
+              </select>
+            </td>
+            <td colspan='4'> <button type='button' id='gen_graph' value='g'>Graph</button> </td>
+            <td id='info_graph_type'>ⓘ</td>
+          </tr>
+          <tr class='sh_graphs'>
+            <td><label for='graph_opts'  >Graph Options</label></td>
+            <td>graph_opts</td>
+            <td colspan='2'>
+              <table id='graph_opts_table'></table>
+            </td>
+            <td colspan='3'></td>
+            <td id='info_graph_opts'>ⓘ</td>
+          </tr>
+
         </table>
 
+        <!-- h2 id='main_title' style='text-align: center'>IcosaLogic Inverter Design</h2 -->
+        <div id='idt_graph'>
+        </div>
   </div>
 
 </body>

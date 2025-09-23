@@ -47,6 +47,11 @@ icosalogic.lcl.derived         = {};
 
 icosalogic.inv_design.mu_keys = [14, 19, 26, 40, 60, 75, 90, 125, 147, 160];
 
+icosalogic.inv_design.num_graph_opts = 0;
+icosalogic.inv_design.graph_max_amps = 0;
+icosalogic.inv_design.graph_names = [];
+icosalogic.inv_design.graph_values = [];
+
 
 
 /*
@@ -73,6 +78,8 @@ icosalogic.inv_design.onLoadHandler = function() {
   
   oa.addConfigOptions();
   oa.addHandlers();
+  
+  oa.graphTypeHandler();
   
   if (oa.config == null) {
     console.log('oa.config is null!');
@@ -119,7 +126,6 @@ icosalogic.inv_design.addConfigOptions = function() {
   var el = document.getElementById('configs');
   console.log('addConfigOptions: before length=' + el.length);
   
-  var i;
   icosalogic.inv_design.configs.forEach(function(cfg_name) {
     console.log('addConfigOptions: cfg_name=' + cfg_name);
     
@@ -590,6 +596,9 @@ icosalogic.inv_design.addHandlers = function() {
     } else if (button.id.startsWith('of_ndx_')) {
       console.log('adding onclick handler to ' + button.id);
       button.onclick = icosalogic.inv_design.ofScroller;
+    } else if (button.id == 'gen_graph') {
+      console.log('adding onclick handler to ' + button.id);
+      button.onclick = icosalogic.inv_design.loadAndGraph;
     }
   });
   
@@ -610,8 +619,12 @@ icosalogic.inv_design.addHandlers = function() {
   // Add update handlers for select elements
   const selects = document.querySelectorAll('select');
   selects.forEach(function(in_el) {
-    // console.log('adding select update handler to ' + in_el.id);
-    in_el.onchange = icosalogic.inv_design.updateHandler;
+    if (in_el.id == 'graph_type') {
+      in_el.onchange = icosalogic.inv_design.graphTypeHandler;
+    } else {
+      // console.log('adding select update handler to ' + in_el.id);
+      in_el.onchange = icosalogic.inv_design.updateHandler;
+    }
   });
 
   // Add info popup handlers
@@ -622,11 +635,6 @@ icosalogic.inv_design.addHandlers = function() {
       // console.log('adding mouseenter/leave handlers to ' + in_el.id);
       
       in_el.onclick = icosalogic.inv_design.showInfoText;
-
-      /* old style
-      in_el.onmouseenter = icosalogic.inv_design.showInfoText;
-      in_el.onmouseleave = icosalogic.inv_design.hideInfoText;
-      */
     }
   });
 
@@ -647,7 +655,7 @@ icosalogic.inv_design.purgeConfigs = function(e) {
 /*
  * This is the handler for the meta show/hide all button.
  * 
- * TODO: fix this for the part data show/hide.  It is broken.
+ * TODO: fix this for the part data show/hide.  It is broken for nested groups.
  */
 icosalogic.inv_design.showHideAll = function(e) {
   console.log('icosalogic.inv_design.showHideAll: enter');
@@ -878,27 +886,6 @@ icosalogic.inv_design.showInfoText = function(e) {
       eltd.appendChild(eld);
     }
     eld.showModal();
-    
-    /* v2 style
-    if (eli != null) {
-      alert(eli.itxt);
-    }
-    */
-
-    /* v1 style
-    var div_id = 'info_text_' + key;
-    var div_el = document.getElementById(div_id);
-    // add child div with text only if it doesn't exist
-    if (div_el == null) {
-      // add the div
-      console.log('adding div id=' + div_id);
-      div_el = document.createElement('div');
-      div_el.id = div_id;
-      div_el.innerHTML = eli.itxt;
-      eltd.appendChild(div_el);
-    }
-    div_el.style.display = 'block';
-    */
   }
 };
 
@@ -1403,7 +1390,8 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('th_prgint').value             = derived.th_prgint.toFixed(3);
   document.getElementById('th_pfi').value                = derived.th_pfi.toFixed(3);
   document.getElementById('th_pfsw').value               = derived.th_pfsw.toFixed(3);
-  document.getElementById('th_t_fet_junction').value     = derived.th_t_fet_junction.toFixed(2);
+  document.getElementById('th_t_fet_junction12').value   = derived.th_t_fet_junction12.toFixed(2);
+  document.getElementById('th_t_fet_junction34').value   = derived.th_t_fet_junction34.toFixed(2);
   document.getElementById('th_p_ind1').value             = derived.ind1.power.toFixed(3);
   document.getElementById('th_t_ind1_core').value        = Number(derived.ind1.t_core).toFixed(3);
   document.getElementById('th_p_ind2').value             = derived.ind2.power.toFixed(3);
@@ -1945,7 +1933,8 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'th_prgext'             + '=' + derived.th_prgext.toFixed(3) + '\n';
   outStr += 'th_prgint'             + '=' + derived.th_prgint.toFixed(3) + '\n';
   outStr += 'th_pfi'                + '=' + derived.th_pfi.toFixed(3) + '\n';
-  outStr += 'th_t_fet_junction'     + '=' + derived.th_t_fet_junction.toFixed(2) + '\n';
+  outStr += 'th_t_fet_junction12'   + '=' + derived.th_t_fet_junction12.toFixed(2) + '\n';
+  outStr += 'th_t_fet_junction34'   + '=' + derived.th_t_fet_junction34.toFixed(2) + '\n';
   outStr += 'th_p_ind1'             + '=' + derived.ind1.power.toFixed(3) + '\n';
   outStr += 'th_t_ind1_core'        + '=' + Number(derived.ind1.t_core).toFixed(3) + '\n';
   outStr += 'th_p_ind2'             + '=' + derived.ind2.power.toFixed(3) + '\n';
@@ -2032,4 +2021,399 @@ icosalogic.inv_design.printConfig = function() {
   return outStr;
 }
 
+/*
+ * Update the graph options based on the selected graph type.
+ */
+icosalogic.inv_design.graphTypeHandler = function() {
+  console.log("icosalogic.inv_design.graphTypeHandler: enter");
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+  
+  var el_gt    = document.getElementById('graph_type');
+  var el_gtbl  = document.getElementById('graph_opts_table');
+  var el_gbtn  = document.getElementById('gen_graph');
+  var el_graph = document.getElementById('idt_graph');
+
+  oa.removeAllChildren(el_gtbl);
+  oa.removeAllChildren(el_graph);
+  oa.num_graph_opts = 0;
+  oa.graph_max_amps = 0;
+  el_gbtn.style.display = 'none';      // turn it on with 'inline-block'
+
+  var gt = el_gt.value;
+  console.log('  graph_type=' + gt);
+  
+  if (gt == 'eff_fet') {
+    // compare FET efficiency
+    oa.addFetGraphOpts(el_gtbl);
+  } else if (gt == 'eff_cfg' || gt == 'pl_cfg') {
+    // compare config efficiency
+    oa.addConfigGraphOpts(el_gtbl);
+  } else if (gt == 'none') {
+    // do nothing
+  }
+}
+
+/*
+ * Add the FET efficiency graph options.
+ */
+icosalogic.inv_design.addFetGraphOpts = function(el_gtbl) {
+  console.log("icosalogic.inv_design.addFetGraphOpts: enter");
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+  
+  icosalogic.inv_design.fet_table.forEach(function(fet_entry) {
+    console.log('addFetGraphOpts: pn=' + fet_entry.pn);
+    
+    var ckbx_id = 'gfopt_' + fet_entry.pn;
+    
+    var el_td_label = document.createElement('label');
+    el_td_label.for = ckbx_id;
+    el_td_label.appendChild(document.createTextNode(fet_entry.pn));
+    
+    var el_td_name = document.createElement('td');
+    el_td_name.appendChild(el_td_label);
+
+    var el_ckbx = document.createElement('input');
+    el_ckbx.id = ckbx_id;
+    el_ckbx.type = 'checkbox';
+    el_ckbx.onchange = icosalogic.inv_design.graphOptHandler;
+
+    var el_td_ckbx = document.createElement('td');
+    el_td_ckbx.appendChild(el_ckbx);
+    
+    var el_tr = document.createElement('tr');
+    el_tr.appendChild(el_td_label);
+    el_tr.appendChild(el_td_ckbx);
+    
+    el_gtbl.appendChild(el_tr);
+  });
+  
+  console.log('addFetGraphOpts: after length=' + el_gtbl.length);
+}
+
+/*
+ * Add the config efficiency graph options.
+ */
+icosalogic.inv_design.addConfigGraphOpts = function(el_gtbl) {
+  console.log("icosalogic.inv_design.addConfigGraphOpts: enter");
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+  
+  icosalogic.inv_design.configs.forEach(function(cfg_name) {
+    console.log('addConfigGraphOpts: cfg_name=' + cfg_name);
+    
+    var ckbx_id = 'gcopt_' + cfg_name;
+    
+    var el_td_label = document.createElement('label');
+    el_td_label.for = ckbx_id;
+    el_td_label.appendChild(document.createTextNode(cfg_name));
+    
+    var el_td_name = document.createElement('td');
+    el_td_name.appendChild(el_td_label);
+
+    var el_ckbx = document.createElement('input');
+    el_ckbx.id = ckbx_id;
+    el_ckbx.type = 'checkbox';
+    el_ckbx.onchange = icosalogic.inv_design.graphOptHandler;
+
+    var el_td_ckbx = document.createElement('td');
+    el_td_ckbx.appendChild(el_ckbx);
+    
+    var el_tr = document.createElement('tr');
+    el_tr.appendChild(el_td_label);
+    el_tr.appendChild(el_td_ckbx);
+    
+    el_gtbl.appendChild(el_tr);
+  });
+  
+  console.log('addConfigGraphOpts: after length=' + el_gtbl.length);
+}
+
+/*
+ * Update the graph button display property based on if any options are checked.
+ * We assume this handler is only called for input checkbox elements.
+ */
+icosalogic.inv_design.graphOptHandler = function(opt_event) {
+  console.log("icosalogic.inv_design.graphOptHandler: enter: id=" + opt_event.target.id + ' checked=' + opt_event.target.checked);
+
+  var oa = icosalogic.inv_design;
+  
+  if (opt_event.target.checked) {
+    oa.num_graph_opts += 1;
+  } else if (oa.num_graph_opts > 0) {
+    oa.num_graph_opts -= 1;
+  }
+  console.log("  num_graph_opts=" + oa.num_graph_opts);
+
+  
+  var el_gbtn = document.getElementById('gen_graph');
+  el_gbtn.style.display = oa.num_graph_opts > 0 ? 'inline-block' : 'none';
+}
+
+/*
+ * Loads the Google graph packages, then invokes our local graph method.
+ */
+icosalogic.inv_design.loadAndGraph = function() {
+  console.log('icosalogic.inv_design.loadAndGraph: enter');
+
+  if (!icosalogic.inv_design.isLoaded) {
+    icosalogic.inv_design.isLoaded = true;
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(icosalogic.inv_design.graph);
+  } else {
+    icosalogic.inv_design.graph();
+  }
+};
+
+/*
+ * Add a child element to the parent div.  The child will hold the graph.
+ */
+icosalogic.inv_design.graph = function() {
+  console.log('icosalogic.inv_design.graph: tread not in no mans land');
+
+  var el = document.getElementById('idt_graph');
+  var gdiv = document.createElement('div');
+  gdiv.id = 'idt_chart';
+  el.appendChild(gdiv);
+
+  icosalogic.inv_design.graphHandler();
+};
+
+
+/*
+ * Generate a graph as configured by the graph options.
+ */
+icosalogic.inv_design.graphHandler = function(graph_event) {
+  console.log("icosalogic.inv_design.graphHandler: enter:");
+
+  var oa = icosalogic.inv_design;
+  
+  var el_gt   = document.getElementById('graph_type');
+  var gt = el_gt.value;
+  console.log('  graph_type=' + gt);
+  
+  if (gt == 'eff_fet') {
+    oa.graphFetEff();
+  } else if (gt == 'eff_cfg') {
+    oa.graphConfigEff('e');
+  } else if (gt == 'pl_cfg') {
+    oa.graphConfigEff('p');
+  } else if (gt == 'none') {
+    // do nothing
+  }
+}
+
+/*
+ * Generate a FET efficiency graph as configured by the graph options.
+ */
+icosalogic.inv_design.graphFetEff = function() {
+  console.log("icosalogic.inv_design.graphFetEff: enter:");
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+
+  var el_gtbl = document.getElementById('graph_opts_table');
+  var saved_fet = cfg.fet_pn;
+  var saved_out_amps = cfg.out_amps;
+  var amp_incr = 1;
+  var numCols = 1;
+  
+  oa.graph_max_amps = cfg.out_amps;
+
+  // Find the number of columns for the current config
+  icosalogic.inv_design.fet_table.forEach(function(fet_entry) {
+    var ckbx_id = 'gfopt_' + fet_entry.pn;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      numCols += 1;
+    }
+  });
+  console.log('    num_cols=' + numCols + ' graph_max_amps=' + oa.graph_max_amps);
+  
+  // Allocate the names and values arrays
+  oa.graph_names = new Array(numCols);
+  oa.graph_names[0] = 'Amps';
+  oa.graph_values = new Array(Math.floor(oa.graph_max_amps / amp_incr));
+  
+  // Assign the amps column values
+  var amps = amp_incr;
+  for (let i = 0; amps <= oa.graph_max_amps; i++) {
+    oa.graph_values[i] = new Array(numCols);
+    oa.graph_values[i][0] = amps;
+    amps += amp_incr;
+  }
+  
+  // Assign the data column for each checked FET
+  var colNum = 1;
+  icosalogic.inv_design.fet_table.forEach(function(fet_entry) {
+    var ckbx_id = 'gfopt_' + fet_entry.pn;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      console.log('addFetGraphOpts: pn=' + fet_entry.pn);
+      
+      cfg.fet_pn = fet_entry.pn;
+      oa.graph_names[colNum] = fet_entry.pn;
+      
+      var amps = amp_incr;
+      for (let ndx = 0; amps <= saved_out_amps && amps <= fet_entry.i_max_hot; ndx += 1) {
+        cfg.out_amps = amps;
+        oa.derived.deriveFJT(cfg);
+        oa.graph_values[ndx][colNum] = oa.derived.th_calc_eff;
+        amps += amp_incr;
+      }
+      colNum += 1;
+    }
+    
+  });
+  
+  oa.graphGeneric('Efficiency');
+}
+
+/*
+ * Generate a config efficiency graph as configured by the graph options.
+ */
+icosalogic.inv_design.graphConfigEff = function(gtype) {
+  console.log("graphConfigEff: enter: gtype=" + gtype);
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+  
+  var el_gtbl = document.getElementById('graph_opts_table');
+  var saved_cfg = cfg.cfg_name;
+  var amp_incr = 1;
+  var numCols = 1;
+
+  // Find the max amps for the selected configs
+  icosalogic.inv_design.configs.forEach(function(cfg_name) {
+    var ckbx_id = 'gcopt_' + cfg_name;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      numCols += 1;
+      var cfgNew = oa.Config.find(cfg_name);
+      oa.setConfigActive(cfgNew);
+      if (oa.graph_max_amps < cfgNew.out_amps) {
+        oa.graph_max_amps = cfgNew.out_amps;
+      }
+    }
+  });
+  console.log('    num_cols=' + numCols + ' graph_max_amps=' + oa.graph_max_amps);
+  
+  // Allocate the names and values arrays and assign the amps column values
+  oa.graph_names = new Array(numCols);
+  oa.graph_names[0] = 'Amps';
+  oa.graph_values = new Array(Math.floor(oa.graph_max_amps / amp_incr));
+
+  var amps = amp_incr;
+  for (let i = 0; amps <= oa.graph_max_amps; i++) {
+    oa.graph_values[i] = new Array(numCols);
+    oa.graph_values[i][0] = amps;
+    amps += amp_incr;
+  }
+  
+  // Build the data array
+  var first_series = true;
+  var colNum = 1;
+  icosalogic.inv_design.configs.forEach(function(cfg_name) {
+    var ckbx_id = 'gcopt_' + cfg_name;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      console.log('    cfg_name=' + cfg_name);
+      
+      var cfgNew = oa.Config.find(cfg_name);
+      oa.setConfigActive(cfgNew);
+      
+      var saved_out_amps = cfgNew.out_amps;
+      oa.graph_names[colNum] = cfg_name;
+      
+      amps = amp_incr;
+      for (let ndx = 0; amps <= saved_out_amps; ndx += 1) {
+        cfgNew.out_amps = amps;
+        oa.derived.deriveFJT(cfgNew);
+        if (gtype == 'e') {
+          oa.graph_values[ndx][colNum] = oa.derived.th_calc_eff;
+        } else if (gtype == 'p') {
+          oa.graph_values[ndx][colNum] = oa.derived.th_total_loss;
+        }
+        amps += amp_incr;
+      }
+      cfgNew.out_amps = saved_out_amps;
+      colNum += 1;
+    }
+  });
+
+  // Restore the status quo
+  var cfgOld = oa.Config.find(saved_cfg);
+  oa.setConfigActive(cfgOld);
+  oa.derived.deriveFJT(cfgOld);
+
+  oa.graphGeneric(gtype == 'e' ? 'Efficiency' : 'Power Loss');
+}
+
+/*
+ * Graph generic data saved in the graph_names and graph_values arrays.
+ */
+icosalogic.inv_design.graphGeneric = function(vTitle) {
+  console.log('icosalogic.inv_design.graphGeneric: enter');
+  
+  var oa = icosalogic.inv_design;
+  oa.chart = new google.visualization.LineChart(document.getElementById('idt_chart'));
+  var chart = oa.chart;
+
+  // icosalogic.inv_design.curGraphName = 'TempInt';
+  oa.dataTable = new google.visualization.DataTable();
+  var data = oa.dataTable;
+  
+  // Add the column names
+  console.log('    numCols=' + oa.graph_names.length);
+  oa.graph_names.forEach(function(gname) {
+    console.log('    adding column ' + gname);
+    data.addColumn('number', gname);
+  });
+  
+  var numColumns = oa.graph_names.length;
+  var rowNum = 0;
+  var chartDate = null;
+  oa.graph_values.forEach(function(gvalues) {
+    console.log('    adding row=' + rowNum + ' num values=' + gvalues.length);
+    data.addRows(1);
+    
+    for (let colNum = 0; colNum < gvalues.length; colNum += 1) {
+      if (gvalues[colNum] != null) {
+        data.setCell(rowNum, colNum, gvalues[colNum]);
+      }
+    }
+    
+    rowNum++;
+  });
+  console.log('rowNum=' + rowNum);
+  
+  // Basic chart settings
+  var options = {
+    hAxis: {
+      title: 'Amps',
+      format: '#',
+    },
+    vAxis: {
+      title: vTitle,
+      format: "#.#"
+    },
+    interpolateNulls: true,
+    height: 700,
+    width: 1300,
+    chartArea: {
+      top: 20
+    }
+  };
+  
+  // Classic Chart
+  chart.draw(data, options);
+};
 
