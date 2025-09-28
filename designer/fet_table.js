@@ -268,7 +268,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     202.0,
   i_max_hot: 146.0,
   r_ds_on:   0.0173,
-  tr_ds_on:  [-40, 0.007, 25, 0.0087, 100, 0.0122, 175, 0.0173],
+  r_ds_on_t: [-40, 0.007, 25, 0.0087, 100, 0.0122, 175, 0.0173],
   qg:        178,
   t_d_on:    21,
   t_rise:    29,
@@ -284,6 +284,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     16.0,
   e_on:      1327.0,                       // uJ
   e_off:     1091.0,
+  e_tot_t:   [25, 1569.0, 175, 2418.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -297,7 +298,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     100.0,
   i_max_hot: 71.0,
   r_ds_on:   0.038,
-  tr_ds_on:  [-40, 0.016, 25, 0.019, 100, 0.027, 175, 0.038],
+  r_ds_on_t: [-40, 0.016, 25, 0.019, 100, 0.027, 175, 0.038],
   qg:        82,
   t_d_on:    13.0,
   t_rise:    16.0,
@@ -313,6 +314,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     7.0,
   e_on:      468.0,                        // uJ
   e_off:     164.0,
+  e_tot_t:   [25, 428.0, 175, 632.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -326,7 +328,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     69.0,
   i_max_hot: 49.0,
   r_ds_on:   0.060,
-  tr_ds_on:  [-40, 0.025, 25, 0.030, 100, 0.042, 175, 0.060],
+  r_ds_on_t: [-40, 0.025, 25, 0.030, 100, 0.042, 175, 0.060],
   qg:        57,
   t_d_on:    11.0,
   t_rise:    13.0,
@@ -342,6 +344,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     4.4,
   e_on:      282.0,                        // uJ
   e_off:     103.0,
+  e_tot_t:   [25, 255.0, 175, 385.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -355,7 +358,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     55.0,
   i_max_hot: 39.0,
   r_ds_on:   0.080,
-  tr_ds_on:  [-40, 0.033, 25, 0.040, 100, 0.056, 175, 0.080],
+  r_ds_on_t: [-40, 0.033, 25, 0.040, 100, 0.056, 175, 0.080],
   qg:        43,
   t_d_on:    10.0,
   t_rise:    10.0,
@@ -371,6 +374,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     3.6,
   e_on:      181.0,                        // uJ
   e_off:     64.0,
+  e_tot_t:   [25, 168.0, 175, 245.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -384,7 +388,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     38.0,
   i_max_hot: 27.0,
   r_ds_on:   0.120,
-  tr_ds_on:  [-40, 0.048, 25, 0.060, 100, 0.084, 175, 0.120],
+  r_ds_on_t: [-40, 0.048, 25, 0.060, 100, 0.084, 175, 0.120],
   qg:        32,
   t_d_on:    9.0,
   t_rise:    8.0,
@@ -400,6 +404,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     2.0,
   e_on:      128.0,                        // uJ
   e_off:     51.0,
+  e_tot_t:   [25, 127.0, 175, 179.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -609,6 +614,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     225.0,
   i_max_hot: 168.0,
   r_ds_on:   0.010,
+  r_ds_on_t: [25, 0.007, 100, 0.010, 175, 0.014],
   qg:        289,
   t_d_on:    92,
   t_rise:    41,
@@ -624,6 +630,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     61.0,
   e_on:      2040.0,                       // uJ
   e_off:     440.0,
+  e_tot_t:   [25, 1926, 175, 3110],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -637,6 +644,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     127.0,
   i_max_hot: 89.3,
   r_ds_on:   0.027,
+  r_ds_on_t: [25, 0.014, 100, 0.019, 175, 0.027],
   qg:        145,
   t_d_on:    48,
   t_rise:    21,
@@ -652,6 +660,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     30.0,
   e_on:      900.0,                        // uJ
   e_off:     170.0,
+  e_tot_t:   [25, 793, 175, 1403],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -665,6 +674,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     98.0,
   i_max_hot: 71.0,
   r_ds_on:   0.036,
+  r_ds_on_t: [25, 0.019, 100, 0.025, 175, 0.036],
   qg:        109,
   t_d_on:    34.0,
   t_rise:    15.5,
@@ -680,6 +690,7 @@ icosalogic.inv_design.fet_table = [
   c_rss:     23.0,
   e_on:      722.0,                        // uJ
   e_off:     145.0,
+  e_tot_t:   [25, 671, 175, 1111],
   v_swe:     800,                          // e_on/off voltage
 },
 
@@ -805,7 +816,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     99,
   i_max_hot: 62,
   r_ds_on:   0.027,
-  tr_ds_on:  [25, 0.015, 150, 0.027],
+  r_ds_on_t: [25, 0.015, 150, 0.027],
   qg:        74,
   t_d_on:    87,
   t_rise:    18,
@@ -834,7 +845,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     55.7,
   i_max_hot: 35,
   r_ds_on:   0.041,
-  tr_ds_on:  [25, 0.030, 150, 0.062],
+  r_ds_on_t: [25, 0.030, 150, 0.062],
   qg:        24.5,
   t_d_on:    40.8,
   t_rise:    6.8,
@@ -863,7 +874,7 @@ icosalogic.inv_design.fet_table = [
   i_max:     46.5,
   i_max_hot: 29.5,
   r_ds_on:   0.041,
-  tr_ds_on:  [25, 0.035, 150, 0.072],
+  r_ds_on_t: [25, 0.035, 150, 0.072],
   qg:        22,
   t_d_on:    50,
   t_rise:    10,

@@ -503,6 +503,7 @@ icosalogic.inv_design.Derived.prototype = {
   bb_status:                'red',
   fet_i_max_actual:         10,
   fet_r_ds_on_eff:          1.0,            // effective r_ds_on as a function of junction temp
+  fet_e_tot_eff:            1.0,            // effective e_tot = e_on + e_off as f(junction temp)
   fet_i_actual_status:      'red',
   fet_status:               'red',
   dcl_i_rms_max:            1.0,
@@ -623,6 +624,9 @@ icosalogic.inv_design.Derived.prototype = {
     if (this.fet_r_ds_on_eff == 1.0) {
       // start with the max and iterate down
       this.fet_r_ds_on_eff = this.fet_entry.r_ds_on;
+    }
+    if (this.fet_e_tot_eff == 1.0) {
+      this.fet_e_tot_eff = this.fet_entry.e_on + this.fet_entry.e_off;
     }
   
     this.out_freq_omega        = 2 * Math.PI * cfg.out_freq;
@@ -844,7 +848,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.th_prgint              = fe.r_g_int * (on_factor + off_factor) / 2;
     var fet_dc                  = 0.5 ;                                                          // assume 50% duty cycle
     this.th_pfi                 = fet_i_rms * fet_i_rms * this.fet_r_ds_on_eff * fet_dc;         // power loss from current
-    this.th_pfsw                = (fe.e_on + fe.e_off) * this.sw_freq_eff * 1e-6 *               // power loss from switching
+    this.th_pfsw                = this.fet_e_tot_eff * this.sw_freq_eff * 1e-6 *                 // power loss from switching
                                   (this.v_pack_max * 0.5 / fe.v_swe) * cfg.gd_sw_hard;
     var fet_power12             = (this.th_pfi + this.th_prgint + this.th_pfsw) / 2;             // current + switching half the time
     var fet_power34             = this.th_pfi + (this.th_prgint + this.th_pfsw) / 2;             // current all the time, switching half the time
@@ -874,9 +878,9 @@ icosalogic.inv_design.Derived.prototype = {
   },
   
   /*
-   * Call derive() iteratively, adjusting the effective r_ds_on based on the calculated
+   * Call derive() iteratively, adjusting the effective r_ds_on and e_tot based on the calculated
    * junction temp, stopping when it converges.  This method only iterates if the configured
-   * FET entry has defined the tr_ds_on array, which has an even number of entries.  For every
+   * FET entry has defined the r_ds_on_t array, which has an even number of entries.  For every
    * pair of numbers in the array, the first is a temperature in *C, and the second is the
    * r_ds_on value at that junction temperature.  We call the deriveRDSOn() method to calculate
    * the r_ds_on value after calculating the FET junction temperature, then iterate until the
@@ -886,26 +890,41 @@ icosalogic.inv_design.Derived.prototype = {
 	  console.log('Derived.deriveFJT: enter: cfg=' + cfg.cfg_name);
 
     this.fet_r_ds_on_eff = 1.0;
+    this.fet_e_tot_eff = 1.0;
     this.derive(cfg);
 
-    if (this.fet_entry.hasOwnProperty('tr_ds_on') && this.fet_entry.tr_ds_on.length > 2) {
-      // We can calculate temperature dependent r_ds_on, instead of using worst-case
+    var do_r_ds_on_t = this.fet_entry.hasOwnProperty('r_ds_on_t') && this.fet_entry.r_ds_on_t.length > 2;
+    var do_e_tot_t = this.fet_entry.hasOwnProperty('e_tot_t') && this.fet_entry.e_tot_t.length > 2;
+
+    if (do_r_ds_on_t || do_e_tot_t) {
+      // We can calculate temperature dependent r_ds_on and/or e_tot, instead of using worst-case values
 
       var r_ds_on_limit = 0.0001;
       var prev_r_ds_on_t = this.fet_r_ds_on_eff;
       this.deriveRDSOn();
 
+      var e_tot_limit = 1;
+      var prev_e_tot = this.fet_e_tot_eff;
+      this.deriveETot();
+
       var maxIters = 8;
       var iter = 0;
-      while (Math.abs(this.fet_r_ds_on_eff - prev_r_ds_on_t) > r_ds_on_limit && iter < maxIters) {
+      var r_ds_on_gt_limit = Math.abs(this.fet_r_ds_on_eff - prev_r_ds_on_t) > r_ds_on_limit;
+      var e_tot_gt_limit = Math.abs(this.fet_e_tot_eff - prev_e_tot) > e_tot_limit;
+      while ((r_ds_on_gt_limit || e_tot_gt_limit) && iter < maxIters) {
         this.derive(cfg);
         prev_r_ds_on_t = this.fet_r_ds_on_eff;
+        prev_e_tot = this.fet_e_tot_eff;
         this.deriveRDSOn();
+        this.deriveETot();
         iter += 1;
+        r_ds_on_gt_limit = Math.abs(this.fet_r_ds_on_eff - prev_r_ds_on_t) > r_ds_on_limit;
+        e_tot_gt_limit = Math.abs(this.fet_e_tot_eff - prev_e_tot) > e_tot_limit;
       }
 
       var t_fet_junction = this.th_t_fet_junction12 > this.th_t_fet_junction34 ? this.th_t_fet_junction12 : this.th_t_fet_junction34;
-      console.log('    iter=' + iter + '  fet_jt=' + t_fet_junction + '  r_ds_on=' + this.fet_r_ds_on_eff);
+      console.log('deriveFJT: iter=' + iter + '  fet_jt=' + t_fet_junction +
+                  '  r_ds_on=' + this.fet_r_ds_on_eff + '  e_tot=' + this.fet_e_tot_eff);
     }
   },
 
@@ -916,23 +935,29 @@ icosalogic.inv_design.Derived.prototype = {
     var t_fet_junction = this.th_t_fet_junction12 > this.th_t_fet_junction34 ? this.th_t_fet_junction12 : this.th_t_fet_junction34;
 	  console.log('deriveRDSOn: enter: fet_jt=' + t_fet_junction);
 
+    // verify we have the array of temp vs r_ds_on defined before proceeding
+    var do_r_ds_on_t = this.fet_entry.hasOwnProperty('r_ds_on_t') && this.fet_entry.r_ds_on_t.length > 2;
+    if (!do_r_ds_on_t) {
+      return;
+    }
+
     // Check for the unlikely event that the junction temperature is less than the minimum
-    if (t_fet_junction <= this.fet_entry.tr_ds_on[0]) {
-      this.fet_r_ds_on_eff = this.fet_entry.tr_ds_on[1];
+    if (t_fet_junction <= this.fet_entry.r_ds_on_t[0]) {
+      this.fet_r_ds_on_eff = this.fet_entry.r_ds_on_t[1];
       return;
     }
 
     // Interpolate r_ds_on as a function of the computed FET junction temperature.
     var inRange = false;
-    var tPrev = this.fet_entry.tr_ds_on[0];
-    var rPrev = this.fet_entry.tr_ds_on[1];
-    for (let i = 2; i < this.fet_entry.tr_ds_on.length; i += 2) {
-      var tCur = this.fet_entry.tr_ds_on[i];
-      var rCur = this.fet_entry.tr_ds_on[i + 1];
+    var tPrev = this.fet_entry.r_ds_on_t[0];
+    var rPrev = this.fet_entry.r_ds_on_t[1];
+    for (let i = 2; i < this.fet_entry.r_ds_on_t.length; i += 2) {
+      var tCur = this.fet_entry.r_ds_on_t[i];
+      var rCur = this.fet_entry.r_ds_on_t[i + 1];
       if (tCur >= t_fet_junction) {
         var prev_r_ds_on_t = this.fet_r_ds_on_eff;
         this.fet_r_ds_on_eff = rPrev + (rCur - rPrev) * (t_fet_junction - tPrev) / (tCur - tPrev);
-        console.log('deriveRDSOn: old r_ds_on_t=' + prev_r_ds_on_t + '  new_r_ds_on_t=' + this.fet_r_ds_on_eff);
+        console.log('    old r_ds_on_t=' + prev_r_ds_on_t + '  new_r_ds_on_t=' + this.fet_r_ds_on_eff);
         inRange = true;
         break;
       }
@@ -941,6 +966,47 @@ icosalogic.inv_design.Derived.prototype = {
     }
     if (! inRange) {
       this.fet_r_ds_on_eff = rPrev;
+    }
+  },
+
+  /*
+   * Interpolate e_tot as a function of the computed FET junction temperature.
+   */
+  deriveETot: function() {
+    var t_fet_junction = this.th_t_fet_junction12 > this.th_t_fet_junction34 ? this.th_t_fet_junction12 : this.th_t_fet_junction34;
+	  console.log('deriveETot: enter: fet_jt=' + t_fet_junction);
+
+    // verify we have the array of temp vs e_tot defined before proceeding
+    var do_e_tot_t = this.fet_entry.hasOwnProperty('e_tot_t') && this.fet_entry.e_tot_t.length > 2;
+    if (!do_e_tot_t) {
+      return;
+    }
+
+    // Check for the unlikely event that the junction temperature is less than the minimum
+    if (t_fet_junction <= this.fet_entry.e_tot_t[0]) {
+      this.fet_e_tot_eff = this.fet_entry.e_tot_t[1];
+      return;
+    }
+
+    // Interpolate e_tot as a function of the computed FET junction temperature.
+    var inRange = false;
+    var tPrev = this.fet_entry.e_tot_t[0];
+    var ePrev = this.fet_entry.e_tot_t[1];
+    for (let i = 2; i < this.fet_entry.e_tot_t.length; i += 2) {
+      var tCur = this.fet_entry.e_tot_t[i];
+      var eCur = this.fet_entry.e_tot_t[i + 1];
+      if (tCur >= t_fet_junction) {
+        var prev_e_tot_t = this.fet_e_tot_eff;
+        this.fet_e_tot_eff = ePrev + (eCur - ePrev) * (t_fet_junction - tPrev) / (tCur - tPrev);
+        console.log('    old e_tot_t=' + prev_e_tot_t + '  new_e_tot_t=' + this.fet_e_tot_eff);
+        inRange = true;
+        break;
+      }
+      tPrev = tCur;
+      ePrev = eCur;
+    }
+    if (! inRange) {
+      this.fet_e_tot_eff = ePrev;
     }
   },
 
