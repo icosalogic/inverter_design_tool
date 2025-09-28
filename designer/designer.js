@@ -1758,7 +1758,7 @@ icosalogic.inv_design.print = function() {
   outStr += 'datetime=' + curDate.toISOString() + '\n';
   outStr += '\n';
   outStr += oa.printConfig();
-  outStr += oa.printDerived();
+  // outStr += oa.printDerived();
   outStr += '</pre>\n';
   
   return outStr;
@@ -2372,9 +2372,9 @@ icosalogic.inv_design.graphGeneric = function(vTitle) {
   var data = oa.dataTable;
   
   // Add the column names
-  console.log('    numCols=' + oa.graph_names.length);
+  console.log('    numCols=' + oa.graph_names.length + ' numRows=' + oa.graph_values.length);
   oa.graph_names.forEach(function(gname) {
-    console.log('    adding column ' + gname);
+    // console.log('    adding column ' + gname);
     data.addColumn('number', gname);
   });
   
@@ -2382,7 +2382,7 @@ icosalogic.inv_design.graphGeneric = function(vTitle) {
   var rowNum = 0;
   var chartDate = null;
   oa.graph_values.forEach(function(gvalues) {
-    console.log('    adding row=' + rowNum + ' num values=' + gvalues.length);
+    // console.log('    adding row=' + rowNum + ' num values=' + gvalues.length);
     data.addRows(1);
     
     for (let colNum = 0; colNum < gvalues.length; colNum += 1) {
@@ -2393,7 +2393,6 @@ icosalogic.inv_design.graphGeneric = function(vTitle) {
     
     rowNum++;
   });
-  console.log('rowNum=' + rowNum);
   
   // Basic chart settings
   var options = {
