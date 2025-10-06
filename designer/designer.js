@@ -2269,9 +2269,12 @@ icosalogic.inv_design.graphFetEff = function() {
       }
       colNum += 1;
     }
-    
+
   });
-  
+
+  cfg.out_amps = saved_out_amps;
+  cfg.fet_pn = saved_fet;
+
   oa.graphGeneric('Efficiency');
 }
 
