@@ -33,6 +33,7 @@
   <script type='text/javascript' src='ind_cor_table.js'></script>
   <script type='text/javascript' src='ind_dc_bias_table.js'></script>
   <script type='text/javascript' src='info_text.js'></script>
+  <script type='text/javascript' src='usage_histogram.js'></script>
   <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
 </head>
 
@@ -1352,6 +1353,27 @@
             <td id='info_ind_winding_factor'>ⓘ</td>
           </tr>
           <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_od_wound'  >Outside Diameter Wound</label></td>
+            <td>ind1_od_wound</td>
+            <td><input id='ind1_od_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_od_wound'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_id_wound'  >Inside Diameter Wound</label></td>
+            <td>ind1_id_wound</td>
+            <td><input id='ind1_id_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_id_wound'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
+            <td><label for='ind1_ht_wound'  >Height Wound</label></td>
+            <td>ind1_ht_wound</td>
+            <td><input id='ind1_ht_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_ht_wound'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind1_cust'>
             <td></td>
             <td></td>
             <td>Unloaded</td>
@@ -1763,6 +1785,27 @@
             <td colspan='4'>%</td>
             <td id='info_ind_winding_factor'>ⓘ</td>
           </tr>
+          <tr class='sh_out_ind1 sh_ind2_cust_cust sh_of_lcl'>
+            <td><label for='ind2_od_wound'  >Outside Diameter Wound</label></td>
+            <td>ind2_od_wound</td>
+            <td><input id='ind2_od_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_od_wound'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind2_cust_cust sh_of_lcl'>
+            <td><label for='ind2_id_wound'  >Inside Diameter Wound</label></td>
+            <td>ind2_id_wound</td>
+            <td><input id='ind2_id_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_id_wound'>ⓘ</td>
+          </tr>
+          <tr class='sh_out_ind1 sh_ind2_cust_cust sh_of_lcl'>
+            <td><label for='ind2_ht_wound'  >Height Wound</label></td>
+            <td>ind2_ht_wound</td>
+            <td><input id='ind2_ht_wound' value='20' readonly='readonly'></td>
+            <td colspan='4'>mm</td>
+            <td id='info_ind_ht_wound'>ⓘ</td>
+          </tr>
           <tr class='sh_out_ind2 sh_ind2_cust sh_of_lcl'>
             <td></td>
             <td></td>
@@ -2008,6 +2051,7 @@
                 <option value='eff_fet'>MOSFET Efficiency Comparison</option>
                 <option value='eff_cfg'>Configuration Efficiency Comparison</option>
                 <option value='pl_cfg'>Configuration Power Loss Comparison</option>
+                <option value='apl_cfg'>Configuration Annual Power Loss Comparison</option>
               </select>
             </td>
             <td colspan='4'> <button type='button' id='gen_graph' value='g'>Graph</button> </td>

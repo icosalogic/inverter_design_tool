@@ -276,6 +276,9 @@ icosalogic.inv_design.info_text = [
 {key: 'ind_od',             itxt: '<b>ind_od:</b> The outside diameter of the inductor core. (Read only)'},
 {key: 'ind_id',             itxt: '<b>ind_id:</b> The inside diamter of the inductor core. (Read only)'},
 {key: 'ind_ht',             itxt: '<b>ind_ht:</b> The height of the inductor core. (Read only)'},
+{key: 'ind_od_wound',       itxt: '<b>ind_od:</b> The outside diameter of the finished inductor after winding. (Read only)'},
+{key: 'ind_id_wound',       itxt: '<b>ind_id:</b> The inside diamter of the finished inductor after winding. (Read only)'},
+{key: 'ind_ht_wound',       itxt: '<b>ind_ht:</b> The height of the finished inductor after winding. (Read only)'},
 {key: 'ind_mu',             itxt: '<b>mu:</b> The relative permeability of the core.<br>' +
 				  'For Coil cores, this field is read/write.<br>' +
 				  'For air core, the value should be 1, for other cores, enter a value &gt; 1.<br>' +
@@ -390,4 +393,8 @@ icosalogic.inv_design.info_text = [
 				  'Note also that, except for the DC link cap, all component counts are multiplied by the number of output lines. (Read only)'},
 {key: 'th_calc_eff',        itxt: '<b>η<sub>calc</sub>:</b> The calculated efficiency of the inverter.<br>' +
                                   'Equal to 100 * P<sub>out</sub> / (P<sub>out</sub> + P<sub>total_loss</sub>). (Read only)'},
+{key: 'graph_type',         itxt: '<b>graph_type:</b> Select the type of graph you would like to generate.<br>' +
+                                  'After selecting a graph type, options will be populated below.'},
+{key: 'graph_opts',         itxt: '<b>graph_opts:</b> This element will be populated with the options for the graph type selected above.<br>' +
+                                  'After selecting one or more options, the graph button will be enabled.  Click on it to generate the graph.'},
 ];

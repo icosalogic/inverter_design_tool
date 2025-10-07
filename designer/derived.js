@@ -79,6 +79,9 @@ icosalogic.inv_design.DerivedInd.prototype = {
   turns_l1:                 123,
   turns_status:             'red',
   winding_factor:           1.0,
+  od_wound:                 1.0,
+  id_wound:                 1.0,
+  ht_wound:                 1.0,
   wound_area:               1.0,
   len:                      3.0,
   winding_len:              1.0,
@@ -255,9 +258,18 @@ icosalogic.inv_design.DerivedInd.prototype = {
       console.log('tight_winding_len=' + tight_winding_len + ' loose_winding_len=' + loose_winding_len);
       this.winding_len = loose_winding_len;
       
-      // area of a torus is 4 * pi**2 * r1 * r2
+      this.od_wound = this.cor_size_entry.OD + 2 * layers_used * wire_dia;           // calculate post-winding dimensions
+      this.id_wound = this.cor_size_entry.ID - 2 * layers_used * wire_dia;
+      this.ht_wound = this.cor_size_entry.HT + 2 * layers_used * wire_dia;
+      let wound_area2 = ((this.od_wound / 2) * (this.od_wound / 2) * Math.PI -       // area of top/bottom od
+                         (this.id_wound / 2) * (this.id_wound / 2) * Math.PI) * 2 +  // minus area of top/bottom id
+                         (this.od_wound + this.id_wound) * Math.PI * this.ht_wound;  // area of inside and outside diameters
+      wound_area2 /= 100;                                                            // convert from mm**2 to cm**2
+
+      // area of a torus is 4 * pi**2 * r1 * r2.
       this.wound_area = 4 * Math.PI * Math.PI * r1 * r2 / 100;
-      console.log('r1=' + r1 + ' r2=' + r2 + ' area=' + this.wound_area);
+      console.log('r1=' + r1 + ' r2=' + r2 + ' area=' + this.wound_area + ' area2=' + wound_area2);
+      this.wound_area = wound_area2;
       
       this.t_core                = cfg.t_ambient + Math.pow(this.power * 1000 / this.wound_area, 0.833);
       this.t_status              = this.t_core > 155.0 ? 'red' : 'green';

@@ -51,6 +51,7 @@ icosalogic.inv_design.num_graph_opts = 0;
 icosalogic.inv_design.graph_max_amps = 0;
 icosalogic.inv_design.graph_names = [];
 icosalogic.inv_design.graph_values = [];
+icosalogic.inv_design.histogram = [];
 
 
 
@@ -1305,6 +1306,9 @@ icosalogic.inv_design.displayDerived = function()
   if (cfg.ind1.ind_type == 'air' || cfg.ind1.ind_type == 'custom') {
     document.getElementById('ind1_winding_len').value      = Number(derived.ind1.winding_len).toFixed(2);
     document.getElementById('ind1_winding_len_in').value   = Number(derived.ind1.winding_len / 25.4).toFixed(3);
+    document.getElementById('ind1_od_wound').value         = Number(derived.ind1.od_wound).toFixed(2);
+    document.getElementById('ind1_id_wound').value         = Number(derived.ind1.id_wound).toFixed(2);
+    document.getElementById('ind1_ht_wound').value         = Number(derived.ind1.ht_wound).toFixed(2);
   }
   if (cfg.ind1.ind_type == 'air') {
     document.getElementById('ind1_vol').value              = Number(derived.ind1.volume / 1000).toFixed(3);
@@ -1359,6 +1363,9 @@ icosalogic.inv_design.displayDerived = function()
   if (cfg.ind2.ind_type == 'air' || cfg.ind2.ind_type == 'custom') {
     document.getElementById('ind2_winding_len').value      = Number(derived.ind2.winding_len).toFixed(2);
     document.getElementById('ind2_winding_len_in').value   = Number(derived.ind2.winding_len / 25.4).toFixed(3);
+    document.getElementById('ind2_od_wound').value         = Number(derived.ind2.od_wound).toFixed(2);
+    document.getElementById('ind2_id_wound').value         = Number(derived.ind2.id_wound).toFixed(2);
+    document.getElementById('ind2_ht_wound').value         = Number(derived.ind2.ht_wound).toFixed(2);
   }
   if (cfg.ind2.ind_type == 'air') {
     document.getElementById('ind2_vol').value              = Number(derived.ind2.volume / 1000).toFixed(3);
@@ -1885,6 +1892,9 @@ icosalogic.inv_design.printDerived = function() {
     outStr += 'ind1_turns_l1'         + '=' + derived.ind1.turns_l1.toFixed(0) + '\n';
     outStr += 'ind1_turns'            + '=' + derived.ind1.turns.toFixed(0) + '\n';
     outStr += 'ind1_winding_factor'   + '=' + derived.ind1.winding_factor.toFixed(2) + '\n';
+    outStr += 'ind1_od_wound'         + '=' + derived.ind1.od_wound.toFixed(2) + '\n';
+    outStr += 'ind1_id_wound'         + '=' + derived.ind1.id_wound.toFixed(2) + '\n';
+    outStr += 'ind1_ht_wound'         + '=' + derived.ind1.ht_wound.toFixed(2) + '\n';
     outStr += 'ind1_wound_area'       + '=' + derived.ind1.wound_area.toFixed(2) + '\n';
     outStr += 'ind1_len'              + '=' + derived.ind1.len.toFixed(2) + '\n';
     outStr += 'ind1_alb'              + '=' + derived.ind1.al_biased.toFixed(2) + '\n';
@@ -1908,6 +1918,9 @@ icosalogic.inv_design.printDerived = function() {
     outStr += 'ind2_turns_l1'         + '=' + derived.ind2.turns_l1.toFixed(0) + '\n';
     outStr += 'ind2_turns'            + '=' + derived.ind2.turns.toFixed(0) + '\n';
     outStr += 'ind2_winding_factor'   + '=' + derived.ind2.winding_factor.toFixed(2) + '\n';
+    outStr += 'ind2_od_wound'         + '=' + derived.ind2.od_wound.toFixed(2) + '\n';
+    outStr += 'ind2_id_wound'         + '=' + derived.ind2.id_wound.toFixed(2) + '\n';
+    outStr += 'ind2_ht_wound'         + '=' + derived.ind2.ht_wound.toFixed(2) + '\n';
     outStr += 'ind2_wound_area'       + '=' + derived.ind2.wound_area.toFixed(2) + '\n';
     outStr += 'ind2_len'              + '=' + derived.ind2.len.toFixed(2) + '\n';
     outStr += 'ind2_al'               + '=' + derived.ind2.cor_pn_entry.Al.toFixed(2) + '\n';
@@ -2047,7 +2060,7 @@ icosalogic.inv_design.graphTypeHandler = function() {
   if (gt == 'eff_fet') {
     // compare FET efficiency
     oa.addFetGraphOpts(el_gtbl);
-  } else if (gt == 'eff_cfg' || gt == 'pl_cfg') {
+  } else if (gt == 'eff_cfg' || gt == 'pl_cfg' || gt == 'apl_cfg') {
     // compare config efficiency
     oa.addConfigGraphOpts(el_gtbl);
   } else if (gt == 'none') {
@@ -2202,6 +2215,8 @@ icosalogic.inv_design.graphHandler = function(graph_event) {
     oa.graphConfigEff('e');
   } else if (gt == 'pl_cfg') {
     oa.graphConfigEff('p');
+  } else if (gt == 'apl_cfg') {
+    oa.graphConfigHistogram();
   } else if (gt == 'none') {
     // do nothing
   }
@@ -2357,7 +2372,114 @@ icosalogic.inv_design.graphConfigEff = function(gtype) {
   oa.setConfigActive(cfgOld);
   oa.derived.deriveFJT(cfgOld);
 
-  oa.graphGeneric(gtype == 'e' ? 'Efficiency' : 'Power Loss');
+  oa.graphGeneric(gtype == 'e' ? 'Efficiency' : 'Power Loss (W)');
+}
+
+/*
+ * Generate a config power loss histogram graph as configured by the graph options.
+ */
+icosalogic.inv_design.graphConfigHistogram = function() {
+  console.log("graphConfigHistogram: enter:");
+
+  var oa = icosalogic.inv_design;
+  var cfg = oa.config;
+  var hist = oa.histogram[0];
+  
+  console.log('histogram length=' + oa.histogram.length);
+  
+  var el_gtbl = document.getElementById('graph_opts_table');
+  var saved_cfg = cfg.cfg_name;
+  var amp_incr = hist.binSize * 1000 / cfg.out_voltage;      // convert from kW to amps
+  var numCols = 2;
+
+  // Find the number of columns to graph
+  icosalogic.inv_design.configs.forEach(function(cfg_name) {
+    var ckbx_id = 'gcopt_' + cfg_name;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      numCols += 1;
+      var cfgNew = oa.Config.find(cfg_name);
+      oa.setConfigActive(cfgNew);
+      if (oa.graph_max_amps < cfgNew.out_amps) {
+        oa.graph_max_amps = cfgNew.out_amps;
+      }
+    }
+  });
+  let max_hist_amps = hist.bins.length * hist.binSize * 1000 / cfg.out_voltage;
+  if (oa.graph_max_amps > max_hist_amps) {
+    oa.graph_max_amps = max_hist_amps;
+  }
+  console.log('    num_cols=' + numCols + ' graph_max_amps=' + oa.graph_max_amps);
+  
+  // Allocate the names and values arrays and assign the amps column values
+  oa.graph_names = new Array(numCols);
+  oa.graph_names[0] = 'Amps';
+  oa.graph_names[1] = 'Minimuum';
+  oa.graph_values = new Array(Math.floor(oa.graph_max_amps / amp_incr));
+
+  var amps = 0;
+  for (let i = 0; amps <= oa.graph_max_amps; i++) {
+    oa.graph_values[i] = new Array(numCols);
+    oa.graph_values[i][0] = amps;
+    oa.graph_values[i][1] = 0;
+    amps += amp_incr;
+  }
+  
+  // Build the data array
+  var total_loss = 0;
+  var first_series = true;
+  var colNum = 2;
+  icosalogic.inv_design.configs.forEach(function(cfg_name) {
+    var ckbx_id = 'gcopt_' + cfg_name;
+    var el_ckbx = document.getElementById(ckbx_id);
+    
+    if (el_ckbx.checked) {
+      console.log('    cfg_name=' + cfg_name);
+      
+      let cfgNew = oa.Config.find(cfg_name);
+      oa.setConfigActive(cfgNew);
+      
+      let saved_out_amps = cfgNew.out_amps;
+      oa.graph_names[colNum] = cfg_name;
+      
+      let wm_kwhr = 60 * 1000;
+      let loss = 0;
+      total_loss = 0;
+      amps = 0;
+      for (let ndx = 0; amps <= saved_out_amps && amps <= oa.graph_max_amps; ndx += 1) {
+        if (hist.bins[ndx] > 0) {
+          cfgNew.out_amps = amps;
+          oa.derived.deriveFJT(cfgNew);
+          loss = oa.derived.th_total_loss * hist.bins[ndx] / wm_kwhr;
+          total_loss += loss;
+          if (loss > 0 && (oa.graph_values[ndx][1] == 0 || oa.graph_values[ndx][1] > loss)) {
+            oa.graph_values[ndx][1] = loss;
+          }
+        }
+        oa.graph_values[ndx][colNum] = total_loss;
+        amps += amp_incr;
+      }
+      cfgNew.out_amps = saved_out_amps;
+      colNum += 1;
+    }
+  });
+  
+  // Calculate the minimum loss for a hybrid configuration
+  total_loss = 0;
+  amps = 0;
+  for (let ndx = 0; amps <= oa.graph_max_amps; ndx += 1) {
+    total_loss += oa.graph_values[ndx][1];
+    oa.graph_values[ndx][1] = total_loss;
+    amps += amp_incr;
+  }
+
+  // Restore the status quo
+  var cfgOld = oa.Config.find(saved_cfg);
+  oa.setConfigActive(cfgOld);
+  oa.derived.deriveFJT(cfgOld);
+
+  oa.graphGeneric('Power Loss (kW)');
 }
 
 /*
