@@ -2415,7 +2415,7 @@ icosalogic.inv_design.graphConfigHistogram = function() {
   // Allocate the names and values arrays and assign the amps column values
   oa.graph_names = new Array(numCols);
   oa.graph_names[0] = 'Amps';
-  oa.graph_names[1] = 'Minimuum';
+  oa.graph_names[1] = 'Hybrid';
   oa.graph_values = new Array(Math.floor(oa.graph_max_amps / amp_incr));
 
   var amps = 0;
