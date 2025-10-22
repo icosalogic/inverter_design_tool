@@ -1,5 +1,7 @@
 /*
  * Attributes of FETs used in the inverter designer.
+ * 
+ * TODO: Add SCT4013DRHR
  */
 
 // icosalogic = {};
@@ -691,6 +693,126 @@ icosalogic.inv_design.fet_table = [
   e_on:      722.0,                        // uJ
   e_off:     145.0,
   e_tot_t:   [25, 671, 175, 1111],
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'AIMCQ120R020M1T',
+  tech:      'SiC',
+  footprint: 'PG-HDSOP-22-3',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     116.0,
+  i_max_hot: 82.0,
+  r_ds_on:   0.038,
+  r_ds_on_t: [25, 0.019, 100, 0.027, 175, 0.038],
+  qg:        82,
+  t_d_on:    10.8,
+  t_rise:    10.5,
+  t_d_off:   25.8,
+  t_fall:    9.0,
+  r_th_jc:   0.26,
+  r_g_ext:   2.0,
+  r_g_int:   2.2,
+  v_g_on:    20.0,
+  v_g_off:   0.0,
+  c_iss:     2667.0,                       // pF
+  c_oss:     126.0,
+  c_rss:     7.0,
+  e_on:      364.0,                        // uJ
+  e_off:     116.0,
+  e_tot_t:   [25, 361.0, 175, 480.0],
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'AIMCQ120R030M1T',
+  tech:      'SiC',
+  footprint: 'PG-HDSOP-22-3',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     78.0,
+  i_max_hot: 55.0,
+  r_ds_on:   0.060,
+  r_ds_on_t: [25, 0.030, 100, 0.042, 175, 0.060],
+  qg:        57,
+  t_d_on:    9.1,
+  t_rise:    7.8,
+  t_d_off:   20.7,
+  t_fall:    9.7,
+  r_th_jc:   0.36,
+  r_g_ext:   2.0,
+  r_g_int:   2.6,
+  v_g_on:    20.0,
+  v_g_off:   0.0,
+  c_iss:     1738.0,                       // pF
+  c_oss:     82.0,
+  c_rss:     4.4,
+  e_on:      216.0,                        // uJ
+  e_off:     72.0,
+  e_tot_t:   [25, 229.0, 175, 288.0],
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'AIMCQ120R040M1T',
+  tech:      'SiC',
+  footprint: 'PG-HDSOP-22-3',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     61.0,
+  i_max_hot: 43.0,
+  r_ds_on:   0.080,
+  r_ds_on_t: [25, 0.040, 100, 0.056, 175, 0.080],
+  qg:        43,
+  t_d_on:    8.2,
+  t_rise:    6.5,
+  t_d_off:   17.8,
+  t_fall:    8.1,
+  r_th_jc:   0.44,
+  r_g_ext:   2.0,
+  r_g_int:   3.7,
+  v_g_on:    20.0,
+  v_g_off:   0.0,
+  c_iss:     1264.0,                       // pF
+  c_oss:     63.0,
+  c_rss:     3.6,
+  e_on:      161.0,                        // uJ
+  e_off:     35.0,
+  e_tot_t:   [25, 158.0, 175, 196.0],
+  v_swe:     800,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Infineon',
+  pn:        'AIMCQ120R060M1T',
+  tech:      'SiC',
+  footprint: 'PG-HDSOP-22-3',
+  n_hb:      2,
+  v_max:     1200.0,
+  i_max:     44.0,
+  i_max_hot: 31.0,
+  r_ds_on:   0.120,
+  r_ds_on_t: [25, 0.060, 100, 0.084, 175, 0.120],
+  qg:        32,
+  t_d_on:    7.1,
+  t_rise:    5.3,
+  t_d_off:   14.3,
+  t_fall:    9.3,
+  r_th_jc:   0.58,
+  r_g_ext:   2.0,
+  r_g_int:   4.0,
+  v_g_on:    20.0,
+  v_g_off:   0.0,
+  c_iss:     880.0,                       // pF
+  c_oss:     43.0,
+  c_rss:     2.0,
+  e_on:      113.0,                        // uJ
+  e_off:     27.0,
+  e_tot_t:   [25, 120.0, 175, 145.0],
   v_swe:     800,                          // e_on/off voltage
 },
 
