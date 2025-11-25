@@ -161,21 +161,27 @@ icosalogic.inv_design.DerivedInd.prototype = {
       }
     
       // calculate a conservative limit on the max number of turns for this core
+      // TODO: also calculate turns_layer for OD, which determines od_wound, current solution assumes same # layers for ID and OD
       var core_radius = this.cor_size_entry.ID / 2;
       var max_layers = Math.floor(core_radius / wire_dia);
       var max_turns = 0;
       var layer = 0;
-      var layer_dia = this.cor_size_entry.ID;
-      var turns_layer = [];
+      var layer_dia_id = this.cor_size_entry.ID;
+      var layer_dia_od = this.cor_size_entry.OD;
+      var turns_layer_id = [];
+      var turns_layer_od = [];
       for ( ; layer < max_layers; layer++) {
-        var layer_dia = layer_dia - wire_dia;
-        var layer_cir = layer_dia * Math.PI;
-        turns_layer[layer] = Math.floor(layer_cir / wire_dia);
+        var layer_dia_id = layer_dia_id - wire_dia;
+        var layer_cir_id = layer_dia_id * Math.PI;
+        turns_layer_id[layer] = Math.floor(layer_cir_id / wire_dia);
+        var layer_dia_od = layer_dia_od + wire_dia;
+        var layer_cir_od = layer_dia_od * Math.PI;
+        turns_layer_od[layer] = Math.floor(layer_cir_od / wire_dia);
         
         if (layer == 0) {
-          this.turns_l1 = turns_layer[layer];
+          this.turns_l1 = turns_layer_id[layer];
         }
-        max_turns += turns_layer[layer];
+        max_turns += turns_layer_id[layer];
       }
       this.turns_max = max_turns;
     
@@ -246,19 +252,27 @@ icosalogic.inv_design.DerivedInd.prototype = {
       var tight_winding_len = 0;
       var loose_winding_len = 0;
       var layers_used = 0;
+      var layers_used_od = 0;
       var turns_left = this.turns;
+      var turns_left_od = this.turns;
       for (layers_used = 0; turns_left > 0; layers_used++) {
         var tight_1winding_len = 2 * (xd + this.cor_size_entry.HT + (2 + layers_used) * wire_dia);
         var loose_1winding_len = 2 * (r2 + (0.5 + layers_used) * wire_dia) * Math.PI;
-        var turns_this_layer = turns_left > turns_layer[layers_used] ? turns_layer[layers_used] : turns_left;
+        var turns_this_layer = turns_left > turns_layer_id[layers_used] ? turns_layer_id[layers_used] : turns_left;
+        var turns_this_layer_od = turns_left_od > turns_layer_od[layers_used] ? turns_layer_od[layers_used] : turns_left_od;
         tight_winding_len += tight_1winding_len * turns_this_layer;
         loose_winding_len += loose_1winding_len * turns_this_layer;
         turns_left -= turns_this_layer;
+        if (turns_left_od > 0) {
+          layers_used_od = layers_used + 1;
+        }
+        turns_left_od -= turns_this_layer_od;
       }
-      console.log('tight_winding_len=' + tight_winding_len + ' loose_winding_len=' + loose_winding_len);
+      console.log('tight_winding_len=' + tight_winding_len + ' loose_winding_len=' + loose_winding_len +
+                  '  layers_used_od=' + layers_used_od);
       this.winding_len = loose_winding_len;
       
-      this.od_wound = this.cor_size_entry.OD + 2 * layers_used * wire_dia;           // calculate post-winding dimensions
+      this.od_wound = this.cor_size_entry.OD + 2 * layers_used_od * wire_dia;           // calculate post-winding dimensions
       this.id_wound = this.cor_size_entry.ID - 2 * layers_used * wire_dia;
       this.ht_wound = this.cor_size_entry.HT + 2 * layers_used * wire_dia;
       let wound_area2 = ((this.od_wound / 2) * (this.od_wound / 2) * Math.PI -       // area of top/bottom od
