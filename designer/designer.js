@@ -15,20 +15,12 @@
  * fields to this application.
  * 
  * TODO:
- * x  1. Add display Ciss, Coss, Crss to FET display
- * x  2. Add bootstrap fields to gate driver section
- * x  3. Add n field to FET section to support having multiple parallel FETs
- * x  4. Better power dissipation calculation for FET, including heat sink
- * x  5. Auto switch from LCL to LC output filter
- *    6. Generate Spice file
- * x  7. Estimate inverter efficiency
- *    8. Auto select components (DCL, FET, OF)
- *    9. Separate tables for DC link caps and output filter caps
- * x 10. Fix power dissipation calculation for inductors
- *   11. Define gate driver IC table to set gate driver params.
- *   12. Fix nested show/hide issues, e.g. inductors
- *   13. Fix printDerived() RE inductors
- * x 14. Use more standard approach for selecting DC-link caps.
+ *    1. Generate Spice file
+ *    2. Auto select components (DCL, FET, OF)
+ *    3. Separate tables for DC link caps and output filter caps
+ *    4. Define gate driver IC table to set gate driver params.
+ *    5. Fix nested show/hide issues, e.g. inductors
+ *    6. Fix printDerived() RE inductors
  */
 
 icosalogic = {};

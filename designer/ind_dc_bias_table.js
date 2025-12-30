@@ -35,6 +35,8 @@ icosalogic.inv_design.ind_dc_bias_table = [
 {mat: 'KoolMuMax',   mu:  60, a: 0.01, b: 5.917e-7, c: 2.000 },
 {mat: 'KoolMuHf',    mu:  26, a: 0.01, b: 3.556e-8, c: 2.213 },
 {mat: 'KoolMuUltra', mu:  26, a: 0.01, b: 7.380e-8, c: 2.111 },
+{mat: 'KoolMuUltra', mu:  40, a: 0.01, b: 4.494e-7, c: 1.920 },
+{mat: 'KoolMuUltra', mu:  60, a: 0.01, b: 6.944e-7, c: 2.000 },
 {mat: 'HighFlux',    mu:  14, a: 0.01, b: 3.389e-8, c: 1.923 },
 {mat: 'HighFlux',    mu:  26, a: 0.01, b: 4.205e-9, c: 2.426 },
 {mat: 'HighFlux',    mu:  40, a: 0.01, b: 1.841e-8, c: 2.409 },
@@ -65,6 +67,8 @@ icosalogic.inv_design.ind_dc_mag_table = [
 {mat: 'KoolMuMax',   mu:  60, a: 3.589E-02, b: 1.862E-02, c: 6.201E-04, d: 6.341E-02, e: 4.897E-04, x: 1.630},
 {mat: 'KoolMuHf',    mu:  26, a: 6.666E-02, b: 1.606E-02, c: 4.749E-04, d: 8.148E-02, e: 4.021E-04, x: 1.905},
 {mat: 'KoolMuUltra', mu:  26, a: 2.167E-02, b: 1.082E-02, c: 1.351E-04, d: 3.187E-02, e: 1.136E-04, x: 1.770},
+{mat: 'KoolMuUltra', mu:  40, a: 2.664E-02, b: 1.000E-02, c: 1.505E-04, d: 2.735E-02, e: 1.239E-04, x: 1.504},
+{mat: 'KoolMuUltra', mu:  60, a: 3.785E-02, b: 1.424E-02, c: 6.078E-04, d: 6.109E-02, e: 5.442E-04, x: 1.471},
 ];
 
 /*
@@ -90,4 +94,6 @@ icosalogic.inv_design.ind_loss_table = [
 {mat: 'KoolMuMax',   mu:  60, a: 113.53, b: 2.072, c: 1.379},
 {mat: 'KoolMuHf',    mu:  26, a:  26.41, b: 1.602, c: 1.394},
 {mat: 'KoolMuUltra', mu:  26, a:  13.99, b: 1.602, c: 1.385},
+{mat: 'KoolMuUltra', mu:  40, a:  13.99, b: 1.602, c: 1.385},
+{mat: 'KoolMuUltra', mu:  60, a:   8.88, b: 1.602, c: 1.443},
 ];
