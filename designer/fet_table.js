@@ -1014,4 +1014,64 @@ icosalogic.inv_design.fet_table = [
   e_off:     480,                          // not given
   v_swe:     400,                          // e_on/off voltage
 },
+
+{
+  mfg:       'Navitas',
+  pn:        'NV6524',
+  tech:      'GaN',
+  footprint: 'TOLT-16L',
+  n_hb:      2,
+  v_max:     650.0,
+  i_max:     90,
+  i_max_hot: 57,
+  r_ds_on:   0.043,
+  r_ds_on_t: [25, 0.025, 150, 0.043],
+  qg:        74,                           // not specified
+  t_d_on:    41,
+  t_rise:    8,
+  t_d_off:   19,
+  t_fall:    11,
+  r_th_jc:   0.28,
+  r_g_ext:   5.0,                          // 10 ohms on, 2 ohms off
+  r_g_int:   1.0,                          // not given
+  v_g_on:    15.0,
+  v_g_off:   0.0,
+  c_iss:     1500.0,                       // pF Not given
+  c_oss:     143.0,
+  c_rss:     4.6,
+  e_on:      145,                          // uJ
+  e_off:     5,
+  v_swe:     400,                          // e_on/off voltage
+},
+
+{
+  mfg:       'Navitas',
+  pn:        'NV6525',
+  tech:      'GaN',
+  footprint: 'TOLT-16L',
+  n_hb:      2,
+  v_max:     650.0,
+  i_max:     65,
+  i_max_hot: 41,
+  r_ds_on:   0.060,
+  r_ds_on_t: [25, 0.035, 150, 0.060],
+  qg:        74,                           // not specified
+  t_d_on:    36,
+  t_rise:    8,
+  t_d_off:   17,
+  t_fall:    9,
+  r_th_jc:   0.38,
+  r_g_ext:   5.0,                          // 10 ohms on, 2 ohms off
+  r_g_int:   1.0,                          // not given
+  v_g_on:    15.0,
+  v_g_off:   0.0,
+  c_iss:     1500.0,                       // pF Not given
+  c_oss:     102.0,
+  c_rss:     4.6,
+  e_on:      91,                           // uJ
+  e_off:     1.5,
+  v_swe:     400,                          // e_on/off voltage
+},
+
+
 ];

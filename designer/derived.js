@@ -646,7 +646,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.i_in_nom = this.i_in_line_nom * cfg.out_lines;
     this.i_in_max = this.i_in_line_max * cfg.out_lines;
     
-    this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_fall - this.fet_entry.t_d_on, 0);
+    this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_rise - this.fet_entry.t_d_on, 0);
     if (this.fet_r_ds_on_eff == 1.0) {
       // start with the max and iterate down
       this.fet_r_ds_on_eff = this.fet_entry.r_ds_on;
