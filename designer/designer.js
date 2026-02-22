@@ -1208,9 +1208,9 @@ icosalogic.inv_design.displayDerived = function()
   document.getElementById('fet_r_ds_on_eff').value       = Number(derived.fet_r_ds_on_eff).toFixed(4);
   document.getElementById('qg').value                    = derived.fet_entry.qg;
   document.getElementById('t_d_on').value                = derived.fet_entry.t_d_on;
-  document.getElementById('t_rise').value                = derived.fet_entry.t_rise;
+  document.getElementById('t_gs_rise').value             = derived.fet_entry.t_gs_rise;
   document.getElementById('t_d_off').value               = derived.fet_entry.t_d_off;
-  document.getElementById('t_fall').value                = derived.fet_entry.t_fall;
+  document.getElementById('t_gs_fall').value             = derived.fet_entry.t_gs_fall;
   document.getElementById('r_th_jc').value               = derived.fet_entry.r_th_jc;
   document.getElementById('r_g_ext').value               = derived.fet_entry.r_g_ext;
   document.getElementById('r_g_int').value               = derived.fet_entry.r_g_int;
@@ -1830,9 +1830,9 @@ icosalogic.inv_design.printDerived = function() {
   outStr += 'fet_r_ds_on_eff'       + '=' + derived.fet_r_ds_on_eff + '\n';
   outStr += 'qg'                    + '=' + derived.fet_entry.qg + '\n';
   outStr += 't_d_on'                + '=' + derived.fet_entry.t_d_on + '\n';
-  outStr += 't_rise'                + '=' + derived.fet_entry.t_rise + '\n';
+  outStr += 't_gs_rise'             + '=' + derived.fet_entry.t_gs_rise + '\n';
   outStr += 't_d_off'               + '=' + derived.fet_entry.t_d_off + '\n';
-  outStr += 't_fall'                + '=' + derived.fet_entry.t_fall + '\n';
+  outStr += 't_gs_fall'             + '=' + derived.fet_entry.t_gs_fall + '\n';
   outStr += 'r_th_jc'               + '=' + derived.fet_entry.r_th_jc + '\n';
   outStr += 'r_g_ext'               + '=' + derived.fet_entry.r_g_ext + '\n';
   outStr += 'r_g_int'               + '=' + derived.fet_entry.r_g_int + '\n';

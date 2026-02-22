@@ -155,9 +155,15 @@ icosalogic.inv_design.info_text = [
                                   'the effective on resistance based on the calculated FET junction temperature. (Read only)'},
 {key: 'qg',                 itxt: '<b>Q<sub>g</sub>:</b>           From the datasheet. (Read only)'},
 {key: 't_d_on',             itxt: '<b>t<sub>d(on)</sub>:</b>       From the datasheet. (Read only)'},
-{key: 't_rise',             itxt: '<b>t<sub>rise</sub>:</b>        From the datasheet. (Read only)'},
+{key: 't_gs_rise',          itxt: '<b>t<sub>gs_rise</sub>:</b>     From the datasheet. Note that many MOSFET datasheets give the V<sub>gs</sub><br>' +
+                                  'rise time (e.g.: Infineon) and others give the V<sub>ds</sub> fall time (Navitas NV6524)<br>' +
+                                  'to describe the same interval.  In the latter case, please use the V<sub>ds</sub> fall time<br>' +
+                                  'as a substitute for V<sub>gs</sub> rise time. (Read only)'},
 {key: 't_d_off',            itxt: '<b>t<sub>d(off)</sub>:</b>      From the datasheet. (Read only)'},
-{key: 't_fall',             itxt: '<b>t<sub>fall</sub>:</b>        From the datasheet. (Read only)'},
+{key: 't_gs_fall',          itxt: '<b>t<sub>gs_fall</sub>:</b>     From the datasheet. Note that many MOSFET datasheets give the V<sub>gs</sub><br>' +
+                                  'fall time (e.g.: Infineon) and others give the V<sub>ds</sub> rise time (e.g.: Navitas NV6524)<br>' +
+                                  'to describe the same interval.  In the latter case, please use the V<sub>ds</sub> rise time as<br>' +
+                                  'a substitue for V<sub>gs</sub> fall time. (Read only)'},
 {key: 'r_th_jc',            itxt: '<b>R<sub>θ_jc</sub>:</b>        From the datasheet. (Read only)'},
 {key: 'r_g_ext',            itxt: '<b>R<sub>g_ext</sub>:</b>       From the datasheet. (Read only)'},
 {key: 'r_g_int',            itxt: '<b>R<sub>g_int</sub>:</b>       From the datasheet. (Read only)'},
@@ -170,7 +176,7 @@ icosalogic.inv_design.info_text = [
 {key: 'e_off',              itxt: '<b>E<sub>off</sub>:</b>         The energy required to turn the FET off.  From the datasheet. (Read only)'},
 {key: 'v_swe',              itxt: '<b>V<sub>swe</sub>:</b>         The voltage at which E<sub>on</sub> and E<sub>off</sub> were measured.  From the datasheet. (Read only)'},
 {key: 't_dead',             itxt: '<b>t<sub>dead</sub>:</b> Minimum dead time.<br>' +
-                                  'Equal to max(t<sub>d(off)</sub> + t<sub>fall</sub> - t<sub>d(on)</sub>, 0). (Read only)'},
+                                  'Equal to max(t<sub>d(off)</sub> + t<sub>gs_fall</sub> - t<sub>d(on)</sub>, 0). (Read only)'},
 {key: 'fet_max_i_actual',   itxt: '<b>I<sub>fet_max_actual</sub>:</b> Maximum current per FET.<br>' +
                                   'Equal to I<sub>out</sub> * sqrt(2) / fet_count.  ' +
 				  'Status is green if this value is less than I<sub>fet_max_hot</sub>.<br>' +
@@ -201,9 +207,9 @@ icosalogic.inv_design.info_text = [
 {key: 'gd_i_off',           itxt: '<b>I<sub>gd_off</sub>:</b> The estimated current through the gate driver to turn off the FET.<br>' +
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>) / (R<sub>gd_off</sub> + R<sub>g_ext_off</sub> + R<sub>g_int</sub>). (Read only)'},
 {key: 'gd_dc_on',           itxt: '<b>gd_dc_on:</b> The FET turn on duty cycle for one switching cycle.<br>' +
-                                  'Equal to (t<sub>d(on)</sub> + t<sub>rise</sub>) / t<sub>sw</sub>. (Read only)'},
+                                  'Equal to (t<sub>d(on)</sub> + t<sub>gs_rise</sub>) / t<sub>sw</sub>. (Read only)'},
 {key: 'gd_dc_off',          itxt: '<b>gd_dc_off:</b> The FET turn off duty cycle for one switching cycle.<br>' +
-                                  'Equal to (t<sub>d(off)</sub> + t<sub>fall</sub>) / t<sub>sw</sub>. (Read only)'},
+                                  'Equal to (t<sub>d(off)</sub> + t<sub>gs_fall</sub>) / t<sub>sw</sub>. (Read only)'},
 {key: 'gd_i_avg',           itxt: '<b>I<sub>gd_avg</sub>:</b> The average gate driver current for one FET on/off cycle.<br>' +
                                   'Equal to I<sub>gd_on</sub> * gd_dc_on + I<sub>gd_off</sub> * gd_dc_off. (Read only)'},
 {key: 'gd_p_avg',           itxt: '<b>P<sub>gd_avg</sub>:</b> The average gate driver power for on turn on/off cycle.<br>' +
@@ -358,11 +364,11 @@ icosalogic.inv_design.info_text = [
 {key: 'th_pgsw',            itxt: '<b>P<sub>gsd</sub>:</b> The power dissipated inside the gate driver.<br>' +
                                   'Equal to (V<sub>g_on</sub> - V<sub>g_off</sub>)<sup>2</sup> * Q<sub>g</sub> * f<sub>sw</sub> / 2. (Read only)'},
 {key: 'th_prgext',          itxt: '<b>P<sub>rgext</sub>:</b> Power dissipated by the external gate resistor.<br>' +
-                                  'Equal to R<sub>g_ext_on</sub> * (I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
-                                  'R<sub>g_ext_off</sub> * (I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>). (Read only)'},
+                                  'Equal to R<sub>g_ext_on</sub> * (I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>gs_rise</sub>) * f<sub>sw</sub>) + ' +
+                                  'R<sub>g_ext_off</sub> * (I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>gs_fall</sub>) * f<sub>sw</sub>). (Read only)'},
 {key: 'th_prgint',          itxt: '<b>P<sub>rgint</sub>:</b> Power dissipated in the FET due to gate switching.<br>' +
-                                  'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>rise</sub>) * f<sub>sw</sub>) + ' +
-                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>fall</sub>) * f<sub>sw</sub>)). (Read only)'},
+                                  'Equal to R<sub>g_int</sub> * ((I<sub>gd_on</sub><sup>2</sup> * (t<sub>d(on)</sub> + t<sub>gs_rise</sub>) * f<sub>sw</sub>) + ' +
+                                  '(I<sub>gd_off</sub><sup>2</sup> * (t<sub>d(off)</sub> + t<sub>gs_fall</sub>) * f<sub>sw</sub>)). (Read only)'},
 {key: 'th_pfi',             itxt: '<b>P<sub>fi</sub>:</b> The power dissipated in the FET due to conduction losses.<br>' +
                                   'Equal to I<sub>fet_max_actual</sub><sup>2</sup> * R<sub>ds(on)</sub> * 0.5 (assuming 50% duty cycle). (Read only)'},
 {key: 'th_pfsw',            itxt: '<b>P<sub>fsw</sub>:</b> The power dissipated in a single FET due to switching losses.<br>' +

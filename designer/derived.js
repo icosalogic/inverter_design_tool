@@ -646,7 +646,7 @@ icosalogic.inv_design.Derived.prototype = {
     this.i_in_nom = this.i_in_line_nom * cfg.out_lines;
     this.i_in_max = this.i_in_line_max * cfg.out_lines;
     
-    this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_rise - this.fet_entry.t_d_on, 0);
+    this.t_dead = Math.max(this.fet_entry.t_d_off + this.fet_entry.t_gs_fall - this.fet_entry.t_d_on, 0);
     if (this.fet_r_ds_on_eff == 1.0) {
       // start with the max and iterate down
       this.fet_r_ds_on_eff = this.fet_entry.r_ds_on;
@@ -846,8 +846,8 @@ icosalogic.inv_design.Derived.prototype = {
     
     var fe = this.fet_entry;
     // resistor max duty cycle is alternating on/off every cycle, i.e., (on + off) / 2
-    this.gd_dc_on               = (fe.t_d_on  + fe.t_rise) / this.sw_cycle_ns;
-    this.gd_dc_off              = (fe.t_d_off + fe.t_fall) / this.sw_cycle_ns;
+    this.gd_dc_on               = (fe.t_d_on  + fe.t_gs_rise) / this.sw_cycle_ns;
+    this.gd_dc_off              = (fe.t_d_off + fe.t_gs_fall) / this.sw_cycle_ns;
     this.gd_i_avg               = this.gd_i_on * this.gd_dc_on + this.gd_i_off * this.gd_dc_off;
     this.gd_p_avg               = this.gd_i_avg * v_gd_total;
     var fet_r_i_on              = v_gd_total / r_fet_on;
